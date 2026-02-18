@@ -1,7 +1,7 @@
 {
   "v1.1.2": {
-    "toolkit.html": "TOOLKIT_HASH_PLACEHOLDER",
-    "date": "",
+    "toolkit.html": "52155c1bd639339d8068e898294023448cdfc28c2b60a0a1bf22f63190992872",
+    "date": "2026-02-18T15:08:35Z",
     "note": "Official relay only, CSP hardened, PRO features"
   }
 }
