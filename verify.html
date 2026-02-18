@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LOWNET — Verify Integrity</title>
+<meta name="description" content="Verify the integrity of LOWNET Toolkit against two independent sources.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23050505' rx='8' width='100' height='100'/><text x='50' y='70' text-anchor='middle' font-size='56' font-family='monospace' font-weight='700' fill='white'>L</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+:root{--bg:#050505;--surface:#0a0a0b;--border:#1a1a1e;--accent:#00d970;--accent-dim:#00b85c;--accent-subtle:#00d97010;--text:#e5e5e5;--text-secondary:#a0a0a0;--text-muted:#666;--text-dim:#444;--error:#ef4444;--radius:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'JetBrains Mono',ui-monospace,monospace;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:60px 20px 40px}
+.container{max-width:640px;width:100%}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:14px;font-weight:600;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.subtitle{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:36px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.card-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.hash-row{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.hash-row:last-child{margin-bottom:0}
+.hash-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:6px}
+.hash-value{font-size:11px;color:var(--accent);word-break:break-all;line-height:1.5;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;user-select:all;cursor:text;min-height:40px}
+.hash-value.loading{color:var(--text-dim);font-style:italic}
+.hash-value.match{border-color:var(--accent);background:var(--accent-subtle)}
+.hash-value.mismatch{border-color:var(--error);background:#ef444410;color:var(--error)}
+.meta{font-size:10px;color:var(--text-dim);margin-top:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all 0.15s;background:var(--surface);color:var(--text);width:100%}
+.btn:hover{border-color:var(--accent);color:var(--accent)}.btn:disabled{opacity:0.4;cursor:not-allowed}
+.btn-accent{background:var(--accent);color:var(--bg);border-color:var(--accent)}.btn-accent:hover{background:var(--accent-dim);border-color:var(--accent-dim);color:var(--bg)}
+.result{display:none;align-items:center;gap:8px;padding:12px 14px;border-radius:6px;font-size:12px;font-weight:600;margin-top:16px}
+.result.show{display:flex}
+.result.ok{background:var(--accent-subtle);border:1px solid var(--accent);color:var(--accent)}
+.result.fail{background:#ef444410;border:1px solid var(--error);color:var(--error)}
+.result.warn{background:#f59e0b10;border:1px solid #f59e0b40;color:#f59e0b}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.section-title{font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:10px}
+.info{font-size:11px;color:var(--text-secondary);line-height:1.7}
+.info code{background:var(--bg);padding:1px 5px;border-radius:3px;font-size:10px;color:var(--accent)}
+.or-row{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:10px;color:var(--text-dim)}
+.or-row::before,.or-row::after{content:'';flex:1;height:1px;background:var(--border)}
+.source-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:0.5px}
+.source-badge.github{background:#24292e;color:#f0f6fc}
+.source-badge.server{background:#1a1a2e;color:var(--accent)}
+.source-badge.live{background:#0a200a;color:var(--accent)}
+input[type="text"]{width:100%;padding:10px 12px;font-family:inherit;font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none}
+input[type="text"]:focus{border-color:var(--accent)}input[type="text"]::placeholder{color:var(--text-dim)}
+footer{margin-top:40px;font-size:10px;color:var(--text-dim);text-align:center}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;opacity:0.03;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>LOWNET</h1>
+  <h2>Verify Integrity</h2>
+  <p class="subtitle">Two independent sources. If both match, the file you received is the file we deployed.</p>
+
+  <!-- Dual-Channel Verification -->
+  <div class="card">
+    <div class="card-title">Dual-Channel Verification</div>
+
+    <div class="hash-row">
+      <div class="hash-label"><span class="source-badge github">GitHub</span> Published hash · v1.1.2</div>
+      <div class="hash-value loading" id="github-hash">loading from GitHub...</div>
+      <div class="meta">Source: <a href="https://github.com/lownetjs/lownet-toolkit/blob/main/hashes.json">lownetjs/lownet-toolkit</a></div>
+    </div>
+
+    <div class="hash-row">
+      <div class="hash-label"><span class="source-badge server">Server</span> Published hash · v1.1.2</div>
+      <div class="hash-value" id="server-hash">TOOLKIT_HASH_PLACEHOLDER</div>
+      <div class="meta">Embedded in this page at deploy time</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="btn btn-accent" id="btn-verify">Fetch toolkit.html &amp; verify</button>
+
+    <div id="live-row" style="display:none;margin-top:16px;">
+      <div class="hash-row">
+        <div class="hash-label"><span class="source-badge live">Live</span> Fetched hash</div>
+        <div class="hash-value" id="live-hash"></div>
+        <div class="meta">Computed client-side from /toolkit.html right now</div>
+      </div>
+    </div>
+
+    <div class="result" id="result">
+      <span id="result-icon"></span>
+      <span id="result-text"></span>
+    </div>
+  </div>
+
+  <!-- Manual -->
+  <div class="card">
+    <div class="card-title">Manual Compare</div>
+    <p class="info" style="margin-bottom:12px;">Paste the hash from Toolkit → Help → SHA-256:</p>
+    <input type="text" id="manual-hash" placeholder="Paste SHA-256 hash here...">
+    <button class="btn" id="btn-compare" style="margin-top:8px;">Compare</button>
+    <div class="result" id="result-manual">
+      <span id="result-manual-icon"></span>
+      <span id="result-manual-text"></span>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="card">
+    <div class="card-title">How It Works</div>
+    <div class="info">
+      The hash is published in two places that require separate credentials to compromise:
+      the server (this page) and <a href="https://github.com/lownetjs/lownet-toolkit">GitHub</a>.
+      An attacker would need to control both to forge a match.
+    </div>
+    <div class="divider"></div>
+    <div class="info">
+      <strong style="color:var(--text);">Verify from terminal:</strong><br>
+      <code style="display:block;margin-top:6px;padding:8px 10px;background:var(--bg);border-radius:4px;line-height:1.6;">curl -s https://lownet.org/toolkit.html | sha256sum</code>
+    </div>
+  </div>
+
+  <footer>
+    <a href="/">lownet.org</a> · <a href="/toolkit.html">Toolkit</a> · <a href="/pro/">PRO</a>
+    <div style="margin-top:6px;">© 2024-2026 LOWNET Contributors · MIT License</div>
+  </footer>
+</div>
+
+<script>
+(function() {
+  var VERSION = 'v1.1.2';
+  var GITHUB_URL = 'https://raw.githubusercontent.com/lownetjs/lownet-toolkit/main/hashes.json';
+  var serverHash = document.getElementById('server-hash').textContent.trim();
+  var githubHash = null;
+
+  // Fetch GitHub hash
+  fetch(GITHUB_URL, { cache: 'no-store' })
+    .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(data) {
+      if (data[VERSION] && data[VERSION]['toolkit.html']) {
+        githubHash = data[VERSION]['toolkit.html'];
+        var el = document.getElementById('github-hash');
+        el.textContent = githubHash;
+        el.className = 'hash-value';
+        // Check if GitHub and server agree
+        if (serverHash && serverHash.length === 64 && githubHash !== serverHash) {
+          el.className = 'hash-value mismatch';
+          document.getElementById('server-hash').className = 'hash-value mismatch';
+          showResult('result', false, 'GitHub and server hashes disagree — investigate');
+        }
+      } else {
+        var el = document.getElementById('github-hash');
+        el.textContent = 'version not found';
+        el.className = 'hash-value mismatch';
+      }
+    })
+    .catch(function(e) {
+      var el = document.getElementById('github-hash');
+      el.textContent = 'unavailable (' + e.message + ')';
+      el.className = 'hash-value';
+    });
+
+  function hexHash(buffer) {
+    return crypto.subtle.digest('SHA-256', buffer).then(function(hash) {
+      return Array.from(new Uint8Array(hash)).map(function(b) {
+        return b.toString(16).padStart(2, '0');
+      }).join('');
+    });
+  }
+
+  function showResult(id, ok, text, warn) {
+    var el = document.getElementById(id);
+    el.className = 'result show ' + (warn ? 'warn' : ok ? 'ok' : 'fail');
+    el.querySelector('[id$="-icon"]').textContent = ok ? '✓' : warn ? '⚠' : '✗';
+    el.querySelector('[id$="-text"]').textContent = text;
+  }
+
+  // Live verify
+  document.getElementById('btn-verify').onclick = function() {
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Fetching...';
+    document.getElementById('result').className = 'result';
+
+    fetch('/toolkit.html?_nocache=' + Date.now(), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
+      .then(hexHash)
+      .then(function(liveHash) {
+        document.getElementById('live-hash').textContent = liveHash;
+        document.getElementById('live-row').style.display = 'block';
+
+        var matchServer = serverHash && serverHash.length === 64 && liveHash === serverHash;
+        var matchGithub = githubHash && liveHash === githubHash;
+        var liveEl = document.getElementById('live-hash');
+
+        if (matchServer && matchGithub) {
+          liveEl.className = 'hash-value match';
+          showResult('result', true, 'Verified — matches both server and GitHub');
+        } else if (matchServer && !githubHash) {
+          liveEl.className = 'hash-value match';
+          showResult('result', true, 'Matches server hash (GitHub unavailable)', true);
+        } else if (matchServer && !matchGithub) {
+          liveEl.className = 'hash-value mismatch';
+          showResult('result', false, 'Matches server but NOT GitHub — investigate');
+        } else if (!matchServer && matchGithub) {
+          liveEl.className = 'hash-value mismatch';
+          showResult('result', false, 'Matches GitHub but NOT server — investigate');
+        } else {
+          liveEl.className = 'hash-value mismatch';
+          showResult('result', false, 'MISMATCH — matches neither server nor GitHub');
+        }
+      })
+      .catch(function(e) { showResult('result', false, 'Fetch failed: ' + e.message); })
+      .finally(function() { btn.disabled = false; btn.innerHTML = 'Fetch toolkit.html &amp; verify'; });
+  };
+
+  // Manual compare
+  document.getElementById('btn-compare').onclick = function() {
+    var input = document.getElementById('manual-hash').value.trim().toLowerCase();
+    if (!input) return;
+    input = input.replace(/^sha-?256[:\s-]+/i, '').replace(/^0x/, '').trim();
+    if (input.length !== 64) {
+      showResult('result-manual', false, 'Invalid — expected 64 hex characters');
+    } else {
+      var matchServer = serverHash === input;
+      var matchGithub = githubHash && githubHash === input;
+      if (matchServer && matchGithub) {
+        showResult('result-manual', true, 'Matches both server and GitHub');
+      } else if (matchServer) {
+        showResult('result-manual', true, 'Matches server' + (githubHash ? ' (GitHub differs!)' : ''), !matchGithub && !!githubHash);
+      } else if (matchGithub) {
+        showResult('result-manual', false, 'Matches GitHub but NOT server');
+      } else {
+        showResult('result-manual', false, 'MISMATCH — does not match published hashes');
+      }
+    }
+  };
+
+  document.getElementById('manual-hash').onkeydown = function(e) {
+    if (e.key === 'Enter') document.getElementById('btn-compare').click();
+  };
+})();
+</script>
+</body>
+</html>
