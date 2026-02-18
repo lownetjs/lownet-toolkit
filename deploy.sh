@@ -66,7 +66,7 @@ done
 
 # Step 3: Upload
 echo "  [3] Uploading..."
-tar -C "$STAGING" -cf - . | ssh $SSH_OPTS "$SERVER" "tar -C $REMOTE -xf -"
+COPYFILE_DISABLE=1 tar -C "$STAGING" -cf - . | ssh $SSH_OPTS "$SERVER" "tar -C $REMOTE -xf - && chown -R www-data:www-data $REMOTE && chmod 755 $REMOTE $REMOTE/verify $REMOTE/pro $REMOTE/public 2>/dev/null; find $REMOTE -name '._*' -delete"
 echo "      Done."
 
 # Step 4: Server hash → verify → re-upload
@@ -78,12 +78,13 @@ python3 -c "
 import re
 h = '$SERVER_HASH'
 v = open('$VERIFY').read()
-v = re.sub(r\"'(?:TOOLKIT_HASH_PLACEHOLDER|[a-f0-9]{64})'\", f\"'{h}'\", v, count=1)
+v = re.sub(r'>(?:TOOLKIT_HASH_PLACEHOLDER|[a-f0-9]{64})<', f'>{h}<', v, count=1)
 open('$VERIFY', 'w').write(v)
 print('      → verify.html updated')
 "
 
 scp $SSH_OPTS "$DIR/verify.html" "$SERVER:$REMOTE/verify/index.html"
+ssh $SSH_OPTS "$SERVER" "chown www-data:www-data $REMOTE/verify/index.html"
 echo "      → re-uploaded"
 
 # Step 5: Publish hash to GitHub
