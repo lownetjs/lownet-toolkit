@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-B8RbkvjKl2IYPav8g1upjqDsJNKmBMM+Fz3DsMG28Wg='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; frame-ancestors 'none'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-ppeCECwB4rtR4xrlaSZt0W4+PE9mYUI2kcIzGfVj1us='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; frame-ancestors 'none'; object-src 'none';">
   <!-- CSP (v1.1.2): Hash-based script-src (deploy.sh injects hash). connect-src locked to official relay.
        base-uri/frame-ancestors/object-src: none. Zero eval, zero external scripts, zero CDN. -->
   <meta name="theme-color" content="#050505">
@@ -735,7 +735,7 @@
     <div class="card">
       <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div><div class="card-title">About</div><div class="card-subtitle">Version & credits</div></div></div>
       <div style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.1.2</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.1.3</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);gap:8px;"><span style="white-space:nowrap;">Protocols</span><span style="font-family:ui-monospace,monospace;font-size:10px;text-align:right;">CNP-1 · ENV-1.2 · SCP-1 · PoW-v2 · ENV-F-1 (PRO)</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;"><span>Crypto</span><span style="font-family:ui-monospace,monospace;font-size:11px;">Ed25519 · P-256 · AES-GCM</span></div>
       </div>
@@ -1054,7 +1054,7 @@
 
 <script>
 // LOWNET Toolkit v3 with Sequential PoW
-var TOOLKIT_VERSION='1.1.2';
+var TOOLKIT_VERSION='1.1.3';
 var TOOLKIT_HASH=null; // Computed on load
 
 var $=function(id){return document.getElementById(id)};
@@ -1324,12 +1324,12 @@ function encodeSCP1(identity,type,payloadHash){
 function decodeSCP1(data){
   var bytes;
   if(typeof data==='string'){
-    if(data.length===220)bytes=new Uint8Array(data.match(/.{2}/g).map(function(x){return parseInt(x,16)}));
+    if(data.length===220){if(!/^[0-9a-fA-F]{220}$/.test(data))return{wellFormed:false,valid:false,error:'Invalid SCP-1 hex'};bytes=new Uint8Array(data.match(/.{2}/g).map(function(x){return parseInt(x,16)}))}
     else bytes=unb64(data);
   }else bytes=data;
-  if(bytes.length!==110)return{valid:false,error:'Invalid SCP-1 length'};
+  if(!bytes||bytes.length!==110)return{wellFormed:false,valid:false,error:'Invalid SCP-1 length'};
   var v=bytes[0];
-  if(v!==SCP1_VERSION)return{valid:false,error:'Unknown SCP-1 version'};
+  if(v!==SCP1_VERSION)return{wellFormed:false,valid:false,error:'Unknown SCP-1 version'};
   var typeCode=bytes[1];
   var typeName=Object.keys(SCP1_TYPES).find(function(k){return SCP1_TYPES[k]===typeCode})||'unknown';
   var ts=(bytes[2]<<24)|(bytes[3]<<16)|(bytes[4]<<8)|bytes[5];
@@ -1338,8 +1338,10 @@ function decodeSCP1(data){
   var hash=bytesToHex(bytes.slice(14,46));
   var sig=bytes.slice(46,110);
   var dataToVerify=bytes.slice(0,46);
+  // v1.1.3: decode only parses (wellFormed). `valid` is reserved for the complete check in verifySCP1.
   return{
-    valid:true,
+    wellFormed:true,
+    verified:false,
     version:v,
     type:typeName,
     ts:ts,
@@ -1354,12 +1356,19 @@ function decodeSCP1(data){
 
 function verifySCP1(data,pubKeyBytes){
   var decoded=decodeSCP1(data);
-  if(!decoded.valid)return Promise.resolve(decoded);
+  if(!decoded.wellFormed)return Promise.resolve(decoded);
+  decoded.valid=false;decoded.signatureValid=false;decoded.fpMatches=false;
   return crypto.subtle.importKey('raw',pubKeyBytes,'Ed25519',false,['verify']).then(function(pubKey){
-    return crypto.subtle.verify('Ed25519',pubKey,decoded.sig,decoded.dataToVerify).then(function(valid){
-      decoded.signatureValid=valid;
-      if(!valid)decoded.error='Invalid signature';
-      return decoded;
+    return crypto.subtle.verify('Ed25519',pubKey,decoded.sig,decoded.dataToVerify).then(function(sigOk){
+      decoded.signatureValid=sigOk;
+      if(!sigOk){decoded.error='Invalid signature';return decoded}
+      // v1.1.3: the fingerprint inside the packet must belong to the key that verified it.
+      return fingerprint(pubKeyBytes).then(function(fp){
+        decoded.keyFp=fp;decoded.fpMatches=(fp===decoded.fp);
+        if(!decoded.fpMatches){decoded.error='Fingerprint mismatch: packet claims '+decoded.fp+', key is '+fp;return decoded}
+        decoded.valid=true;decoded.verified=true;
+        return decoded;
+      });
     });
   }).catch(function(e){
     decoded.valid=false;
@@ -1458,7 +1467,8 @@ function validateNoticeStructure(data){
       if(p.prev!==null&&!HEX64.test(p.prev))return'Invalid PoW prev';
       if(!HEX64.test(p.ph))return'Invalid PoW payload hash';
       if(!HEX64.test(p.out))return'Invalid PoW output';
-      if(typeof p.r!=='number'||p.r<1)return'Invalid PoW rounds';
+      // v1.1.3: whole numbers only, as lownet.js 1.0.1 requires (64.5 ran 65 rounds here, 64 in the node)
+      if(typeof p.r!=='number'||p.r<1||!Number.isInteger(p.r)||p.r>ABS_MAX_ROUNDS)return'Invalid PoW rounds';
     }
   }
   return null; // valid
@@ -1468,6 +1478,9 @@ function validateNoticeStructure(data){
 var MAX_ROUNDS_OVER=5000000;
 var ABS_MAX_ROUNDS=50000000;
 var VERIFY_SKIP_ROUNDS=400000; // Skip client-side PoW recomputation above this (UX only, server still verifies)
+// v1.1.3: the verify tab recomputes up to this many rounds itself (desktop Chrome: about 790k rounds/s,
+// so a 2M-round notice takes ~3 s). The board list keeps VERIFY_SKIP_ROUNDS.
+var VERIFY_TAB_ROUNDS=10000000;
 
 // SIGN WITH SEQUENTIAL POW
 function signNotice(identity,type,payload,onProgress,links,powMultiplier){
@@ -1528,7 +1541,8 @@ function generateReceipt(identity,noticeHash,powRounds,seq){
 }
 
 // VERIFY
-function verifyNotice(data){
+function verifyNotice(data,opts){
+  opts=opts||{};var skipAbove=opts.maxRounds||VERIFY_SKIP_ROUNDS;
   // Pre-parse validation
   var structErr=validateNoticeStructure(data);
   if(structErr)return Promise.resolve({valid:false,error:structErr});
@@ -1553,14 +1567,17 @@ function verifyNotice(data){
             // Reconstruct seed
             var seed=buildPoWSeed(data.ln_pow.fp,data.ln_pow.seq,data.ln_pow.prev,data.ln_pow.ph);
             // Skip heavy recomputation for high rounds (client UX only - server already verified)
-            if(data.ln_pow.r>VERIFY_SKIP_ROUNDS){
-              return{valid:true,data:data,derivedFingerprint:derivedFp,pow:{valid:null,unverified:true,reason:'rounds_gt_threshold',r:data.ln_pow.r,seq:data.ln_pow.seq,threshold:VERIFY_SKIP_ROUNDS,error:null,note:'PoW not verified locally ('+data.ln_pow.r.toLocaleString()+' > '+VERIFY_SKIP_ROUNDS.toLocaleString()+' threshold). Signature valid.'}}
+            if(data.ln_pow.r>skipAbove){
+              // v1.1.3: the check is not complete, so the result is not `valid`. signatureValid and
+              // unverified say what did hold, and the page shows it as a warning, not as a green tick.
+              return{valid:false,unverified:true,signatureValid:true,error:'Signature OK, but the work was not recomputed here ('+data.ln_pow.r.toLocaleString()+' rounds > '+skipAbove.toLocaleString()+')',data:data,derivedFingerprint:derivedFp,pow:{valid:null,unverified:true,reason:'rounds_gt_threshold',r:data.ln_pow.r,seq:data.ln_pow.seq,threshold:skipAbove,error:null,note:'PoW not verified locally ('+data.ln_pow.r.toLocaleString()+' > '+skipAbove.toLocaleString()+' threshold). Signature valid.'}}
             }
             // Verify PoW (only for low rounds)
             showStatus('Verifying PoW...');
-            return sequentialPoW(seed,data.ln_pow.r).then(function(recomputed){
+            return sequentialPoW(seed,data.ln_pow.r,opts.onProgress).then(function(recomputed){
               var powValid=recomputed.result===data.ln_pow.out;
-              return{valid:true,data:data,derivedFingerprint:derivedFp,pow:{valid:powValid,r:data.ln_pow.r,seq:data.ln_pow.seq,recomputedTime:recomputed.time_ms,error:powValid?null:'PoW mismatch'}}
+              // v1.1.3: a chain that does not recompute makes the notice invalid (it used to stay valid:true).
+              return{valid:powValid,signatureValid:true,error:powValid?undefined:'PoW mismatch',data:data,derivedFingerprint:derivedFp,pow:{valid:powValid,r:data.ln_pow.r,seq:data.ln_pow.seq,recomputedTime:recomputed.time_ms,error:powValid?null:'PoW mismatch'}}
             })
           })
         }
@@ -1569,18 +1586,18 @@ function verifyNotice(data){
           // Max rounds protection for legacy too
           if(data.ln_pow.rounds>5000000)return{valid:false,error:'Excessive rounds (verifier DoS protection)'};
           showStatus('Verifying PoW...');
-          return sequentialPoW(data.ln_pow.seed,data.ln_pow.rounds).then(function(recomputed){
+          return sequentialPoW(data.ln_pow.seed,data.ln_pow.rounds,opts.onProgress).then(function(recomputed){
             var powValid=recomputed.result===data.ln_pow.result;
-            return{valid:true,data:data,derivedFingerprint:derivedFp,pow:{valid:powValid,r:data.ln_pow.rounds,seq:data.ln_pow.seq,recomputedTime:recomputed.time_ms,error:powValid?null:'PoW mismatch'}}
+            return{valid:powValid,signatureValid:true,error:powValid?undefined:'PoW mismatch',data:data,derivedFingerprint:derivedFp,pow:{valid:powValid,r:data.ln_pow.rounds,seq:data.ln_pow.seq,recomputedTime:recomputed.time_ms,error:powValid?null:'PoW mismatch'}}
           })
         }
         // Classic PoW format (nonce + hash + bits) - used by server
         if(data.ln_pow&&data.ln_pow.nonce&&data.ln_pow.hash){
           return verifyClassicPoW(data).then(function(powResult){
-            return{valid:true,data:data,derivedFingerprint:derivedFp,pow:{valid:powResult.valid,bits:data.ln_pow.bits,error:powResult.error||null}}
+            return{valid:!!powResult.valid,signatureValid:true,error:powResult.valid?undefined:(powResult.error||'PoW invalid'),data:data,derivedFingerprint:derivedFp,pow:{valid:powResult.valid,bits:data.ln_pow.bits,error:powResult.error||null}}
           })
         }
-        return{valid:true,data:data,derivedFingerprint:derivedFp,pow:null}
+        return{valid:true,signatureValid:true,data:data,derivedFingerprint:derivedFp,pow:null}
       })
     })
   }).catch(function(e){return{valid:false,error:e.message}})
@@ -1715,7 +1732,9 @@ function decryptEnvelope(identity,data){
                     return crypto.subtle.verify('Ed25519',innerKey,unb64(decrypted.sender_sig),te.encode(sigData)).then(function(innerValid){
                       if(!innerValid)return{valid:false,error:'Invalid inner signature'};
                       return fingerprint(innerSenderPub).then(function(computedFp){
-                        return{valid:true,data:data,payload:decrypted.content,sender:Object.assign({},decrypted.sender,{fp:decrypted.sender.fp||computedFp}),forwardSecrecy:true,privateMode:true,senderMinimized:true}
+                        // v1.1.3: the claimed sender fingerprint must belong to the signing key
+                        if(decrypted.sender.fp&&decrypted.sender.fp!==computedFp)return{valid:false,error:'Sender fingerprint mismatch'};
+                        return{valid:true,data:data,payload:decrypted.content,sender:Object.assign({},decrypted.sender,{fp:computedFp}),forwardSecrecy:true,privateMode:true,senderMinimized:true}
                       });
                     });
                   });
@@ -1723,7 +1742,8 @@ function decryptEnvelope(identity,data){
                   // Public mode or legacy: sender was in header
                   var senderPubBytes=unb64(data.env_sender.sign.slice(8));
                   return fingerprint(senderPubBytes).then(function(computedFp){
-                    return{valid:true,data:data,payload:decrypted,sender:Object.assign({},data.env_sender,{fp:data.env_sender.fp||computedFp}),forwardSecrecy:true,privateMode:isPrivate}
+                    if(data.env_sender.fp&&data.env_sender.fp!==computedFp)return{valid:false,error:'Sender fingerprint mismatch'};
+                    return{valid:true,data:data,payload:decrypted,sender:Object.assign({},data.env_sender,{fp:computedFp}),forwardSecrecy:true,privateMode:isPrivate}
                   });
                 }
               })
@@ -2121,7 +2141,13 @@ async function decryptFileEnvelope(identity, fileBuffer) {
   var isPrivate = header.env_meta && header.env_meta.mode === 'private';
   
   // Verify outer signature (public mode)
-  if (!isPrivate && header.env_signature && header.env_sender) {
+  // v1.1.3, same rule as ENV-1.2: a public file names its sender in the header, so the
+  // sender's signature must be there and hold. It used to be skipped when env_signature was missing,
+  // and the named sender was shown anyway.
+  if (!isPrivate) {
+    if (!header.env_signature || !header.env_sender || typeof header.env_sender.sign !== 'string') {
+      throw new Error('Missing sender signature');
+    }
     var senderPub = unb64(header.env_sender.sign.slice(8));
     var senderKey = await crypto.subtle.importKey('raw', senderPub, 'Ed25519', false, ['verify']);
     var sigHeader = Object.assign({}, header);
@@ -2207,30 +2233,33 @@ async function decryptFileEnvelope(identity, fileBuffer) {
   }
   
   // Verify inner signature (private mode)
+  // v1.1.3: the sender inside a private file is shown only after its signature held. A file that
+  // carried a sender without one, or without the file hash it signs, used to show that sender anyway.
   var sender = null;
-  if (isPrivate && fileMeta._sender) {
-    sender = fileMeta._sender;
-    if (fileMeta._sender_sig && fileMeta._file_hash) {
-      var fileHash = await sha256(new Uint8Array(filePt));
-      var computedHash = bytesToHex(fileHash);
-      if (computedHash !== fileMeta._file_hash) {
-        throw new Error('File hash mismatch (content may be corrupted)');
-      }
-      var innerPub = unb64(fileMeta._sender.sign.slice(8));
-      var innerKey = await crypto.subtle.importKey('raw', innerPub, 'Ed25519', false, ['verify']);
-      var sigData = header.env_id + '|' + header.env_timestamp + '|' + fileMeta._file_hash;
-      var innerValid = await crypto.subtle.verify('Ed25519', innerKey, unb64(fileMeta._sender_sig), te.encode(sigData));
-      if (!innerValid) throw new Error('Invalid inner signature (sender auth failed)');
+  if (isPrivate) {
+    if (!fileMeta._sender || typeof fileMeta._sender.sign !== 'string' || !fileMeta._sender_sig || !fileMeta._file_hash) {
+      throw new Error('Missing inner auth');
     }
-  } else if (header.env_sender) {
+    sender = fileMeta._sender;
+    var fileHash = await sha256(new Uint8Array(filePt));
+    var computedHash = bytesToHex(fileHash);
+    if (computedHash !== fileMeta._file_hash) {
+      throw new Error('File hash mismatch (content may be corrupted)');
+    }
+    var innerPub = unb64(fileMeta._sender.sign.slice(8));
+    var innerKey = await crypto.subtle.importKey('raw', innerPub, 'Ed25519', false, ['verify']);
+    var sigData = header.env_id + '|' + header.env_timestamp + '|' + fileMeta._file_hash;
+    var innerValid = await crypto.subtle.verify('Ed25519', innerKey, unb64(fileMeta._sender_sig), te.encode(sigData));
+    if (!innerValid) throw new Error('Invalid inner signature (sender auth failed)');
+  } else {
     sender = header.env_sender;
   }
   
-  // Compute sender fingerprint if not present
-  if (sender && sender.sign && !sender.fp) {
-    var senderPubBytes = unb64(sender.sign.slice(8));
-    sender.fp = await fingerprint(senderPubBytes);
-  }
+  // v1.1.3: the fingerprint shown is the signing key's. A different one written beside the key
+  // means the file claims another sender, and it is refused, as ENV-1.2 does.
+  var senderKeyFp = await fingerprint(unb64(sender.sign.slice(8)));
+  if (sender.fp && sender.fp !== senderKeyFp) throw new Error('Sender fingerprint mismatch');
+  sender = Object.assign({}, sender, { fp: senderKeyFp });
   
   // Verify sender license (shareware check)
   var senderLicensed = false;
@@ -3181,21 +3210,21 @@ if(data.scp1_version){
   var pubB64=data.publicKey.indexOf('ed25519:')===0?data.publicKey.slice(8):data.publicKey;
   var packetData=data.scp1_hex||data.scp1_packet;
   verifySCP1(packetData,unb64(pubB64)).then(function(result){
+    // v1.1.3: a payload shown next to a valid packet must hash to the hash INSIDE the signed packet
+    // (result.hash). The JSON field payload_hash is not signed and is not trusted.
+    if(!result.valid||!data.payload)return result;
+    return sha256(data.payload).then(function(h){
+      result.payloadMatches=(bytesToHex(h)===result.hash);
+      if(!result.payloadMatches){result.valid=false;result.error='Payload does not match the signed hash'}
+      return result;
+    });
+  }).then(function(result){
     var box=$('verify-details');
-    if(result.signatureValid){
+    if(result.valid){
       badge.classList.remove('error');
       badge.querySelector('.result-badge-icon').innerHTML=checkSvg;
       badge.querySelector('.result-badge-title').textContent='Valid SCP-1';
-      badge.querySelector('.result-badge-sub').textContent='Signature OK · 110 bytes';
-      // Check payload hash match if payload present
-      var hashMatch='';
-      if(data.payload){
-        sha256(data.payload).then(function(h){
-          var computed=bytesToHex(h);
-          hashMatch=computed===data.payload_hash?' · Payload ✓':' · Payload hash mismatch!';
-          badge.querySelector('.result-badge-sub').textContent='Signature OK · 110 bytes'+hashMatch;
-        });
-      }
+      badge.querySelector('.result-badge-sub').textContent='Signature OK · key matches fingerprint · 110 bytes'+(data.payload?' · Payload ✓':'');
       box.textContent='';
       addInfoRow(box,'Type','SCP-1 LoRa Commitment');
       addInfoRow(box,'Fingerprint',result.fp||data.fp);
@@ -3224,7 +3253,7 @@ if(data.scp1_version){
   return;
 }
 
-if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data)}promise.then(function(result){var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.payload&&result.sender){var features=[];if(result.forwardSecrecy)features.push('Forward Secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=(result.payload.title?result.payload.title+'\n\n':'')+result.payload.content}else{var powStatus='No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}}}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')})};
+if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.payload&&result.sender){var features=[];if(result.forwardSecrecy)features.push('Forward Secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=(result.payload.title?result.payload.title+'\n\n':'')+result.payload.content}else{var powStatus='No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}}}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Signature OK, work not checked';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')})};
 $('btn-verify-save').onclick=function(){vaultAdd(JSON.parse($('verify-input').value)).then(function(){showStatus('Saved')})};
 
 // VAULT
@@ -3573,12 +3602,14 @@ function renderPublicProofs(){
     var verifiedIcon;
     if(proof._verified){
       verifiedIcon='<svg viewBox="0 0 24 24" fill="var(--accent)" width="12" height="12"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Valid';
+    }else if(proof._signatureOnly){
+      verifiedIcon='<svg viewBox="0 0 24 24" fill="var(--text-muted)" width="12" height="12"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Signed · work not rechecked here';
     }else{
       verifiedIcon='<svg viewBox="0 0 24 24" fill="var(--error)" width="12" height="12"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> Invalid';
     }
     var type=escapeHtml(proof.ln_type||'notice');
     var hasPow=proof.ln_pow&&(proof.ln_pow.type==='sequential'||proof.ln_pow.type==='sequential-v2');
-    return'<div style="border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--input-bg);overflow:hidden;'+(proof._verified?'':'opacity:0.6;')+'"><div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;"><span><span style="color:var(--accent);font-weight:500;">'+author+'</span><span style="color:var(--text-muted);margin-left:6px;font-family:ui-monospace,monospace;font-size:9px;">'+fpShort+'</span></span><span style="color:var(--text-muted);font-size:10px;">'+time+'</span></div><div style="padding:12px 14px;"><span style="font-size:9px;font-weight:600;color:var(--bg);padding:2px 8px;border-radius:2px;text-transform:uppercase;background:var(--accent);margin-right:6px;">'+type+'</span>'+(hasPow?'<span style="font-size:9px;color:var(--text-muted);">PoW</span>':'')+(title?'<div style="font-size:12px;font-weight:600;margin:8px 0 4px;">'+title+'</div>':'')+'<div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">'+content+(content.length>=150?'...':'')+'</div></div><div style="padding:8px 14px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;"><span style="display:flex;align-items:center;gap:4px;">'+verifiedIcon+'</span><span style="font-family:ui-monospace,monospace;font-size:9px;">'+escapeHtml((proof.ln_id||'').slice(0,16))+'</span></div></div>';
+    return'<div style="border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--input-bg);overflow:hidden;'+(proof._verified||proof._signatureOnly?'':'opacity:0.6;')+'"><div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;"><span><span style="color:var(--accent);font-weight:500;">'+author+'</span><span style="color:var(--text-muted);margin-left:6px;font-family:ui-monospace,monospace;font-size:9px;">'+fpShort+'</span></span><span style="color:var(--text-muted);font-size:10px;">'+time+'</span></div><div style="padding:12px 14px;"><span style="font-size:9px;font-weight:600;color:var(--bg);padding:2px 8px;border-radius:2px;text-transform:uppercase;background:var(--accent);margin-right:6px;">'+type+'</span>'+(hasPow?'<span style="font-size:9px;color:var(--text-muted);">PoW</span>':'')+(title?'<div style="font-size:12px;font-weight:600;margin:8px 0 4px;">'+title+'</div>':'')+'<div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">'+content+(content.length>=150?'...':'')+'</div></div><div style="padding:8px 14px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;"><span style="display:flex;align-items:center;gap:4px;">'+verifiedIcon+'</span><span style="font-family:ui-monospace,monospace;font-size:9px;">'+escapeHtml((proof.ln_id||'').slice(0,16))+'</span></div></div>';
   }).join('');
 }
 
@@ -3608,6 +3639,7 @@ async function loadPublicProofs(){
           var verifyResult=await verifyNotice(proof).catch(function(){return{valid:false}});
           proof._verified=verifyResult.valid;
           proof._powUnverified=verifyResult.pow&&verifyResult.pow.unverified;
+          proof._signatureOnly=!verifyResult.valid&&!!verifyResult.unverified&&!!verifyResult.signatureValid;
           proof._derivedFp=verifyResult.derivedFingerprint||'';
           proof.server_received_at=entries[i].server_received_at||null;
           publicProofs.push(proof);

@@ -3,5 +3,10 @@
     "toolkit.html": "52155c1bd639339d8068e898294023448cdfc28c2b60a0a1bf22f63190992872",
     "date": "2026-02-18T15:16:45Z",
     "note": "Official relay only, CSP hardened, PRO features"
+  },
+  "v1.1.3": {
+    "toolkit.html": "ec11704b5103d4308338bbceccb08da1a933923295022b3a2fc7e0fee8ad3a6f",
+    "date": "2026-10-09T09:26:51Z",
+    "note": "Security fix: SCP-1 packets and ENV-1.2/ENV-F senders are bound to the verifying key; SCP-1 payload checked against the signed hash; a notice is valid only when its work chain recomputes"
   }
 }
