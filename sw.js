@@ -1,4 +1,4 @@
-var CACHE = 'lownet-v113';
+var CACHE = 'lownet-v120';
 
 var PRECACHE = [
   '/toolkit.html',

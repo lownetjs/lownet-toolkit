@@ -8,5 +8,10 @@
     "toolkit.html": "ec11704b5103d4308338bbceccb08da1a933923295022b3a2fc7e0fee8ad3a6f",
     "date": "2026-10-09T09:26:51Z",
     "note": "Security fix: SCP-1 packets and ENV-1.2/ENV-F senders are bound to the verifying key; SCP-1 payload checked against the signed hash; a notice is valid only when its work chain recomputes"
+  },
+  "v1.2.0": {
+    "toolkit.html": "7e610c82b43d75e19b1691a330212d45d1a24c52637390d5202c9497eb4acdd1",
+    "date": "2026-11-26T12:29:00Z",
+    "note": "Security fix for findings F-1 to F-7 of an external review of 1.1.3: envelopes ENV-1.3 sign the whole clear header and content; notices carry ln_bind, a second signature over the whole notice including the work chain; exact canonicalization without NFC; minimum work rounds; 128-bit fingerprints; sender checks fail closed. Includes the unpublished 1.1.4 fixes (file envelopes ENV-F-2). Older formats stay readable as older format, never as valid. Formats are not externally audited."
   }
 }

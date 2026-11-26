@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-ppeCECwB4rtR4xrlaSZt0W4+PE9mYUI2kcIzGfVj1us='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; frame-ancestors 'none'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-WMVYoar79OZrSeVMgx4VYlwNYKEPQoMxsuBZ31h1nD8='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; frame-ancestors 'none'; object-src 'none';">
   <!-- CSP (v1.1.2): Hash-based script-src (deploy.sh injects hash). connect-src locked to official relay.
        base-uri/frame-ancestors/object-src: none. Zero eval, zero external scripts, zero CDN. -->
   <meta name="theme-color" content="#050505">
@@ -251,6 +251,8 @@
     .result-badge.error { background: var(--error-subtle); border-color: var(--error); }
     .result-badge-icon { width: 36px; height: 36px; background: var(--accent); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--bg); }
     .result-badge.error .result-badge-icon { background: var(--error); }
+    .result-badge.warn { background: var(--warning-subtle); border-color: var(--warning); }
+    .result-badge.warn .result-badge-icon { background: var(--warning); }
     .result-badge-text { flex: 1; }
     .result-badge-title { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.5px; }
     .result-badge.error .result-badge-title { color: var(--error); }
@@ -377,7 +379,7 @@
     <div class="header-left">
       <div>
         <div class="header-title">LOWNET <span>Toolkit</span></div>
-        <div class="header-sub">CNP-1 · ENV-1.2 · ENV-F-1 · SCP-1 · PoW v2</div>
+        <div class="header-sub">CNP-1 · ENV-1.2 · ENV-F-2 · SCP-1 · PoW v2</div>
       </div>
     </div>
     <div class="header-right">
@@ -423,7 +425,7 @@
           <div class="template-item" data-template="commitment"><div class="template-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3z"/></svg></div><div class="template-info"><div class="template-name">Commitment</div><div class="template-desc">Promise or obligation</div></div><div class="template-check"></div></div>
           <div class="template-item" data-template="attestation"><div class="template-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div><div class="template-info"><div class="template-name">Attestation</div><div class="template-desc">ISO / audit-ready format</div></div><div class="template-check"></div></div>
           <div class="template-item" data-template="envelope"><div class="template-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div><div class="template-info"><div class="template-name">Encrypted Envelope</div><div class="template-desc">Private message (ENV-1.2)</div></div><div class="template-check"></div></div>
-                    <div class="template-item" data-template="file"><div class="template-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm0 7V3.5L18.5 9H14zM12 11l-4 4h2.5v4h3v-4H16l-4-4z"/></svg></div><div class="template-info"><div class="template-name">Encrypted File</div><div class="template-desc">E2E encrypted file (ENV-F-1) <span class="pro-badge" id="file-pro-badge">PRO</span></div></div><div class="template-check"></div></div>
+                    <div class="template-item" data-template="file"><div class="template-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm0 7V3.5L18.5 9H14zM12 11l-4 4h2.5v4h3v-4H16l-4-4z"/></svg></div><div class="template-info"><div class="template-name">Encrypted File</div><div class="template-desc">E2E encrypted file (ENV-F-2) <span class="pro-badge" id="file-pro-badge">PRO</span></div></div><div class="template-check"></div></div>
           <div class="template-item" data-template="lora"><div class="template-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div><div class="template-info"><div class="template-name">LoRa Commitment</div><div class="template-desc">SCP-1 packet (~110 bytes)</div></div><div class="template-check"></div></div>
         </div>
         <div class="btn-row"><button class="btn btn-primary" id="btn-step1-next" disabled>Continue</button></div>
@@ -439,7 +441,7 @@
         </div>
         <div id="file-fields" class="hide">
           <div style="background:var(--accent-subtle);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px;">Encrypted File (ENV-F-1)</div>
+            <div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px;">Encrypted File (ENV-F-2)</div>
             <div style="font-size:10px;color:var(--text-secondary);">End-to-end encrypted. Recipient needs their private key to decrypt. Max 50 MB.</div>
           </div>
           <div id="file-recipient" class="field">
@@ -561,7 +563,7 @@
         <div class="btn-row"><button class="btn btn-secondary" id="btn-copy-output">Copy JSON</button><button class="btn btn-secondary hide" id="btn-copy-packet">Copy Packet</button><button class="btn btn-secondary hide" id="btn-qr-packet">QR</button><button class="btn btn-secondary hide" id="btn-export-receipt">Receipt</button><button class="btn btn-secondary" id="btn-download-output">Download</button><button class="btn btn-accent" id="btn-save-vault">Save to Vault</button></div>
       </div>
 <div id="file-output-card" class="card hide">
-        <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm0 7V3.5L18.5 9H14zM12 11l-4 4h2.5v4h3v-4H16l-4-4z"/></svg></div><div><div class="card-title">Encrypted File</div><div class="card-subtitle" id="file-output-subtitle">ENV-F-1</div></div></div>
+        <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm0 7V3.5L18.5 9H14zM12 11l-4 4h2.5v4h3v-4H16l-4-4z"/></svg></div><div><div class="card-title">Encrypted File</div><div class="card-subtitle" id="file-output-subtitle">ENV-F-2</div></div></div>
         <div id="file-output-info" style="padding:10px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:12px;font-size:11px;line-height:1.7;">
         </div>
         <div class="btn-row">
@@ -696,7 +698,7 @@
         <div>✓ Identity Management & Contacts</div>
         <div>✓ File Hash Verification (SHA-256)</div>
         <div style="margin-top:8px;font-weight:600;color:var(--text-secondary);">PRO:</div>
-        <div style="color:var(--accent);">Encrypted File Envelope (ENV-F-1) — up to 50 MB</div>
+        <div style="color:var(--accent);">Encrypted File Envelope (ENV-F-2) — up to 50 MB</div>
         <div style="color:var(--accent);">Native sharing via OS share sheet (AirDrop, Drive, Email, etc.)</div>
       </div>
       <div class="field">
@@ -728,15 +730,15 @@
       <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div><div><div class="card-title">Data</div><div class="card-subtitle">Backup & storage</div></div></div>
       <div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-secondary" id="btn-full-backup" style="flex:1;">Export Backup</button><button class="btn btn-secondary" id="btn-restore-backup" style="flex:1;">Restore</button></div>
       <input type="file" id="file-backup" accept=".json" class="hide">
-      <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;">Integrity</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;">Script hash (not the file hash in hashes.json)</div>
       <div id="toolkit-hash" style="font-family:ui-monospace,monospace;font-size:9px;background:var(--bg);padding:8px;border-radius:var(--radius-sm);word-break:break-all;color:var(--text-muted);margin-bottom:12px;">Calculating...</div>
       <button class="btn btn-secondary" id="btn-clear-all" style="width:100%;background:transparent;border-color:var(--error);color:var(--error);">Clear All Local Data</button>
     </div>
     <div class="card">
       <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div><div class="card-title">About</div><div class="card-subtitle">Version & credits</div></div></div>
       <div style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.1.3</span></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);gap:8px;"><span style="white-space:nowrap;">Protocols</span><span style="font-family:ui-monospace,monospace;font-size:10px;text-align:right;">CNP-1 · ENV-1.2 · SCP-1 · PoW-v2 · ENV-F-1 (PRO)</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.2.0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);gap:8px;"><span style="white-space:nowrap;">Protocols</span><span style="font-family:ui-monospace,monospace;font-size:10px;text-align:right;">CNP-1 · ENV-1.2 · SCP-1 · PoW-v2 · ENV-F-2 (PRO)</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;"><span>Crypto</span><span style="font-family:ui-monospace,monospace;font-size:11px;">Ed25519 · P-256 · AES-GCM</span></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
@@ -756,7 +758,7 @@
       <div style="font-size:11px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;text-align:left;padding:12px;background:var(--bg);border-radius:var(--radius-sm);">
         <div style="margin-bottom:4px;font-weight:600;">PRO includes:</div>
         <div>End-to-end encrypted file envelope (50 MB)</div>
-        <div>Forward secrecy (ephemeral ECDH per file)</div>
+        <div>Fresh sender key per file (ephemeral ECDH)</div>
         <div>Private & public sender modes</div>
         <div>Multi-recipient encryption</div>
         <div>Batch encrypt (multiple files)</div>
@@ -870,7 +872,7 @@
     <div class="modal-body">
       <h2>What is LOWNET?</h2>
       <p>LOWNET creates <strong>verifiable digital artifacts</strong> — signed statements, encrypted messages, and encrypted files that exist independently of any platform.</p>
-      <p>Prove <em>who</em> said <em>what</em> and <em>when</em>, without relying on a central authority. Encrypt what matters — no server in the crypto path.</p>
+      <p>Prove <em>who</em> said <em>what</em>, without relying on a central authority. The time in a notice is the signer's own statement. Encrypt what matters — no server in the crypto path.</p>
       
       <h2>Protocols</h2>
       
@@ -880,31 +882,33 @@
         <tr><th>Field</th><th>Purpose</th></tr>
         <tr><td><code>ln_payload</code></td><td>What was said</td></tr>
         <tr><td><code>ln_signer</code></td><td>Who said it (Ed25519 public key)</td></tr>
-        <tr><td><code>ln_timestamp</code></td><td>When (ISO 8601)</td></tr>
+        <tr><td><code>ln_timestamp</code></td><td>When, as the signer states it (ISO 8601)</td></tr>
         <tr><td><code>ln_signature</code></td><td>Ed25519 signature</td></tr>
         <tr><td><code>ln_pow</code></td><td>Sequential hash-chain proof</td></tr>
       </table>
       
       <h3>ENV-1.2 — Encrypted Envelope</h3>
-      <p>End-to-end encrypted messages with forward secrecy:</p>
+      <p>End-to-end encrypted messages. Forward secrecy covers the sender's side only:</p>
       <ul>
-        <li>Ephemeral ECDH key exchange per message — keys never reused</li>
+        <li>Ephemeral ECDH on the sender's side, a new key per message. The recipient's key is long-lived: whoever obtains it later can read old messages sent to it</li>
         <li>AES-256-GCM with HKDF-derived keys</li>
         <li><strong>Public mode:</strong> Sender identity visible in header</li>
         <li><strong>Private mode:</strong> Sender identity encrypted inside envelope</li>
       </ul>
       <p style="font-size:10px;color:var(--text-muted);margin-top:6px;">Note: Private mode is pseudonymous, not anonymous. Same sender key = correlation possible.</p>
       
-      <h3>ENV-F-1 — Encrypted File Envelope <span class="pro-badge">PRO</span></h3>
+      <h3>ENV-F-2 — Encrypted File Envelope <span class="pro-badge">PRO</span></h3>
       <p>Binary file encryption up to 50 MB:</p>
       <ul>
         <li>Dual HKDF keys — separate keys for metadata and file content</li>
+        <li>Signed content — the sender's signature covers the header and the SHA-256 of the encrypted content (public mode: in the header; private mode: inside the encrypted metadata, with name and type)</li>
         <li>AAD binding — header integrity verified during decryption</li>
-        <li>Forward secrecy — ephemeral ECDH per file</li>
+        <li>Ephemeral ECDH on the sender's side, a new key per file. The recipient's key is long-lived, as with messages</li>
         <li>Output: <code>.lownet.enc</code> binary blob — offline-decryptable</li>
         <li>Format: <code>[JSON header][0x00][AES-GCM ciphertext]</code></li>
         <li>Share via native OS share sheet (AirDrop, Drive, Email, etc.)</li>
       </ul>
+      <p style="font-size:10px;color:var(--text-muted);margin-top:6px;">Files from toolkit 1.1.3 and earlier (ENV-F-1) still open, marked "older format": their signature does not cover the file content (public mode) or its name and recipients (private mode). Toolkit 1.1.3 does not open ENV-F-2 files; it reports an unknown version.</p>
       
       <h3>SCP-1 — Short Commitment Packet</h3>
       <p>110-byte binary format for constrained channels:</p>
@@ -949,11 +953,11 @@
       <table>
         <tr><th>Component</th><th>Algorithm</th></tr>
         <tr><td>Signing</td><td>Ed25519</td></tr>
-        <tr><td>Key Exchange</td><td>P-256 ECDH (ephemeral)</td></tr>
+        <tr><td>Key Exchange</td><td>P-256 ECDH (ephemeral on the sender's side only)</td></tr>
         <tr><td>Encryption</td><td>AES-256-GCM</td></tr>
         <tr><td>Key Derivation</td><td>HKDF-SHA-256 (dual keys for files)</td></tr>
         <tr><td>Key Storage</td><td>PBKDF2 + AES-256-GCM</td></tr>
-        <tr><td>Canonicalization</td><td>JCS / RFC 8785</td></tr>
+        <tr><td>Canonicalization</td><td>JCS / RFC 8785, strings exactly as written (older formats: normalized to NFC)</td></tr>
         <tr><td>Integrity</td><td>SHA-256 + AAD binding</td></tr>
         <tr><td>Runtime</td><td>WebCrypto API (browser-native)</td></tr>
       </table>
@@ -962,11 +966,11 @@
       <ul>
         <li><strong>Auto-Lock</strong> — Keys cleared after 5 min idle</li>
         <li><strong>Rate Limit</strong> — Per-identity cooldown between signs</li>
-        <li><strong>CSP Protected</strong> — Hash-based script-src, locked connect-src, no framing</li>
+        <li><strong>CSP Protected</strong> — Hash-based script-src, locked connect-src</li>
         <li><strong>Worker-based PoW</strong> — Background thread, no UI freeze</li>
-        <li><strong>Forward Secrecy</strong> — Ephemeral keys per message and file</li>
+        <li><strong>Sender-side forward secrecy</strong> — Fresh sender key per message and file. It does not protect old messages once the recipient's key is obtained</li>
         <li><strong>Zero dependencies</strong> — Single HTML file, no external libraries</li>
-        <li><strong>Self-Integrity</strong> — SHA-256 hash verification (see below)</li>
+        <li><strong>Self-Integrity</strong> — Shows the SHA-256 of its own file (see below). A tampered page can fake this</li>
       </ul>
       
       <h3>Browser Extensions</h3>
@@ -979,9 +983,9 @@
       </ul>
 
       <h3>File Integrity</h3>
-      <p>This toolkit computes its own SHA-256 hash on load. Compare it against the published release hash to detect tampering (MITM, CDN injection, silent updates).</p>
+      <p>On load, this page fetches its own address again and shows the SHA-256 of what came back. That can differ from the copy running here, and a tampered page can show any value. To detect tampering, hash the file from a terminal and compare it with <code>hashes.json</code> on GitHub.</p>
       <div style="margin:10px 0;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-family:ui-monospace,monospace;">
-        <div style="font-size:9px;color:var(--text-muted);margin-bottom:4px;">SHA-256 of this file</div>
+        <div style="font-size:9px;color:var(--text-muted);margin-bottom:4px;">SHA-256 of the file at this address</div>
         <div style="font-size:11px;color:var(--accent);word-break:break-all;line-height:1.5;" id="self-integrity-hash">computing...</div>
       </div>
       <a href="https://lownet.org/verify" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--accent);text-decoration:none;margin-top:4px;">Verify against published hash →</a>
@@ -990,19 +994,19 @@
       <h2>Glossary</h2>
       <table>
         <tr><th>Term</th><th>Definition</th></tr>
-        <tr><td>CNP-1</td><td>Commitment Notice Protocol v1 — Signed notice with PoW (JSON)</td></tr>
-        <tr><td>ENV-1.2</td><td>Encrypted Envelope v1.2 — E2E encrypted messages</td></tr>
-        <tr><td>ENV-F-1</td><td>Encrypted File Envelope — Binary file encryption (PRO)</td></tr>
+        <tr><td>CNP-1</td><td>Commitment Notice Protocol v1 — Signed notice with PoW (JSON); since 1.2 ln_bind signs the whole notice, chain and links included</td></tr>
+        <tr><td>ENV-1.3</td><td>Encrypted Envelope v1.3 — E2E encrypted messages; the sender's signature names the recipient. ENV-1.2 is the older format</td></tr>
+        <tr><td>ENV-F-2</td><td>Encrypted File Envelope — Binary file encryption (PRO); ENV-F-1 is the older format</td></tr>
         <tr><td>SCP-1</td><td>Short Commitment Packet — 110-byte binary for LoRa/QR</td></tr>
-        <tr><td>Fingerprint</td><td>SHA-256(pubkey)[0:6] as hex pairs</td></tr>
-        <tr><td>Forward Secrecy</td><td>Ephemeral keys per message — past comms stay secure</td></tr>
+        <tr><td>Fingerprint</td><td>SHA-256(pubkey)[0:16], 32 hex digits in groups of four: compare this one. FP is the short index SHA-256(pubkey)[0:6]</td></tr>
+        <tr><td>Forward Secrecy</td><td>Here on the sender's side only: a fresh key per message. Whoever obtains the recipient's key later can read old messages</td></tr>
         <tr><td>AAD</td><td>Additional Authenticated Data — header bound to ciphertext</td></tr>
         <tr><td>HKDF</td><td>HMAC-based Key Derivation Function</td></tr>
         <tr><td>LoRa</td><td>Long Range radio — max ~200 bytes per packet</td></tr>
       </table>
       
       <p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);color:var(--text-muted);text-align:center;font-size:10px;">
-        LOWNET Toolkit v1.1.2 · <a href="https://lownet.org" style="color:var(--accent);text-decoration:none;">lownet.org</a> · MIT License
+        LOWNET Toolkit v1.2.0 · <a href="https://lownet.org" style="color:var(--accent);text-decoration:none;">lownet.org</a> · MIT License
       </p>
     </div>
   </div>
@@ -1054,7 +1058,7 @@
 
 <script>
 // LOWNET Toolkit v3 with Sequential PoW
-var TOOLKIT_VERSION='1.1.3';
+var TOOLKIT_VERSION='1.2.0';
 var TOOLKIT_HASH=null; // Computed on load
 
 var $=function(id){return document.getElementById(id)};
@@ -1136,10 +1140,13 @@ function startQRScan(onResult){
     return;
   }
   scanCallback=onResult;
+  // v1.1.4: closing the window while the camera starts used to leave it running and scanning behind the page
+  var current=scanSlot();
   $('scan-status').textContent='Initializing camera...';
   $('scan-modal').classList.remove('hide');
   var video=$('scan-video');
   navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(stream){
+    if(!current()){stream.getTracks().forEach(function(t){t.stop()});return}
     scanStream=stream;
     video.srcObject=stream;
     video.play();
@@ -1147,8 +1154,10 @@ function startQRScan(onResult){
     var detector=new BarcodeDetector({formats:['qr_code']});
     var scanning=true;
     function scan(){
+      if(!current())return;
       if(!scanning||video.readyState!==4)return requestAnimationFrame(scan);
       detector.detect(video).then(function(codes){
+        if(!current())return;
         if(codes.length>0){
           scanning=false;
           stopQRScan();
@@ -1160,10 +1169,11 @@ function startQRScan(onResult){
     }
     scan();
   }).catch(function(e){
-    $('scan-status').textContent='Camera error: '+e.message;
+    if(current())$('scan-status').textContent='Camera error: '+e.message;
   });
 }
 function stopQRScan(){
+  scanSlot();
   if(scanStream){scanStream.getTracks().forEach(function(t){t.stop()});scanStream=null}
   $('scan-video').srcObject=null;
   $('scan-modal').classList.add('hide');
@@ -1177,7 +1187,28 @@ function bytesToHex(bytes){return Array.from(bytes).map(function(b){return b.toS
 function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function sha256(d){return crypto.subtle.digest('SHA-256',typeof d==='string'?te.encode(d):d).then(function(h){return new Uint8Array(h)})}
 function canonicalize(v){if(v===null)return'null';if(v===undefined)return undefined;var t=typeof v;if(t==='boolean')return v?'true':'false';if(t==='number')return Object.is(v,-0)?'0':String(v);if(t==='string')return JSON.stringify(v.normalize('NFC'));if(Array.isArray(v))return'['+v.map(canonicalize).join(',')+']';if(t==='object'){var k=Object.keys(v).sort(),p=[];for(var i=0;i<k.length;i++){var c=canonicalize(v[k[i]]);if(c!==undefined)p.push(JSON.stringify(k[i])+':'+c)}return'{'+p.join(',')+'}'}throw new Error('type')}
+// v1.2: canonical form for the new formats (ENV-1.3, ENV-F-2 as released, CNP-1 bind). Strings stay as they are:
+// RFC 8785 does not normalize, and a signature over normalized text let a header be rewritten from NFC to NFD
+// without breaking it. A key "__proto__" is refused: JSON.parse makes it an own key, Object.assign and copies
+// turn it into a prototype, so it could sit next to a signature without being covered by it.
+var LONE_SURROGATE=/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+// RFC 8785 needs well-formed strings: a lone surrogate cannot be written the same way everywhere (Go decodes it to U+FFFD)
+function canonicalizeExact(v){if(v===null)return'null';if(v===undefined)return undefined;var t=typeof v;if(t==='boolean')return v?'true':'false';if(t==='number'){if(!isFinite(v))throw new Error('number');return Object.is(v,-0)?'0':String(v)}if(t==='string'){if(LONE_SURROGATE.test(v))throw new Error('Text with a broken character (lone surrogate)');return JSON.stringify(v)}if(Array.isArray(v))return'['+v.map(function(x){var c=canonicalizeExact(x);return c===undefined?'null':c}).join(',')+']';if(t==='object'){var k=Object.keys(v).sort(),p=[];for(var i=0;i<k.length;i++){if(k[i]==='__proto__')throw new Error('Key __proto__ not allowed');if(LONE_SURROGATE.test(k[i]))throw new Error('Key with a broken character');var c=canonicalizeExact(v[k[i]]);if(c!==undefined)p.push(JSON.stringify(k[i])+':'+c)}return'{'+p.join(',')+'}'}throw new Error('type')}
+// v1.2: the fingerprint people compare. 16 bytes (128 bit) of SHA-256 over the signing key, in groups of four hex
+// digits. The short form (6 bytes) stays inside the formats as an index, never as the thing a person checks.
+function longFingerprint(pub){var bytes=pub instanceof Uint8Array?pub:unb64(pub.indexOf&&pub.indexOf('ed25519:')===0?pub.slice(8):pub);return sha256(bytes).then(function(h){var x=bytesToHex(h.slice(0,16)).toUpperCase();return x.match(/.{4}/g).join(' ')})}
 function showStatus(msg,type){var el=$('global-status');el.textContent=msg;el.className='status '+(type||'success');el.classList.remove('hide');setTimeout(function(){el.classList.add('hide')},3000)}
+
+// v1.1.4: one rule for everything that writes an asynchronous result into the page. A slot hands out a ticket per run,
+// and only the newest ticket may still write. Without it a slow old run overwrites the answer to a newer one.
+function latestOnly(){var newest=0;return function(){var mine=++newest;return function(){return mine===newest}}}
+var fileCardSlot=latestOnly(),hashCardSlot=latestOnly(),boardSlot=latestOnly(),recipientSlot=latestOnly(),fileRecipientSlot=latestOnly(),contactKeySlot=latestOnly(),
+  vaultSlot=latestOnly(),keysSlot=latestOnly(),contactsSlot=latestOnly(),securitySlot=latestOnly(),unlockSlot=latestOnly(),scanSlot=latestOnly(),publishSlot=latestOnly(),
+  pendingFilesSlot=latestOnly(),verifyFileSlot=latestOnly(),contactPickSlot=latestOnly(),linkPickSlot=latestOnly(),licenseSlot=latestOnly();
+// v1.1.4: no failure stays silent. What no caller catches ends in the status line.
+window.addEventListener('unhandledrejection',function(e){showStatus('Error: '+(e.reason&&e.reason.message||'unknown'),'error')});
+window.addEventListener('error',function(e){showStatus('Error: '+e.message,'error')});
+function listFailed(list,e){list.textContent='';var d=document.createElement('div');d.className='list-empty';d.textContent='Could not load: '+e.message;list.appendChild(d)}
 
 // Styled confirm dialog
 var confirmResolve=null;
@@ -1238,24 +1269,34 @@ self.onmessage=async function(e){
 `;
 var powWorkerBlob=new Blob([powWorkerCode],{type:'application/javascript'});
 var powWorkerUrl=URL.createObjectURL(powWorkerBlob);
-var activePowWorker=null;
+var activePowWorker=null,activePowReject=null;
+
+// v1.1.4: a worker that is ended takes its promise with it. It used to stay open for ever, so a check started while the
+// board loaded, or a signature during a check, never answered.
+function stopPoW(reason){
+  if(!activePowWorker)return false;
+  activePowWorker.terminate();activePowWorker=null;
+  var reject=activePowReject;activePowReject=null;
+  if(reject)reject(new Error(reason));
+  return true;
+}
 
 function sequentialPoW(seed,rounds,onProgress){
   return new Promise(function(resolve,reject){
-    if(activePowWorker){activePowWorker.terminate();activePowWorker=null}
+    stopPoW('stopped by a newer chain');
     var worker=new Worker(powWorkerUrl);
-    activePowWorker=worker;
+    activePowWorker=worker;activePowReject=reject;
     worker.onmessage=function(e){
       if(e.data.type==='progress'){
         if(onProgress)onProgress(e.data.i,e.data.rounds,e.data.elapsed);
       }else if(e.data.type==='done'){
-        activePowWorker=null;
+        activePowWorker=null;activePowReject=null;
         worker.terminate();
         resolve({result:e.data.result,rounds:e.data.rounds,time_ms:e.data.time_ms});
       }
     };
     worker.onerror=function(err){
-      activePowWorker=null;
+      activePowWorker=null;activePowReject=null;
       worker.terminate();
       reject(new Error('PoW Worker error'));
     };
@@ -1263,10 +1304,7 @@ function sequentialPoW(seed,rounds,onProgress){
   });
 }
 
-function cancelPoW(){
-  if(activePowWorker){activePowWorker.terminate();activePowWorker=null;return true}
-  return false;
-}
+function cancelPoW(){return stopPoW('cancelled')}
 
 function buildPoWSeed(fp,seq,prev,payloadHash){return fp+'|'+seq+'|'+(prev||'null')+'|'+payloadHash}
 function getDayEpoch(){return Math.floor(Date.now()/86400000)}
@@ -1274,7 +1312,9 @@ function getElapsed(){return Math.floor((Date.now()-pageLoadTime)/1000)}
 function getMinWait(){return 60}
 function getBaseRounds(seq){return (seq||1)<=5?2000000:500000}
 function getStepRounds(){return 20000}
-function requiredRounds(seq){return getBaseRounds(seq)+getStepRounds()*(seq-1)}
+// v1.1.4: no seq gave NaN, 0 gave 1,980,000, and from seq 2477 on (or earlier with a PRO factor) the chain passed
+// ABS_MAX_ROUNDS: a person spent the work on a notice this page and every node then refuse.
+function requiredRounds(seq){var n=Number.isInteger(seq)&&seq>=1?seq:1;return Math.min(getBaseRounds(n)+getStepRounds()*(n-1),ABS_MAX_ROUNDS)}
 
 function fingerprint(pub){var bytes=pub instanceof Uint8Array?pub:unb64(pub.indexOf&&pub.indexOf('ed25519:')===0?pub.slice(8):pub);return sha256(bytes).then(function(h){return Array.from(h.slice(0,6)).map(function(b){return b.toString(16).padStart(2,'0').toUpperCase()}).join(':')})}
 
@@ -1288,7 +1328,12 @@ function encodeSCP1(identity,type,payloadHash){
   var ts=Math.floor(Date.now()/1000);
   var fpBytes=identity.fp.split(':').map(function(x){return parseInt(x,16)});
   var seq=identity.seq||0;
-  var typeCode=SCP1_TYPES[type]||0x01;
+  // v1.1.4: sign what was handed in or nothing. seq above 65535 lost its high bits, a wrong hash length was
+  // cut or padded, and the result still showed the original.
+  if(!Object.prototype.hasOwnProperty.call(SCP1_TYPES,type))return Promise.reject(new Error('Unknown SCP-1 type: '+type));
+  if(!Number.isInteger(seq)||seq<0||seq>0xffff)return Promise.reject(new Error('SCP-1 seq must be a whole number from 0 to 65535'));
+  if(!payloadHash||payloadHash.length!==32)return Promise.reject(new Error('SCP-1 payload hash must be 32 bytes'));
+  var typeCode=SCP1_TYPES[type];
   
   // Build data to sign: V|T|TS|FP|SEQ|HASH (46 bytes)
   var dataToSign=new Uint8Array(46);
@@ -1325,14 +1370,14 @@ function decodeSCP1(data){
   var bytes;
   if(typeof data==='string'){
     if(data.length===220){if(!/^[0-9a-fA-F]{220}$/.test(data))return{wellFormed:false,valid:false,error:'Invalid SCP-1 hex'};bytes=new Uint8Array(data.match(/.{2}/g).map(function(x){return parseInt(x,16)}))}
-    else bytes=unb64(data);
+    else{try{bytes=unb64(data)}catch(e){return{wellFormed:false,valid:false,error:'Invalid SCP-1 encoding'}}}
   }else bytes=data;
   if(!bytes||bytes.length!==110)return{wellFormed:false,valid:false,error:'Invalid SCP-1 length'};
   var v=bytes[0];
   if(v!==SCP1_VERSION)return{wellFormed:false,valid:false,error:'Unknown SCP-1 version'};
   var typeCode=bytes[1];
   var typeName=Object.keys(SCP1_TYPES).find(function(k){return SCP1_TYPES[k]===typeCode})||'unknown';
-  var ts=(bytes[2]<<24)|(bytes[3]<<16)|(bytes[4]<<8)|bytes[5];
+  var ts=((bytes[2]<<24)|(bytes[3]<<16)|(bytes[4]<<8)|bytes[5])>>>0; // v1.1.4: unsigned, or 2038 reads as 1901
   var fp=Array.from(bytes.slice(6,12)).map(function(b){return b.toString(16).padStart(2,'0').toUpperCase()}).join(':');
   var seq=(bytes[12]<<8)|bytes[13];
   var hash=bytesToHex(bytes.slice(14,46));
@@ -1452,12 +1497,13 @@ function validateNoticeStructure(data){
   if(!data.ln_id||typeof data.ln_id!=='string')return'Missing id';
   if(!data.ln_timestamp)return'Missing timestamp';
   if(!data.ln_signer||!data.ln_signer.publicKey)return'Missing signer';
-  if(data.ln_signer.publicKey.indexOf('ed25519:')!==0)return'Invalid key prefix';
+  if(typeof data.ln_signer.publicKey!=='string'||data.ln_signer.publicKey.indexOf('ed25519:')!==0)return'Invalid key prefix';
   if(!data.ln_signature||!B64_CHARS.test(data.ln_signature))return'Invalid signature format';
   try{var sigBytes=unb64(data.ln_signature);if(sigBytes.length!==64)return'Signature wrong length';}catch(e){return'Signature decode failed';}
   if(!data.ln_payload)return'Missing payload';
   // Reject notices with timestamps >5min in future
-  if(data.ln_timestamp){var tsTime=new Date(data.ln_timestamp).getTime();if(!isNaN(tsTime)&&tsTime>Date.now()+300000)return'Timestamp is in the future';}
+  // v1.1.4: an unreadable timestamp used to pass this check, and the page shows it as written
+  if(data.ln_timestamp){var tsTime=new Date(data.ln_timestamp).getTime();if(isNaN(tsTime))return'Invalid timestamp';if(tsTime>Date.now()+300000)return'Timestamp is in the future';}
   // Validate PoW structure if present
   if(data.ln_pow){
     var p=data.ln_pow;
@@ -1482,6 +1528,8 @@ var VERIFY_SKIP_ROUNDS=400000; // Skip client-side PoW recomputation above this 
 // so a 2M-round notice takes ~3 s). The board list keeps VERIFY_SKIP_ROUNDS.
 var VERIFY_TAB_ROUNDS=10000000;
 
+// v1.2: what ln_bind signs: a purpose label and the notice without ln_bind, canonicalized exactly
+function cnpBindData(notice){var n=JSON.parse(JSON.stringify(notice));delete n.ln_bind;return te.encode(canonicalizeExact({purpose:'LOWNET CNP-1 bind',notice:n}))}
 // SIGN WITH SEQUENTIAL POW
 function signNotice(identity,type,payload,onProgress,links,powMultiplier){
   var now=Date.now();
@@ -1498,7 +1546,9 @@ function signNotice(identity,type,payload,onProgress,links,powMultiplier){
   var elapsed=now-baseTime;
   if(elapsed<minWait)return Promise.reject(new Error('Wait '+Math.ceil((minWait-elapsed)/1000)+' more seconds'));
   var prevHash=identity.prevHash||null;
-  var rounds=requiredRounds(seq)*(powMultiplier||1);
+  var rounds=Math.min(requiredRounds(seq)*(powMultiplier||1),ABS_MAX_ROUNDS);
+  // v1.2: the binding signature covers the notice exactly; what cannot be canonicalized exactly is refused here
+  try{canonicalizeExact({p:payload,n:identity.name,l:links||null})}catch(e){return Promise.reject(new Error('Notice cannot be signed: '+e.message))}
   // Compute payload hash first
   return sha256(canonicalize(payload)).then(function(phBytes){
     var ph=bytesToHex(phBytes);
@@ -1512,6 +1562,12 @@ function signNotice(identity,type,payload,onProgress,links,powMultiplier){
       var unsigned=buildUnsignedForCanon(notice);
       return crypto.subtle.sign('Ed25519',identity._keys.sign.privateKey,te.encode(canonicalize(unsigned))).then(function(sig){
         notice.ln_signature=b64(new Uint8Array(sig));
+        // v1.2 (findings F-3, F-7): ln_signature keeps the reduced projection, so 1.1.x pages, the board and the
+        // nodes still read the notice. ln_bind signs the whole notice as it stands, byte for byte: work chain,
+        // links and ln_signature included. Without it the chain and the links lie outside every signature.
+        return crypto.subtle.sign('Ed25519',identity._keys.sign.privateKey,cnpBindData(notice));
+      }).then(function(bindSig){
+        notice.ln_bind={v:1,sig:b64(new Uint8Array(bindSig))};
         return sha256(canonicalize(notice)).then(function(h){
           var noticeHash='sha256:'+bytesToHex(h);
           identity.seq=seq;identity.prevHash=bytesToHex(h);identity.lastSignTime=Date.now();
@@ -1541,14 +1597,74 @@ function generateReceipt(identity,noticeHash,powRounds,seq){
 }
 
 // VERIFY
+// v1.1.4: a check answers, whatever it is given. A value without a text form in ln_timestamp, ln_signature or
+// ln_pow threw inside the structure check, past every .catch, and the previous result stayed on the card.
 function verifyNotice(data,opts){
+  return new Promise(function(resolve){
+    // v1.2: ln_bind first. A notice changed after signing is refused before any work is recomputed for it.
+    if(validateNoticeStructure(data))return resolve(checkNotice(data,opts));
+    resolve(bindState(data).then(function(bind){
+      if(bind==='bad')return{valid:false,error:'Binding signature invalid: the notice was changed after it was signed'};
+      return checkNotice(data,opts).then(function(r){return finishNotice(data,r,bind)});
+    }));
+  }).catch(function(e){return{valid:false,error:e.message}});
+}
+// v1.2: the title of an amber notice says why it is not valid
+function noticeAmberTitle(r){
+  if(r.weak)return'Signature OK · too little work';
+  if(r.amberReason==='older')return'Signature OK · older format';
+  if(r.amberReason==='nochain')return'Signature OK · no work chain';
+  if(r.amberReason==='unknown')return'Signature OK · unknown work format';
+  return'Signature OK, work not checked';
+}
+// v1.2: ln_bind present and valid ('ok'), absent ('none') or present and wrong ('bad').
+function bindState(data){
+  // 'bad' only when the binding signature itself fails. A ln_bind this page cannot read (another version, a malformed
+  // field) counts as no binding: the notice can at best be amber. A broken key is left to checkNotice, which names it.
+  if(!Object.prototype.hasOwnProperty.call(data,'ln_bind'))return Promise.resolve('none');
+  var b=data.ln_bind;
+  if(!b||typeof b!=='object'||b.v!==1||typeof b.sig!=='string'||!B64_CHARS.test(b.sig))return Promise.resolve('none');
+  var sig,pub,signed;
+  try{sig=unb64(b.sig);pub=unb64(data.ln_signer.publicKey.slice(8))}catch(e){return Promise.resolve('none')}
+  if(sig.length!==64)return Promise.resolve('none');
+  try{signed=cnpBindData(data)}catch(e){return Promise.resolve('bad')}
+  return crypto.subtle.importKey('raw',pub,'Ed25519',false,['verify']).then(function(k){
+    return crypto.subtle.verify('Ed25519',k,sig,signed).then(function(ok){return ok?'ok':'bad'});
+  },function(){return'none'});
+}
+// v1.2 (finding F-3): a notice is valid only when its work chain recomputes, reaches the minimum for its sequence
+// number and is covered by ln_bind together with its links. A notice without a chain, with an unknown or the
+// classic format, or from a page before 1.2 (no ln_bind) shows its signature and content, never as valid.
+function finishNotice(data,r,known){
+  if(!r||r.signatureValid!==true)return Promise.resolve(r);
+  return (known?Promise.resolve(known):bindState(data)).then(function(bind){
+    if(bind==='bad')return{valid:false,error:'Binding signature invalid: the notice was changed after it was signed'};
+    var bound=bind==='ok',out=Object.assign({},r,{bound:bound});
+    var isSeq=!!(data.ln_pow&&data.ln_pow.type==='sequential-v2'),isClassic=!!(data.ln_pow&&!isSeq&&data.ln_pow.nonce&&data.ln_pow.hash);
+    var amber=function(msg,legacy,why){return Object.assign(out,{valid:false,unverified:true,legacy:!!legacy,amberReason:why,error:msg})};
+    if(out.valid===true){
+      if(!data.ln_pow)return amber('Signature OK, but the notice carries no work chain',false,'nochain');
+      if(isClassic)return amber('Older work format (nonce, hash, bits): not covered by a signature',true,'older');
+      if(!isSeq)return amber('Signature OK, unknown work format: not checked',false,'unknown');
+      if(!bound)return amber('Older format: the work chain'+(data.ln_links?' and the links are':' is')+' not covered by a signature',true,'older');
+      return out;
+    }
+    if(out.unverified&&!bound)out.legacy=true;
+    return out;
+  }).then(function(res){
+    if(!res||!data.ln_signer||typeof data.ln_signer.publicKey!=='string')return res;
+    return longFingerprint(data.ln_signer.publicKey).then(function(l){res.longFingerprint=l;return res},function(){return res});
+  });
+}
+function checkNotice(data,opts){
   opts=opts||{};var skipAbove=opts.maxRounds||VERIFY_SKIP_ROUNDS;
   // Pre-parse validation
   var structErr=validateNoticeStructure(data);
   if(structErr)return Promise.resolve({valid:false,error:structErr});
   
   var pubKeyStr=data.ln_signer.publicKey;
-  var pubBytes=unb64(pubKeyStr.slice(8));
+  // v1.1.4: a check answers, it does not throw. Broken Base64 here used to throw past the .catch below.
+  var pubBytes;try{pubBytes=unb64(pubKeyStr.slice(8))}catch(e){return Promise.resolve({valid:false,error:'Invalid key encoding'})}
   return crypto.subtle.importKey('raw',pubBytes,'Ed25519',false,['verify']).then(function(pubKey){
     var unsigned=buildUnsignedForCanon(data);
     return crypto.subtle.verify('Ed25519',pubKey,unb64(data.ln_signature),te.encode(canonicalize(unsigned))).then(function(valid){
@@ -1562,6 +1678,10 @@ function verifyNotice(data,opts){
           return sha256(canonicalize(data.ln_payload)).then(function(phBytes){
             var computedPh=bytesToHex(phBytes);
             if(data.ln_pow.ph!==computedPh)return{valid:false,error:'Payload hash mismatch'};
+            // v1.2 (finding F-3): the chain must reach the minimum this page itself would compute for its sequence number
+            var need=requiredRounds(data.ln_pow.seq);
+            // Below it the notice is not valid; signature and content are still shown, as for a chain not checked here.
+            if(data.ln_pow.r<need)return{valid:false,unverified:true,weak:true,signatureValid:true,error:'Work below the minimum: '+data.ln_pow.r.toLocaleString()+' rounds, sequence '+data.ln_pow.seq+' needs '+need.toLocaleString(),data:data,derivedFingerprint:derivedFp,pow:{valid:null,unverified:true,reason:'below minimum',r:data.ln_pow.r,seq:data.ln_pow.seq,expectedR:need}};
             // Absolute max rounds (hard DoS protection)
             if(data.ln_pow.r>ABS_MAX_ROUNDS)return{valid:false,error:'Rounds exceed absolute max ('+ABS_MAX_ROUNDS+')'};
             // Reconstruct seed
@@ -1578,23 +1698,19 @@ function verifyNotice(data,opts){
               var powValid=recomputed.result===data.ln_pow.out;
               // v1.1.3: a chain that does not recompute makes the notice invalid (it used to stay valid:true).
               return{valid:powValid,signatureValid:true,error:powValid?undefined:'PoW mismatch',data:data,derivedFingerprint:derivedFp,pow:{valid:powValid,r:data.ln_pow.r,seq:data.ln_pow.seq,recomputedTime:recomputed.time_ms,error:powValid?null:'PoW mismatch'}}
+            },function(e){
+              // v1.1.4: the chain did not finish. That says nothing against the notice: signature OK, work not checked.
+              return{valid:false,unverified:true,signatureValid:true,error:'Signature OK, but the check of the work did not finish: '+e.message,data:data,derivedFingerprint:derivedFp,pow:{valid:null,unverified:true,reason:'stopped',r:data.ln_pow.r,seq:data.ln_pow.seq,error:null}}
             })
           })
         }
-        // Legacy PoW format (sequential)
-        if(data.ln_pow&&data.ln_pow.type==='sequential'){
-          // Max rounds protection for legacy too
-          if(data.ln_pow.rounds>5000000)return{valid:false,error:'Excessive rounds (verifier DoS protection)'};
-          showStatus('Verifying PoW...');
-          return sequentialPoW(data.ln_pow.seed,data.ln_pow.rounds,opts.onProgress).then(function(recomputed){
-            var powValid=recomputed.result===data.ln_pow.result;
-            return{valid:powValid,signatureValid:true,error:powValid?undefined:'PoW mismatch',data:data,derivedFingerprint:derivedFp,pow:{valid:powValid,r:data.ln_pow.rounds,seq:data.ln_pow.seq,recomputedTime:recomputed.time_ms,error:powValid?null:'PoW mismatch'}}
-          })
-        }
+        // v1.1.4: the older format `sequential` is no longer checked. No version in this repository ever wrote it,
+        // its seed was free, so the chain belonged to nothing, and a missing seed left the worker hanging. Like any
+        // other unknown chain it lies outside the signature and counts for nothing: the card says it was not checked.
         // Classic PoW format (nonce + hash + bits) - used by server
         if(data.ln_pow&&data.ln_pow.nonce&&data.ln_pow.hash){
           return verifyClassicPoW(data).then(function(powResult){
-            return{valid:!!powResult.valid,signatureValid:true,error:powResult.valid?undefined:(powResult.error||'PoW invalid'),data:data,derivedFingerprint:derivedFp,pow:{valid:powResult.valid,bits:data.ln_pow.bits,error:powResult.error||null}}
+            return{valid:!!powResult.valid,signatureValid:true,error:powResult.valid?undefined:(powResult.error||'PoW invalid'),data:data,derivedFingerprint:derivedFp,pow:{valid:powResult.valid,bits:powResult.bits,error:powResult.error||null}}
           })
         }
         return{valid:true,signatureValid:true,data:data,derivedFingerprint:derivedFp,pow:null}
@@ -1603,64 +1719,60 @@ function verifyNotice(data,opts){
   }).catch(function(e){return{valid:false,error:e.message}})
 }
 
-// ENVELOPE (ENV-1.2)
+// ENVELOPE (ENV-1.3)
+// v1.2: new envelopes are ENV-1.3. What changed against ENV-1.2 (toolkit 1.1.4 and earlier):
+//  - Private mode: the sender's inner signature covers the whole clear header (id, time, TTL, mode, the
+//    ephemeral key and the recipient hint) and the content. ENV-1.2 signed only id, time and content, so a
+//    recipient could put the content and the signature into a new envelope for someone else.
+//  - Strings are signed and authenticated exactly as they are (canonicalizeExact, no NFC rewriting).
+// ENV-1.1 and ENV-1.2 still open. A private ENV-1.2 envelope is reported as older format, never as valid.
+var ENV_VERSION='ENV-1.3';
+function envView(data){var v=JSON.parse(JSON.stringify(data));delete v.env_encrypted;delete v.env_signature;return v}
+function env13InnerSignedData(headerView,content){return te.encode(canonicalizeExact({purpose:'LOWNET ENV-1.3 sender',header:headerView,content:content}))}
 function encryptEnvelope(identity,recipientPub,content){
   var now=Date.now();
   var minWait=getMinWait()*1000;
   var lastSign=identity.lastSignTime||0;
   var elapsed=now-lastSign;
   if(elapsed<minWait)return Promise.reject(new Error('Wait '+Math.ceil((minWait-elapsed)/1000)+' more seconds'));
+  // v1.2: what cannot be signed exactly is refused here, not on arrival
+  try{canonicalizeExact(content)}catch(e){return Promise.reject(new Error('Content cannot be signed: '+e.message))}
   return crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']).then(function(ephKey){
     return crypto.subtle.exportKey('jwk',ephKey.publicKey).then(function(ephPubJwk){
       return crypto.subtle.importKey('jwk',recipientPub.dh,{name:'ECDH',namedCurve:'P-256'},false,[]).then(function(recipientDhPub){
         return crypto.subtle.deriveBits({name:'ECDH',public:recipientDhPub},ephKey.privateKey,256).then(function(shared){
-          var env_id='env_'+b64(crypto.getRandomValues(new Uint8Array(12))),iv=crypto.getRandomValues(new Uint8Array(12)),env_timestamp=new Date().toISOString(),mode=settings.envPrivacy||'public';
+          var env_id='env_'+b64(crypto.getRandomValues(new Uint8Array(12))),iv=crypto.getRandomValues(new Uint8Array(12)),env_timestamp=new Date().toISOString(),mode=settings.envPrivacy==='private'?'private':'public';
           var env_dh={kty:'EC',crv:'P-256',x:ephPubJwk.x,y:ephPubJwk.y};
-          
-          // Build header - NO sender info in private mode
-          var header={env_version:'ENV-1.2',env_id:env_id,env_timestamp:env_timestamp,env_ttl_ms:7*24*60*60*1000,env_meta:{mode:mode},env_dh:env_dh};
-          if(mode==='public'){
-            header.env_sender={name:identity.name,sign:'ed25519:'+identity.sign.pub,fp:identity.fp};
-          }
-          
+          // Header - no sender info in private mode
+          var header={env_version:ENV_VERSION,env_id:env_id,env_timestamp:env_timestamp,env_ttl_ms:7*24*60*60*1000,env_meta:{mode:mode},env_dh:env_dh};
+          if(mode==='public')header.env_sender={name:identity.name,sign:'ed25519:'+identity.sign.pub,fp:identity.fp};
           return sha256(te.encode(recipientPub.fp)).then(function(hint){
             if(mode==='private')header.env_recipient_hint=b64(hint.slice(0,8));else header.env_recipient_fp=recipientPub.fp;
-            
-            // Build inner payload with sender auth (for private mode)
             var innerPayload;
             if(mode==='private'){
-              // Sender info goes INSIDE ciphertext
               var senderInfo={name:identity.name,sign:'ed25519:'+identity.sign.pub,fp:identity.fp};
-              var sigData=env_id+'|'+env_timestamp+'|'+canonicalize(content);
-              return crypto.subtle.sign('Ed25519',identity._keys.sign.privateKey,te.encode(sigData)).then(function(innerSig){
+              return crypto.subtle.sign('Ed25519',identity._keys.sign.privateKey,env13InnerSignedData(header,content)).then(function(innerSig){
                 innerPayload={content:content,sender:senderInfo,sender_sig:b64(new Uint8Array(innerSig))};
                 return encryptInner();
               });
-            }else{
-              innerPayload=content;
-              return encryptInner();
             }
-            
+            innerPayload=content;
+            return encryptInner();
             function encryptInner(){
-              // Add random padding (0-2KB) to resist traffic analysis
+              // Random padding (0-2KB) against traffic analysis, private wrapper only
               var padding=crypto.getRandomValues(new Uint8Array(new Uint16Array(crypto.getRandomValues(new Uint8Array(2)).buffer)[0]%2048));
               var paddedPayload=mode==='private'?Object.assign({},innerPayload,{_pad:b64(padding)}):innerPayload;
-              
-              var aad=te.encode(canonicalize(header)),envIdBytes=te.encode(env_id),hkdfSalt=new Uint8Array(envIdBytes.length+iv.length);
+              var aad=te.encode(canonicalizeExact(header)),envIdBytes=te.encode(env_id),hkdfSalt=new Uint8Array(envIdBytes.length+iv.length);
               hkdfSalt.set(envIdBytes,0);hkdfSalt.set(iv,envIdBytes.length);
               return crypto.subtle.importKey('raw',shared,'HKDF',false,['deriveKey']).then(function(keyMat){
-                return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:hkdfSalt,info:te.encode('LOWNET:ENV-1.2')},keyMat,{name:'AES-GCM',length:256},false,['encrypt']).then(function(aesKey){
+                return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:hkdfSalt,info:te.encode('LOWNET:ENV-1.3')},keyMat,{name:'AES-GCM',length:256},false,['encrypt']).then(function(aesKey){
                   return crypto.subtle.encrypt({name:'AES-GCM',iv:iv,additionalData:aad},aesKey,te.encode(JSON.stringify(paddedPayload))).then(function(ct){
                     var envelope=Object.assign({},header,{env_encrypted:{iv:b64(iv),ct:b64(new Uint8Array(ct))}});
-                    if(mode==='public'){
-                      // Public mode: outer signature
-                      return crypto.subtle.sign('Ed25519',identity._keys.sign.privateKey,te.encode(canonicalize(envelope))).then(function(sig){
-                        envelope.env_signature=b64(new Uint8Array(sig));return envelope
-                      })
-                    }else{
-                      // Private mode: no outer signature (auth is inside)
-                      return envelope;
-                    }
+                    if(mode!=='public')return envelope;
+                    // Public mode: outer signature over everything, the encrypted part included
+                    return crypto.subtle.sign('Ed25519',identity._keys.sign.privateKey,te.encode(canonicalizeExact(envelope))).then(function(sig){
+                      envelope.env_signature=b64(new Uint8Array(sig));return envelope
+                    })
                   })
                 })
               })
@@ -1672,18 +1784,107 @@ function encryptEnvelope(identity,recipientPub,content){
   })
 }
 
+// v1.2: one entry for all versions. A check answers, whatever it is given.
 function decryptEnvelope(identity,data){
+  return new Promise(function(resolve){
+    if(data&&typeof data==='object'&&data.env_version===ENV_VERSION)resolve(decryptEnvelope13(identity,data));
+    else resolve(decryptEnvelopeLegacy(identity,data).then(function(r){
+      if(!r||!r.valid)return r;
+      r.olderFormat=true;r.forwardSecrecy='sender';
+      // v1.2: the inner signature of a private ENV-1.2 envelope does not name the recipient (finding F-2):
+      // the content and the sender are shown, but never as valid.
+      if(r.privateMode&&data.env_version==='ENV-1.2'){
+        return Object.assign({},r,{valid:false,legacy:true,signatureValid:true,error:'Older format (ENV-1.2): the sender\'s signature does not name the recipient, so it may have been passed on'});
+      }
+      return r;
+    }));
+  }).then(function(r){
+    if(!r||!r.sender||!r.sender.sign)return r;
+    return longFingerprint(r.sender.sign).then(function(lfp){r.sender=Object.assign({},r.sender,{longFp:lfp});return r},function(){return r});
+  }).then(function(r){
+    // v1.2: WebCrypto says only "The operation failed for an operation-specific reason". Say what it means.
+    if(r&&r.valid===false&&/operation-specific|OperationError/i.test(String(r.error)))r.error='Decryption failed: wrong key, or the envelope was changed';
+    return r;
+  }).catch(function(e){return{valid:false,error:e.message}});
+}
+
+function decryptEnvelope13(identity,data){
+  if(!data.env_encrypted||typeof data.env_encrypted.iv!=='string'||typeof data.env_encrypted.ct!=='string')return Promise.resolve({valid:false,error:'Missing ciphertext'});
+  if(!data.env_dh||typeof data.env_dh!=='object')return Promise.resolve({valid:false,error:'Missing key exchange'});
+  var isPrivate=!!(data.env_meta&&data.env_meta.mode==='private');
+  var view=envView(data),aadText;
+  try{aadText=canonicalizeExact(view)}catch(e){return Promise.resolve({valid:false,error:'Malformed header: '+e.message})}
+  var checkRecipient=data.env_recipient_fp?Promise.resolve(data.env_recipient_fp===identity.fp):data.env_recipient_hint?sha256(te.encode(identity.fp)).then(function(h){return b64(h.slice(0,8))===data.env_recipient_hint}):Promise.resolve(false);
+  return checkRecipient.then(function(isForMe){
+    if(!isForMe)return{valid:false,error:'Not for you'};
+    var ttl=data.env_ttl_ms,envTime=new Date(data.env_timestamp).getTime();
+    if(typeof ttl!=='number'||!isFinite(ttl)||ttl<=0)return{valid:false,error:'Invalid TTL'};
+    if(isNaN(envTime))return{valid:false,error:'Invalid timestamp'};
+    if(Date.now()>envTime+ttl)return{valid:false,error:'Expired'};
+    if(envTime>Date.now()+300000)return{valid:false,error:'Timestamp is in the future'};
+    var outer;
+    if(!isPrivate){
+      if(!data.env_sender||typeof data.env_sender.sign!=='string'||data.env_sender.sign.indexOf('ed25519:')!==0||typeof data.env_signature!=='string')return{valid:false,error:'Missing sender'};
+      var signed=JSON.parse(JSON.stringify(data));delete signed.env_signature;
+      outer=crypto.subtle.importKey('raw',unb64(data.env_sender.sign.slice(8)),'Ed25519',false,['verify']).then(function(k){
+        return crypto.subtle.verify('Ed25519',k,unb64(data.env_signature),te.encode(canonicalizeExact(signed)));
+      });
+    }else outer=Promise.resolve(true);
+    return outer.then(function(outerValid){
+      if(!outerValid)return{valid:false,error:'Invalid outer signature'};
+      return crypto.subtle.importKey('jwk',data.env_dh,{name:'ECDH',namedCurve:'P-256'},false,[]).then(function(dhPub){
+        return crypto.subtle.deriveBits({name:'ECDH',public:dhPub},identity._keys.dh.privateKey,256);
+      }).then(function(shared){
+        var iv=unb64(data.env_encrypted.iv),envIdBytes=te.encode(String(data.env_id)),hkdfSalt=new Uint8Array(envIdBytes.length+iv.length);
+        hkdfSalt.set(envIdBytes,0);hkdfSalt.set(iv,envIdBytes.length);
+        return crypto.subtle.importKey('raw',shared,'HKDF',false,['deriveKey']).then(function(keyMat){
+          return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:hkdfSalt,info:te.encode('LOWNET:ENV-1.3')},keyMat,{name:'AES-GCM',length:256},false,['decrypt']);
+        }).then(function(aesKey){
+          return crypto.subtle.decrypt({name:'AES-GCM',iv:iv,additionalData:te.encode(aadText)},aesKey,unb64(data.env_encrypted.ct));
+        });
+      }).then(function(pt){
+        var decrypted=JSON.parse(td.decode(pt));
+        if(!isPrivate){
+          var senderPubBytes=unb64(data.env_sender.sign.slice(8));
+          return fingerprint(senderPubBytes).then(function(computedFp){
+            if(data.env_sender.fp&&data.env_sender.fp!==computedFp)return{valid:false,error:'Sender fingerprint mismatch'};
+            return{valid:true,data:data,payload:decrypted,sender:Object.assign({},data.env_sender,{fp:computedFp}),forwardSecrecy:'sender',privateMode:false};
+          });
+        }
+        if(!decrypted||typeof decrypted!=='object'||!decrypted.sender||typeof decrypted.sender.sign!=='string'||decrypted.sender.sign.indexOf('ed25519:')!==0||typeof decrypted.sender_sig!=='string')return{valid:false,error:'Missing inner auth'};
+        var innerSenderPub=unb64(decrypted.sender.sign.slice(8)),signedData;
+        try{signedData=env13InnerSignedData(view,decrypted.content)}catch(e){return{valid:false,error:'Malformed content: '+e.message}}
+        return crypto.subtle.importKey('raw',innerSenderPub,'Ed25519',false,['verify']).then(function(innerKey){
+          return crypto.subtle.verify('Ed25519',innerKey,unb64(decrypted.sender_sig),signedData);
+        }).then(function(innerValid){
+          if(!innerValid)return{valid:false,error:'Invalid inner signature'};
+          return fingerprint(innerSenderPub).then(function(computedFp){
+            if(decrypted.sender.fp&&decrypted.sender.fp!==computedFp)return{valid:false,error:'Sender fingerprint mismatch'};
+            return{valid:true,data:data,payload:decrypted.content,sender:Object.assign({},decrypted.sender,{fp:computedFp}),forwardSecrecy:'sender',privateMode:true,senderMinimized:true};
+          });
+        });
+      });
+    });
+  }).catch(function(e){return{valid:false,error:e.message}});
+}
+
+function decryptEnvelopeLegacy(identity,data){
   // Support both ENV-1.1 (legacy) and ENV-1.2 (sender-minimized)
-  if(data.env_version!=='ENV-1.1'&&data.env_version!=='ENV-1.2')return Promise.resolve({valid:false,error:'Unknown version'});
+  if(!data||(data.env_version!=='ENV-1.1'&&data.env_version!=='ENV-1.2'))return Promise.resolve({valid:false,error:'Unknown version'});
   var isV12=data.env_version==='ENV-1.2';
   var isPrivate=data.env_meta&&data.env_meta.mode==='private';
   
   var checkRecipient=data.env_recipient_fp?Promise.resolve(data.env_recipient_fp===identity.fp):data.env_recipient_hint?sha256(te.encode(identity.fp)).then(function(h){return b64(h.slice(0,8))===data.env_recipient_hint}):Promise.resolve(false);
   return checkRecipient.then(function(isForMe){
     if(!isForMe)return{valid:false,error:'Not for you'};
-    if(data.env_ttl_ms){var expires=new Date(data.env_timestamp).getTime()+data.env_ttl_ms;if(Date.now()>expires)return{valid:false,error:'Expired'}}
+    // v1.1.4: an unreadable timestamp became NaN and passed both checks, a TTL of 0 or a text skipped the
+    // first: such an envelope never expired. Only a header with neither stays without a limit.
+    var ttl=data.env_ttl_ms,hasTtl=ttl!==undefined&&ttl!==null,envTime=new Date(data.env_timestamp).getTime();
+    if(hasTtl&&(typeof ttl!=='number'||!isFinite(ttl)||ttl<=0))return{valid:false,error:'Invalid TTL'};
+    if(isNaN(envTime)&&(hasTtl||data.env_timestamp!==undefined))return{valid:false,error:'Invalid timestamp'};
+    if(hasTtl&&Date.now()>envTime+ttl)return{valid:false,error:'Expired'};
     // Reject envelopes with timestamps >5min in future
-    var envTime=new Date(data.env_timestamp).getTime();if(!isNaN(envTime)&&envTime>Date.now()+300000)return{valid:false,error:'Timestamp is in the future'};
+    if(envTime>Date.now()+300000)return{valid:false,error:'Timestamp is in the future'};
     
     // For public mode or legacy: verify outer signature first
     var outerSigCheck;
@@ -1720,12 +1921,13 @@ function decryptEnvelope(identity,data){
               return crypto.subtle.decrypt({name:'AES-GCM',iv:iv,additionalData:aad},aesKey,unb64(data.env_encrypted.ct)).then(function(pt){
                 var decrypted=JSON.parse(td.decode(pt));
                 
-                // Remove padding if present
-                if(decrypted._pad)delete decrypted._pad;
+                // v1.1.4: padding only sits on the private wrapper. In public mode this is the sender's content:
+                // a field _pad is theirs, and null is a value (it used to end in a TypeError and valid:false).
+                if((isPrivate||!isV12)&&decrypted&&decrypted._pad)delete decrypted._pad;
                 
                 // For private ENV-1.2: verify inner signature
                 if(isPrivate&&isV12){
-                  if(!decrypted.sender||!decrypted.sender_sig)return{valid:false,error:'Missing inner auth'};
+                  if(!decrypted||!decrypted.sender||!decrypted.sender_sig)return{valid:false,error:'Missing inner auth'};
                   var innerSenderPub=unb64(decrypted.sender.sign.slice(8));
                   var sigData=data.env_id+'|'+data.env_timestamp+'|'+canonicalize(decrypted.content);
                   return crypto.subtle.importKey('raw',innerSenderPub,'Ed25519',false,['verify']).then(function(innerKey){
@@ -1803,14 +2005,17 @@ function parseRecipientInput(str){
     var pub=JSON.parse(str);
     if(pub.dh){
       // Has DH key - can be used for encryption
-      if(pub.fp)return Promise.resolve(pub);
-      if(pub.sign){
-        // Can compute fingerprint from sign key
-        return fingerprint(pub.sign.indexOf('ed25519:')===0?pub.sign.slice(8):pub.sign).then(function(fp){
+      // v1.2: with a signing key, the fingerprint is always derived from it. A bundle whose fp claims another key is
+      // refused: the contact list decides who counts as known.
+      if(typeof pub.sign==='string'&&pub.sign){
+        var raw=pub.sign.indexOf('ed25519:')===0?pub.sign.slice(8):pub.sign;
+        return fingerprint(raw).then(function(fp){
+          if(pub.fp&&pub.fp!==fp)return null;
           pub.fp=fp;
-          return pub;
-        });
+          return longFingerprint(raw).then(function(l){pub.longFp=l;return pub},function(){return pub});
+        },function(){return null});
       }
+      if(pub.fp)return Promise.resolve(pub);
       // No sign key, no FP - still valid for encryption
       return Promise.resolve(pub);
     }
@@ -1818,10 +2023,20 @@ function parseRecipientInput(str){
   return Promise.resolve(null);
 }
 // ============================================================
-// ENV-F-1: Encrypted File Envelope
+// ENV-F-2: Encrypted File Envelope
 // ============================================================
+// v1.1.4: new files are ENV-F-2. What changed against ENV-F-1 (toolkit 1.1.3 and earlier):
+//  - The sender's signature covers the SHA-256 of the encrypted content (env_file.sha256): the outer
+//    signature in public mode, the inner one (inside the encrypted metadata) in private mode. ENV-F-1
+//    signed only the header. Every recipient holds the content key, so another recipient could replace
+//    the content and the file still showed as signed by the sender.
+//  - The clear header holds no plaintext hash and no file name: they would tell which file was sent.
+// ENV-F-1 files still open. They are reported as older format, never as valid.
 var MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-var ENVF_VERSION = 'ENV-F-1';
+var ENVF_VERSION = 'ENV-F-2';
+var ENVF_OLD_VERSION = 'ENV-F-1';
+var ENVF_HEADER_MAX = 65536; // the reader searches the header end in this many bytes
+var ENVF_MAX_RECIPIENTS = 200; // the page refuses more before encrypting (about 55 KB of header)
 var pendingFiles = []; // [{buffer, name, type, size}, ...]
 var encryptedFiles = []; // [{blob, fileName, totalSize, header}, ...]
 var decryptedFileBlob = null;
@@ -1838,6 +2053,8 @@ function formatFileSize(bytes) {
 async function encryptFileEnvelope(identity, recipients, fileBuffer, fileName, fileType) {
   // Normalize recipients: accept single object or array
   if (!Array.isArray(recipients)) recipients = [recipients];
+  // v1.2 (finding F-6): more recipients than a reader can find the header for are refused before any work
+  if (recipients.length > ENVF_MAX_RECIPIENTS) throw new Error('Too many recipients (' + recipients.length + '): at most ' + ENVF_MAX_RECIPIENTS + ' per file');
   var isMulti = recipients.length > 1;
   
   // Rate limit check
@@ -1928,29 +2145,11 @@ async function encryptFileEnvelope(identity, recipients, fileBuffer, fileName, f
     header.env_recipients = envRecipients;
   }
   
-  // License proof (shareware): include signed license for recipient verification
-  if (licenseState.valid) {
-    var rawKey = localStorage.getItem('lownet_license');
-    if (rawKey && rawKey.startsWith('LN-PRO-')) {
-      header.env_license = rawKey.slice(7); // payload.sig (Ed25519 verifiable)
-    }
-  }
-  
   // Derive keys via HKDF from key material (shared secret or DEK)
   // Key 1: file metadata encryption
   // Key 2: file content encryption
   var keyMat = await crypto.subtle.importKey('raw', keyMaterial, 'HKDF', false, ['deriveKey']);
   var envIdBytes = te.encode(env_id);
-  
-  // --- Encrypt file metadata ---
-  var metaIv = crypto.getRandomValues(new Uint8Array(12));
-  var metaSalt = new Uint8Array(envIdBytes.length + metaIv.length);
-  metaSalt.set(envIdBytes, 0); metaSalt.set(metaIv, envIdBytes.length);
-  
-  var metaKey = await crypto.subtle.deriveKey(
-    { name: 'HKDF', hash: 'SHA-256', salt: metaSalt, info: te.encode('LOWNET:ENVF:META') },
-    keyMat, { name: 'AES-GCM', length: 256 }, false, ['encrypt']
-  );
   
   var fileMeta = {
     name: fileName,
@@ -1958,33 +2157,9 @@ async function encryptFileEnvelope(identity, recipients, fileBuffer, fileName, f
     size: fileBuffer.byteLength
   };
   
-  // Mark as padded if PRO (actual padding happens after meta encryption)
+  // --- File Padding (PRO) — obfuscate file size ---
   var willPad = isPremium();
   if (willPad) fileMeta._padded = true;
-  
-  // In private mode, include sender info in metadata
-  if (mode === 'private') {
-    fileMeta._sender = { name: identity.name, sign: 'ed25519:' + identity.sign.pub, fp: identity.fp };
-    // Inner signature over env_id + timestamp + file hash
-    var fileHash = await sha256(new Uint8Array(fileBuffer));
-    var sigData = env_id + '|' + env_timestamp + '|' + bytesToHex(fileHash);
-    var innerSig = await crypto.subtle.sign('Ed25519', identity._keys.sign.privateKey, te.encode(sigData));
-    fileMeta._sender_sig = b64(new Uint8Array(innerSig));
-    fileMeta._file_hash = bytesToHex(fileHash);
-  }
-  
-  // AAD for metadata: header hash
-  var headerCanon = canonicalize(header);
-  var metaAad = te.encode(headerCanon);
-  
-  var metaCt = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: metaIv, additionalData: metaAad },
-    metaKey, te.encode(JSON.stringify(fileMeta))
-  );
-  
-  header.env_file_meta = { iv: b64(metaIv), ct: b64(new Uint8Array(metaCt)) };
-  
-  // --- File Padding (PRO) — obfuscate file size ---
   var encryptBuffer = fileBuffer;
   if (willPad) {
     var origSize = fileBuffer.byteLength;
@@ -1997,7 +2172,7 @@ async function encryptFileEnvelope(identity, recipients, fileBuffer, fileName, f
     encryptBuffer = padded.buffer;
   }
   
-  // --- Encrypt file content ---
+  // --- Encrypt file content (first, so that its hash can be signed) ---
   var fileIv = crypto.getRandomValues(new Uint8Array(12));
   var fileSalt = new Uint8Array(envIdBytes.length + fileIv.length);
   fileSalt.set(envIdBytes, 0); fileSalt.set(fileIv, envIdBytes.length);
@@ -2007,33 +2182,58 @@ async function encryptFileEnvelope(identity, recipients, fileBuffer, fileName, f
     keyMat, { name: 'AES-GCM', length: 256 }, false, ['encrypt']
   );
   
-  // AAD for file: header + meta hash (binds everything together)
-  var fullHeaderCanon = canonicalize(header);
-  var fileAad = te.encode(fullHeaderCanon);
-  
+  // AAD for file: the header so far (version, id, time, mode, sender, recipients)
   var fileCt = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv: fileIv, additionalData: fileAad },
+    { name: 'AES-GCM', iv: fileIv, additionalData: te.encode(canonicalizeExact(header)) },
     fileKey, encryptBuffer
   );
+  var ctBytes = new Uint8Array(fileCt);
   
-  header.env_file = { iv: b64(fileIv), size: fileCt.byteLength };
+  // v1.1.4: the hash of the encrypted content. Every signature below covers it.
+  header.env_file = { iv: b64(fileIv), size: ctBytes.length, sha256: bytesToHex(await sha256(ctBytes)) };
   
-  // --- Outer signature (public mode only) ---
+  // In private mode, sender and signature travel inside the encrypted metadata
+  if (mode === 'private') {
+    fileMeta._sender = { name: identity.name, sign: 'ed25519:' + identity.sign.pub, fp: identity.fp };
+    var innerSig = await crypto.subtle.sign('Ed25519', identity._keys.sign.privateKey, envfInnerSignedData(header, fileMeta));
+    fileMeta._sender_sig = b64(new Uint8Array(innerSig));
+  }
+  
+  // --- Encrypt file metadata; AAD: the header with env_file (content hash) ---
+  var metaIv = crypto.getRandomValues(new Uint8Array(12));
+  var metaSalt = new Uint8Array(envIdBytes.length + metaIv.length);
+  metaSalt.set(envIdBytes, 0); metaSalt.set(metaIv, envIdBytes.length);
+  
+  var metaKey = await crypto.subtle.deriveKey(
+    { name: 'HKDF', hash: 'SHA-256', salt: metaSalt, info: te.encode('LOWNET:ENVF:META') },
+    keyMat, { name: 'AES-GCM', length: 256 }, false, ['encrypt']
+  );
+  
+  var metaCt = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv: metaIv, additionalData: te.encode(canonicalizeExact(header)) },
+    metaKey, te.encode(JSON.stringify(fileMeta))
+  );
+  
+  header.env_file_meta = { iv: b64(metaIv), ct: b64(new Uint8Array(metaCt)) };
+  
+  // --- Outer signature (public mode only): the whole header, content hash included ---
   if (mode === 'public') {
-    var sigCanon = canonicalize(header);
-    var outerSig = await crypto.subtle.sign('Ed25519', identity._keys.sign.privateKey, te.encode(sigCanon));
+    var outerSig = await crypto.subtle.sign('Ed25519', identity._keys.sign.privateKey, te.encode(canonicalizeExact(header)));
     header.env_signature = b64(new Uint8Array(outerSig));
   }
   
   // --- Build binary output ---
   // Format: [header JSON UTF-8] [0x00] [AES-GCM ciphertext]
   var headerBytes = te.encode(JSON.stringify(header));
-  var delimiter = new Uint8Array([0x00]);
-  var ctBytes = new Uint8Array(fileCt);
+  // v1.2 (finding F-6): a reader looks for the end of the header in the first 64 KB. A longer header used to be
+  // written and could then not be opened by anyone.
+  if (headerBytes.length >= ENVF_HEADER_MAX) {
+    throw new Error('Header too large: ' + headerBytes.length + ' bytes, the limit is ' + ENVF_HEADER_MAX + '. Use fewer recipients or a shorter name.');
+  }
   
   var output = new Uint8Array(headerBytes.length + 1 + ctBytes.length);
   output.set(headerBytes, 0);
-  output.set(delimiter, headerBytes.length);
+  output[headerBytes.length] = 0x00;
   output.set(ctBytes, headerBytes.length + 1);
   
   // Update identity state
@@ -2045,6 +2245,241 @@ async function encryptFileEnvelope(identity, recipients, fileBuffer, fileName, f
     totalSize: output.length,
     fileName: fileName.replace(/\.[^.]+$/, '') + '.lownet.enc'
   };
+}
+
+// A copy of the header without the given fields. JSON round trip, so every other field stays in,
+// whatever its name, and the copy can be canonicalized as it was signed or used as AAD.
+function envfView(header, without) {
+  var view = JSON.parse(JSON.stringify(header));
+  for (var i = 0; i < without.length; i++) delete view[without[i]];
+  return view;
+}
+
+// v1.1.4: what the sender of a private ENV-F-2 file signs: a purpose label, the clear header without
+// env_file_meta and env_signature (so the content hash and the recipients) and the metadata without
+// the signature itself (name, type, size, padding, sender).
+function envfInnerSignedData(headerView, fileMeta) {
+  var meta = JSON.parse(JSON.stringify(fileMeta));
+  delete meta._sender_sig;
+  return te.encode(canonicalizeExact({ purpose: 'LOWNET ENV-F-2 sender', header: headerView, meta: meta }));
+}
+
+// Key material for this identity: the unwrapped DEK (several recipients) or the ECDH secret (one)
+async function envfKeyMaterial(identity, header) {
+  if (header.env_recipients && Array.isArray(header.env_recipients)) {
+    // === MULTI-RECIPIENT: try each slot ===
+    for (var si = 0; si < header.env_recipients.length; si++) {
+      var slot = header.env_recipients[si];
+      try {
+        var slotDhPub = await crypto.subtle.importKey(
+          'jwk', slot.ephemeral, { name: 'ECDH', namedCurve: 'P-256' }, false, []
+        );
+        var slotShared = await crypto.subtle.deriveBits(
+          { name: 'ECDH', public: slotDhPub }, identity._keys.dh.privateKey, 256
+        );
+        // Derive KEK and unwrap DEK
+        var slotKekMat = await crypto.subtle.importKey('raw', slotShared, 'HKDF', false, ['deriveKey']);
+        var slotKek = await crypto.subtle.deriveKey(
+          { name: 'HKDF', hash: 'SHA-256', salt: te.encode(header.env_id), info: te.encode('LOWNET:ENVF:KEK') },
+          slotKekMat, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+        );
+        return await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: unb64(slot.wrapped_key.iv) },
+          slotKek, unb64(slot.wrapped_key.ct)
+        );
+      } catch(e) {
+        continue; // not our slot
+      }
+    }
+    throw new Error('This file is not encrypted for your identity (' + identity.fp + ')');
+  }
+  // === SINGLE RECIPIENT: ECDH-direct flow ===
+  var isForMe = false;
+  if (header.env_recipient_fp) {
+    isForMe = (header.env_recipient_fp === identity.fp);
+  } else if (header.env_recipient_hint) {
+    var h = await sha256(te.encode(identity.fp));
+    isForMe = (b64(h.slice(0, 8)) === header.env_recipient_hint);
+  }
+  if (!isForMe) throw new Error('This file is not encrypted for your identity (' + identity.fp + ')');
+  
+  var dhPub = await crypto.subtle.importKey(
+    'jwk', header.env_dh, { name: 'ECDH', namedCurve: 'P-256' }, false, []
+  );
+  return crypto.subtle.deriveBits(
+    { name: 'ECDH', public: dhPub }, identity._keys.dh.privateKey, 256
+  );
+}
+
+async function envfDecryptMeta(keyMat, header, aad, exact) {
+  var envIdBytes = te.encode(header.env_id);
+  var metaIv = unb64(header.env_file_meta.iv);
+  var metaSalt = new Uint8Array(envIdBytes.length + metaIv.length);
+  metaSalt.set(envIdBytes, 0); metaSalt.set(metaIv, envIdBytes.length);
+  
+  var metaKey = await crypto.subtle.deriveKey(
+    { name: 'HKDF', hash: 'SHA-256', salt: metaSalt, info: te.encode('LOWNET:ENVF:META') },
+    keyMat, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+  );
+  
+  var metaPt;
+  try {
+    metaPt = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: metaIv, additionalData: te.encode(exact ? canonicalizeExact(aad) : canonicalize(aad)) },
+      metaKey, unb64(header.env_file_meta.ct)
+    );
+  } catch(e) {
+    throw new Error('Metadata decryption failed (wrong key or tampered header)');
+  }
+  return JSON.parse(td.decode(metaPt));
+}
+
+async function envfDecryptContent(keyMat, header, aad, ctBytes, exact) {
+  var envIdBytes = te.encode(header.env_id);
+  var fileIv = unb64(header.env_file.iv);
+  var fileSalt = new Uint8Array(envIdBytes.length + fileIv.length);
+  fileSalt.set(envIdBytes, 0); fileSalt.set(fileIv, envIdBytes.length);
+  
+  var fileKey = await crypto.subtle.deriveKey(
+    { name: 'HKDF', hash: 'SHA-256', salt: fileSalt, info: te.encode('LOWNET:ENVF:FILE') },
+    keyMat, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+  );
+  
+  try {
+    return await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: fileIv, additionalData: te.encode(exact ? canonicalizeExact(aad) : canonicalize(aad)) },
+      fileKey, ctBytes
+    );
+  } catch(e) {
+    throw new Error('File decryption failed (wrong key or corrupted data)');
+  }
+}
+
+// Remove padding. v1.1.4: also for an empty file, whose size 0 used to leave the padding in place.
+function envfUnpad(filePt, fileMeta) {
+  if (fileMeta._padded && typeof fileMeta.size === 'number' && fileMeta.size >= 0 && filePt.byteLength > fileMeta.size) {
+    return filePt.slice(0, fileMeta.size);
+  }
+  return filePt;
+}
+
+// ENV-F-2. Every check below must hold; any failure throws. Only the end sets complete.
+async function openEnvF2(header, ctBytes, keyMat, isPrivate) {
+  var f = header.env_file, m = header.env_file_meta;
+  if (!f || typeof f.iv !== 'string' || typeof f.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(f.sha256) ||
+      !m || typeof m.iv !== 'string' || typeof m.ct !== 'string') {
+    throw new Error('Malformed ENV-F-2 header');
+  }
+  
+  // 1. Public mode: the sender's signature over the whole header, content hash included
+  if (!isPrivate) {
+    if (!header.env_signature || !header.env_sender || typeof header.env_sender.sign !== 'string') {
+      throw new Error('Missing sender signature');
+    }
+    var senderKey = await crypto.subtle.importKey('raw', unb64(header.env_sender.sign.slice(8)), 'Ed25519', false, ['verify']);
+    var sigValid = await crypto.subtle.verify(
+      'Ed25519', senderKey, unb64(header.env_signature), te.encode(canonicalizeExact(envfView(header, ['env_signature'])))
+    );
+    if (!sigValid) throw new Error('Invalid outer signature');
+  }
+  
+  // 2. The content must be the content that was signed: its hash is recomputed here
+  if (bytesToHex(await sha256(ctBytes)) !== f.sha256) {
+    throw new Error('File content does not match the signed hash (replaced or corrupted)');
+  }
+  
+  // 3. Metadata; AAD: the header without env_file_meta and env_signature
+  var signedHeader = envfView(header, ['env_file_meta', 'env_signature']);
+  var fileMeta = await envfDecryptMeta(keyMat, header, signedHeader, true);
+  
+  // 4. Private mode: the inner signature covers that header (content hash, recipients) and the metadata
+  var sender;
+  if (isPrivate) {
+    if (!fileMeta._sender || typeof fileMeta._sender.sign !== 'string' || typeof fileMeta._sender_sig !== 'string') {
+      throw new Error('Missing inner auth');
+    }
+    var innerKey = await crypto.subtle.importKey('raw', unb64(fileMeta._sender.sign.slice(8)), 'Ed25519', false, ['verify']);
+    var innerValid = await crypto.subtle.verify(
+      'Ed25519', innerKey, unb64(fileMeta._sender_sig), envfInnerSignedData(signedHeader, fileMeta)
+    );
+    if (!innerValid) throw new Error('Invalid inner signature (sender auth failed)');
+    sender = fileMeta._sender;
+  } else {
+    sender = header.env_sender;
+  }
+  
+  // 5. Content; AAD: the header without env_file, env_file_meta and env_signature
+  var filePt = await envfDecryptContent(keyMat, header, envfView(header, ['env_file', 'env_file_meta', 'env_signature']), ctBytes, true);
+  return { fileMeta: fileMeta, filePt: envfUnpad(filePt, fileMeta), sender: sender, complete: true };
+}
+
+// ENV-F-1 (toolkit 1.1.3 and earlier), opened with the checks 1.1.3 made. Its signature does not
+// cover everything, so the caller reports it as older format, never as valid.
+async function openEnvF1(header, ctBytes, keyMat, isPrivate) {
+  // Verify outer signature (public mode)
+  // v1.1.3, same rule as ENV-1.2: a public file names its sender in the header, so the
+  // sender's signature must be there and hold. It used to be skipped when env_signature was missing,
+  // and the named sender was shown anyway.
+  if (!isPrivate) {
+    if (!header.env_signature || !header.env_sender || typeof header.env_sender.sign !== 'string') {
+      throw new Error('Missing sender signature');
+    }
+    var senderPub = unb64(header.env_sender.sign.slice(8));
+    var senderKey = await crypto.subtle.importKey('raw', senderPub, 'Ed25519', false, ['verify']);
+    var sigHeader = Object.assign({}, header);
+    delete sigHeader.env_signature;
+    var sigValid = await crypto.subtle.verify(
+      'Ed25519', senderKey, unb64(header.env_signature), te.encode(canonicalize(sigHeader))
+    );
+    if (!sigValid) throw new Error('Invalid outer signature');
+  }
+  
+  // --- Reconstruct header for AAD (without signature, without env_file) ---
+  // The metadata AAD is the header WITH env_license (if any) but before env_file_meta, env_file
+  // and env_signature were added; the file AAD adds env_file_meta.
+  var headerForMetaAad = {
+    env_version: header.env_version,
+    env_id: header.env_id,
+    env_timestamp: header.env_timestamp,
+    env_meta: header.env_meta
+  };
+  if (header.env_sender) headerForMetaAad.env_sender = header.env_sender;
+  if (header.env_recipient_fp) headerForMetaAad.env_recipient_fp = header.env_recipient_fp;
+  if (header.env_recipient_hint) headerForMetaAad.env_recipient_hint = header.env_recipient_hint;
+  if (header.env_dh) headerForMetaAad.env_dh = header.env_dh;
+  if (header.env_recipients) headerForMetaAad.env_recipients = header.env_recipients;
+  // ENV-F-1: part of the AAD where present; not checked or shown.
+  if (header.env_license) headerForMetaAad.env_license = header.env_license;
+  
+  var fileMeta = await envfDecryptMeta(keyMat, header, headerForMetaAad);
+  
+  // Note: env_file was NOT in the header when the file was encrypted (added after encryption)
+  headerForMetaAad.env_file_meta = header.env_file_meta;
+  var filePt = envfUnpad(await envfDecryptContent(keyMat, header, headerForMetaAad, ctBytes), fileMeta);
+  
+  // Verify inner signature (private mode)
+  // v1.1.3: the sender inside a private file is shown only after its signature held. A file that
+  // carried a sender without one, or without the file hash it signs, used to show that sender anyway.
+  var sender = null;
+  if (isPrivate) {
+    if (!fileMeta._sender || typeof fileMeta._sender.sign !== 'string' || !fileMeta._sender_sig || !fileMeta._file_hash) {
+      throw new Error('Missing inner auth');
+    }
+    sender = fileMeta._sender;
+    var fileHash = await sha256(new Uint8Array(filePt));
+    var computedHash = bytesToHex(fileHash);
+    if (computedHash !== fileMeta._file_hash) {
+      throw new Error('File hash mismatch (content may be corrupted)');
+    }
+    var innerPub = unb64(fileMeta._sender.sign.slice(8));
+    var innerKey = await crypto.subtle.importKey('raw', innerPub, 'Ed25519', false, ['verify']);
+    var sigData = header.env_id + '|' + header.env_timestamp + '|' + fileMeta._file_hash;
+    var innerValid = await crypto.subtle.verify('Ed25519', innerKey, unb64(fileMeta._sender_sig), te.encode(sigData));
+    if (!innerValid) throw new Error('Invalid inner signature (sender auth failed)');
+  } else {
+    sender = header.env_sender;
+  }
+  return { fileMeta: fileMeta, filePt: filePt, sender: sender };
 }
 
 async function decryptFileEnvelope(identity, fileBuffer) {
@@ -2076,184 +2511,33 @@ async function decryptFileEnvelope(identity, fileBuffer) {
     throw new Error('Invalid header JSON');
   }
   
-  if (header.env_version !== ENVF_VERSION) {
+  var isV2 = header.env_version === ENVF_VERSION;
+  if (!isV2 && header.env_version !== ENVF_OLD_VERSION) {
     throw new Error('Unknown version: ' + header.env_version);
   }
   
-  // Check recipient and establish key material
-  var keyMaterial; // raw bytes for HKDF
-  
-  if (header.env_recipients && Array.isArray(header.env_recipients)) {
-    // === MULTI-RECIPIENT: try each slot ===
-    var foundSlot = false;
-    for (var si = 0; si < header.env_recipients.length; si++) {
-      var slot = header.env_recipients[si];
-      try {
-        var slotDhPub = await crypto.subtle.importKey(
-          'jwk', slot.ephemeral, { name: 'ECDH', namedCurve: 'P-256' }, false, []
-        );
-        var slotShared = await crypto.subtle.deriveBits(
-          { name: 'ECDH', public: slotDhPub }, identity._keys.dh.privateKey, 256
-        );
-        // Derive KEK and unwrap DEK
-        var slotKekMat = await crypto.subtle.importKey('raw', slotShared, 'HKDF', false, ['deriveKey']);
-        var slotKek = await crypto.subtle.deriveKey(
-          { name: 'HKDF', hash: 'SHA-256', salt: te.encode(header.env_id), info: te.encode('LOWNET:ENVF:KEK') },
-          slotKekMat, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
-        );
-        var unwrapped = await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: unb64(slot.wrapped_key.iv) },
-          slotKek, unb64(slot.wrapped_key.ct)
-        );
-        keyMaterial = unwrapped;
-        foundSlot = true;
-        break;
-      } catch(e) {
-        continue; // not our slot
-      }
-    }
-    if (!foundSlot) throw new Error('This file is not encrypted for your identity (' + identity.fp + ')');
-  } else {
-    // === SINGLE RECIPIENT: existing ECDH-direct flow ===
-    var isForMe = false;
-    if (header.env_recipient_fp) {
-      isForMe = (header.env_recipient_fp === identity.fp);
-    } else if (header.env_recipient_hint) {
-      var h = await sha256(te.encode(identity.fp));
-      isForMe = (b64(h.slice(0, 8)) === header.env_recipient_hint);
-    }
-    if (!isForMe) throw new Error('This file is not encrypted for your identity (' + identity.fp + ')');
-    
-    var dhPub = await crypto.subtle.importKey(
-      'jwk', header.env_dh, { name: 'ECDH', namedCurve: 'P-256' }, false, []
-    );
-    keyMaterial = await crypto.subtle.deriveBits(
-      { name: 'ECDH', public: dhPub }, identity._keys.dh.privateKey, 256
-    );
-  }
+  // Check recipient and establish key material (raw bytes for HKDF)
+  var keyMaterial = await envfKeyMaterial(identity, header);
   
   // Timestamp check
   var envTime = new Date(header.env_timestamp).getTime();
-  if (!isNaN(envTime) && envTime > Date.now() + 300000) {
+  if (isNaN(envTime) && header.env_timestamp !== undefined) throw new Error('Invalid timestamp');
+  if (envTime > Date.now() + 300000) {
     throw new Error('Timestamp is in the future');
   }
   
   var isPrivate = header.env_meta && header.env_meta.mode === 'private';
-  
-  // Verify outer signature (public mode)
-  // v1.1.3, same rule as ENV-1.2: a public file names its sender in the header, so the
-  // sender's signature must be there and hold. It used to be skipped when env_signature was missing,
-  // and the named sender was shown anyway.
-  if (!isPrivate) {
-    if (!header.env_signature || !header.env_sender || typeof header.env_sender.sign !== 'string') {
-      throw new Error('Missing sender signature');
-    }
-    var senderPub = unb64(header.env_sender.sign.slice(8));
-    var senderKey = await crypto.subtle.importKey('raw', senderPub, 'Ed25519', false, ['verify']);
-    var sigHeader = Object.assign({}, header);
-    delete sigHeader.env_signature;
-    var sigValid = await crypto.subtle.verify(
-      'Ed25519', senderKey, unb64(header.env_signature), te.encode(canonicalize(sigHeader))
-    );
-    if (!sigValid) throw new Error('Invalid outer signature');
-  }
-  
-  // ECDH key agreement → already done above
-  
   var keyMat = await crypto.subtle.importKey('raw', keyMaterial, 'HKDF', false, ['deriveKey']);
-  var envIdBytes = te.encode(header.env_id);
+  var opened = isV2
+    ? await openEnvF2(header, ctBytes, keyMat, isPrivate)
+    : await openEnvF1(header, ctBytes, keyMat, isPrivate);
+  var fileMeta = opened.fileMeta, filePt = opened.filePt, sender = opened.sender;
   
-  // --- Reconstruct header for AAD (without signature, without env_file) ---
-  // We need the header as it was BEFORE env_file was added
-  // Actually, we need the header WITH env_file_meta but before env_file and env_signature
-  var headerForMetaAad = {
-    env_version: header.env_version,
-    env_id: header.env_id,
-    env_timestamp: header.env_timestamp,
-    env_meta: header.env_meta
-  };
-  if (header.env_sender) headerForMetaAad.env_sender = header.env_sender;
-  if (header.env_recipient_fp) headerForMetaAad.env_recipient_fp = header.env_recipient_fp;
-  if (header.env_recipient_hint) headerForMetaAad.env_recipient_hint = header.env_recipient_hint;
-  if (header.env_dh) headerForMetaAad.env_dh = header.env_dh;
-  if (header.env_recipients) headerForMetaAad.env_recipients = header.env_recipients;
-  if (header.env_license) headerForMetaAad.env_license = header.env_license;
-  
-  // --- Decrypt file metadata ---
-  var metaIv = unb64(header.env_file_meta.iv);
-  var metaSalt = new Uint8Array(envIdBytes.length + metaIv.length);
-  metaSalt.set(envIdBytes, 0); metaSalt.set(metaIv, envIdBytes.length);
-  
-  var metaKey = await crypto.subtle.deriveKey(
-    { name: 'HKDF', hash: 'SHA-256', salt: metaSalt, info: te.encode('LOWNET:ENVF:META') },
-    keyMat, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
-  );
-  
-  var metaAad = te.encode(canonicalize(headerForMetaAad));
-  var metaPt;
-  try {
-    metaPt = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: metaIv, additionalData: metaAad },
-      metaKey, unb64(header.env_file_meta.ct)
-    );
-  } catch(e) {
-    throw new Error('Metadata decryption failed (wrong key or tampered header)');
-  }
-  
-  var fileMeta = JSON.parse(td.decode(metaPt));
-  
-  // Now reconstruct header WITH env_file_meta for file AAD
-  // Note: env_file was NOT in the header when file was encrypted (added after encryption)
-  headerForMetaAad.env_file_meta = header.env_file_meta;
-  
-  // --- Decrypt file content ---
-  var fileIv = unb64(header.env_file.iv);
-  var fileSalt = new Uint8Array(envIdBytes.length + fileIv.length);
-  fileSalt.set(envIdBytes, 0); fileSalt.set(fileIv, envIdBytes.length);
-  
-  var fileKey = await crypto.subtle.deriveKey(
-    { name: 'HKDF', hash: 'SHA-256', salt: fileSalt, info: te.encode('LOWNET:ENVF:FILE') },
-    keyMat, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
-  );
-  
-  var fileAad = te.encode(canonicalize(headerForMetaAad));
-  var filePt;
-  try {
-    filePt = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: fileIv, additionalData: fileAad },
-      fileKey, ctBytes
-    );
-  } catch(e) {
-    throw new Error('File decryption failed (wrong key or corrupted data)');
-  }
-  
-  // --- Remove padding if present ---
-  if (fileMeta._padded && fileMeta.size && filePt.byteLength > fileMeta.size) {
-    filePt = filePt.slice(0, fileMeta.size);
-  }
-  
-  // Verify inner signature (private mode)
-  // v1.1.3: the sender inside a private file is shown only after its signature held. A file that
-  // carried a sender without one, or without the file hash it signs, used to show that sender anyway.
-  var sender = null;
-  if (isPrivate) {
-    if (!fileMeta._sender || typeof fileMeta._sender.sign !== 'string' || !fileMeta._sender_sig || !fileMeta._file_hash) {
-      throw new Error('Missing inner auth');
-    }
-    sender = fileMeta._sender;
-    var fileHash = await sha256(new Uint8Array(filePt));
-    var computedHash = bytesToHex(fileHash);
-    if (computedHash !== fileMeta._file_hash) {
-      throw new Error('File hash mismatch (content may be corrupted)');
-    }
-    var innerPub = unb64(fileMeta._sender.sign.slice(8));
-    var innerKey = await crypto.subtle.importKey('raw', innerPub, 'Ed25519', false, ['verify']);
-    var sigData = header.env_id + '|' + header.env_timestamp + '|' + fileMeta._file_hash;
-    var innerValid = await crypto.subtle.verify('Ed25519', innerKey, unb64(fileMeta._sender_sig), te.encode(sigData));
-    if (!innerValid) throw new Error('Invalid inner signature (sender auth failed)');
-  } else {
-    sender = header.env_sender;
-  }
+  // v1.1.4: what the card shows and the download uses must be text. No version writes anything else here. A value
+  // without a text form used to pass as valid and threw only in the display.
+  if (typeof fileMeta.name !== 'string') throw new Error('Invalid file name');
+  if (fileMeta.type !== undefined && fileMeta.type !== null && typeof fileMeta.type !== 'string') throw new Error('Invalid file type');
+  if (sender.name !== undefined && sender.name !== null && typeof sender.name !== 'string') throw new Error('Invalid sender name');
   
   // v1.1.3: the fingerprint shown is the signing key's. A different one written beside the key
   // means the file claims another sender, and it is refused, as ENV-1.2 does.
@@ -2261,17 +2545,12 @@ async function decryptFileEnvelope(identity, fileBuffer) {
   if (sender.fp && sender.fp !== senderKeyFp) throw new Error('Sender fingerprint mismatch');
   sender = Object.assign({}, sender, { fp: senderKeyFp });
   
-  // Verify sender license (shareware check)
-  var senderLicensed = false;
-  if (header.env_license) {
-    try {
-      var licResult = await verifyLicense('LN-PRO-' + header.env_license);
-      senderLicensed = licResult.valid;
-    } catch(e) { /* invalid = unlicensed */ }
-  }
-  
-  return {
-    valid: true,
+  // v1.1.4: valid only for ENV-F-2 after the whole check (signature over header and content hash, the
+  // hash recomputed from the bytes). An ENV-F-1 file opens, but says what its signature leaves out.
+  var result = {
+    valid: isV2 && opened.complete === true,
+    format: header.env_version,
+    olderFormat: !isV2,
     fileName: fileMeta.name,
     fileType: fileMeta.type || 'application/octet-stream',
     fileSize: filePt.byteLength,
@@ -2279,9 +2558,14 @@ async function decryptFileEnvelope(identity, fileBuffer) {
     sender: sender,
     privateMode: isPrivate,
     timestamp: header.env_timestamp,
-    envId: header.env_id,
-    senderLicensed: senderLicensed
+    envId: header.env_id
   };
+  if (!isV2) {
+    result.note = isPrivate
+      ? 'Older format (ENV-F-1): the sender signed the file content, not its name and type or the recipients. A recipient could have renamed it or passed it on.'
+      : 'Older format (ENV-F-1): the sender signed the header, not the file content. Another recipient could have replaced the content.';
+  }
+  return result;
 }
 
 
@@ -2319,9 +2603,11 @@ function isPremium() {
 }
 
 async function loadLicense() {
+  var current = licenseSlot();
   var stored = localStorage.getItem('lownet_license');
   if (stored) {
     var result = await verifyLicense(stored);
+    if (!current()) return;
     licenseState = result;
     updateLicenseUI();
   } else {
@@ -2339,6 +2625,8 @@ function updateLicenseUI() {
   var btnRemove = $('btn-remove-license');
   var fileBadge = $('file-pro-badge');
   var decryptBadge = $('decrypt-pro-badge');
+  // v1.2: opening files is free, so the decrypt card carries no PRO mark
+  decryptBadge.style.display = 'none';
   var fileTemplate = document.querySelector('.template-item[data-template="file"]');
   if (licenseState.valid) {
     status.className = 'active';
@@ -2394,11 +2682,7 @@ function hidePremiumModal() {
 }
 
 // RENDER FUNCTIONS
-function renderVault(){
-  vaultList().then(function(items){
-    var list=$('vault-list');
-    if(items.length===0){list.innerHTML='<div class="list-empty">No items</div>';return}
-    list.innerHTML=items.map(function(item){
+function vaultRow(item){
       var d=item.data,isEnv=d.env_version==='ENV-1.1'||d.env_version==='ENV-1.2',isScp=d.scp1_version;
       // Type labels: statement, commitment, attestation, envelope, lora
       var type;
@@ -2411,17 +2695,30 @@ function renderVault(){
       else type='notice';
       var title=isScp?'Hash: '+(d.payload_hash||'').slice(0,16)+'...':isEnv?'To: '+(d.env_recipient_fp||d.env_recipient_hint||'private').slice(0,11):(d.ln_payload&&d.ln_payload.title?d.ln_payload.title:(d.ln_payload&&d.ln_payload.content?d.ln_payload.content.slice(0,40):'Untitled'));
       var time=(isScp?d.timestamp:isEnv?d.env_timestamp:d.ln_timestamp||item.savedAt||'').slice(0,16).replace('T',' ');
-      var hasPow=d.ln_pow&&(d.ln_pow.type==='sequential-v2'||d.ln_pow.type==='sequential');
+      var hasPow=d.ln_pow&&d.ln_pow.type==='sequential-v2';
       return'<div class="list-item" data-id="'+item.id+'" style="display:flex;align-items:center;"><div style="flex:1;display:flex;align-items:center;gap:12px;cursor:pointer;" class="vault-item-click"><div class="list-type">'+escapeHtml(type)+'</div><div class="list-info"><div class="list-title">'+escapeHtml(title)+'</div><div class="list-meta">'+escapeHtml(time)+(hasPow?' · PoW':'')+(isScp?' · 110B':'')+'</div></div></div><button class="vault-delete" data-id="'+item.id+'" style="width:20px;height:20px;padding:0;margin-left:8px;font-size:11px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;opacity:0.5;border-radius:4px;" title="Delete">✕</button></div>';
-    }).join('');
+}
+// v1.1.4: an item that cannot be shown keeps a row to delete it. It must not take the rest of the vault with it.
+function vaultRowSafe(item){
+  try{return vaultRow(item)}catch(e){return'<div class="list-item" data-id="'+item.id+'" style="display:flex;align-items:center;"><div class="list-info" style="flex:1;"><div class="list-title">Unreadable item</div></div><button class="btn btn-secondary btn-small vault-delete" data-id="'+item.id+'">Delete</button></div>'}
+}
+function openVaultItem(id){
+  var current=verifyFileSlot();
+  vaultList().then(function(all){
+    if(!current())return;
+    var item=all.find(function(i){return i.id===parseInt(id)});
+    if(item){setVerifyInput(JSON.stringify(item.data,null,2));showTab('verify')}
+  }).catch(function(e){if(current())showStatus('Error: '+e.message,'error')});
+}
+function renderVault(){
+  var current=vaultSlot();
+  vaultList().then(function(items){
+    if(!current())return;
+    var list=$('vault-list');
+    if(items.length===0){list.innerHTML='<div class="list-empty">No items</div>';return}
+    list.innerHTML=items.map(vaultRowSafe).join('');
     list.querySelectorAll('.vault-item-click').forEach(function(el){
-      el.onclick=function(){
-        var id=el.parentElement.dataset.id;
-        vaultList().then(function(all){
-          var item=all.find(function(i){return i.id===parseInt(id)});
-          if(item){$('verify-input').value=JSON.stringify(item.data,null,2);showTab('verify')}
-        });
-      };
+      el.onclick=function(){openVaultItem(el.parentElement.dataset.id)};
     });
     list.querySelectorAll('.vault-delete').forEach(function(btn){
       btn.onclick=function(e){
@@ -2437,11 +2734,13 @@ function renderVault(){
         });
       };
     });
-  });
+  }).catch(function(e){if(current())listFailed($('vault-list'),e)});
 }
 
 function renderKeys(){
+  var current=keysSlot();
   keysList().then(function(keys){
+    if(!current())return;
     var list=$('keys-list');
     if(keys.length===0){list.innerHTML='<div class="list-empty">No identities</div>';identities=[];return}
     identities=[];
@@ -2466,8 +2765,15 @@ function renderKeys(){
       var actionBtn=isUnlocked
         ?'<button class="btn btn-secondary" data-action="lock" data-id="'+rid+'">Lock</button>'
         :'<button class="btn btn-accent" data-action="unlock" data-id="'+rid+'">Unlock</button>';
-      return'<div class="key-card"><div class="key-card-header"><div class="key-card-name">'+escapeHtml(record.name)+'</div><div class="key-card-fp">'+escapeHtml(record.fp)+'</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;"><span style="font-size:9px;color:var(--text-muted);">Seq: '+(record.seq||0)+(hasBiometric?' · Bio':'')+'</span><span class="key-status '+statusClass+'">'+statusText+'</span></div><div class="key-card-actions">'+actionBtn+biometricBtn+'<button class="btn btn-secondary" data-action="copy" data-id="'+rid+'">Copy Pub</button><button class="btn btn-secondary" data-action="qr" data-id="'+rid+'">QR</button><button class="btn btn-secondary" data-action="delete" data-id="'+rid+'">Delete</button></div></div>';
+      return'<div class="key-card"><div class="key-card-header"><div class="key-card-name">'+escapeHtml(record.name)+'</div><div class="key-card-fp" data-fp-id="'+rid+'">'+escapeHtml(record.fp)+'</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;"><span style="font-size:9px;color:var(--text-muted);">Seq: '+(record.seq||0)+(hasBiometric?' · Bio':'')+'</span><span class="key-status '+statusClass+'">'+statusText+'</span></div><div class="key-card-actions">'+actionBtn+biometricBtn+'<button class="btn btn-secondary" data-action="copy" data-id="'+rid+'">Copy Pub</button><button class="btn btn-secondary" data-action="qr" data-id="'+rid+'">QR</button><button class="btn btn-secondary" data-action="delete" data-id="'+rid+'">Delete</button></div></div>';
     }).join('');
+    // v1.2 (finding F-5): an unlocked identity shows the 128-bit fingerprint others compare; a locked one only its index
+    session.unlocked.forEach(function(loaded,key){
+      longFingerprint(loaded.sign.pub).then(function(l){
+        if(!current())return;
+        var cells=list.querySelectorAll('[data-fp-id]');for(var i=0;i<cells.length;i++)if(cells[i].dataset.fpId===key||cells[i].dataset.fpId===loaded.id)cells[i].textContent=l;
+      },function(){});
+    });
     // Event delegation for key actions
     list.querySelectorAll('button[data-action]').forEach(function(btn){
       btn.addEventListener('click',function(e){
@@ -2485,7 +2791,7 @@ function renderKeys(){
       });
     });
     renderLockStatus();
-  });
+  }).catch(function(e){if(current())listFailed($('keys-list'),e)});
 }
 
 function renderIdentityList(){
@@ -2514,8 +2820,10 @@ function renderIdentityList(){
 
 function updateSecurityLevel(){
   var el=$('security-level');
+  var current=securitySlot();
   if(!selectedIdentityId){el.classList.add('hide');return}
   keysList().then(function(keys){
+    if(!current())return;
     var record=keys.find(function(k){return k.id===selectedIdentityId});
     if(!record){el.classList.add('hide');return}
     el.classList.remove('hide');
@@ -2533,11 +2841,13 @@ function updateSecurityLevel(){
       $('security-level-icon').innerHTML='<svg viewBox="0 0 24 24" fill="var(--warning)" width="14" height="14"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
       $('security-level-text').innerHTML='<span style="color:var(--warning);font-weight:500;">Level 1</span> <span style="color:var(--text-muted);">Enable biometric in Keys for stronger security</span>';
     }
-  });
+  }).catch(function(e){if(current()){el.classList.add('hide');showStatus('Error: '+e.message,'error')}});
 }
 
 function renderContacts(){
+  var current=contactsSlot();
   contactsList().then(function(contacts){
+    if(!current())return;
     var list=$('contacts-list');
     if(contacts.length===0){
       list.innerHTML='<div class="list-empty" style="padding:20px;font-size:11px;">No contacts saved</div>';
@@ -2568,7 +2878,7 @@ function renderContacts(){
         $('contact-delete-modal').style.display='flex';
       };
     });
-  });
+  }).catch(function(e){if(current())listFailed($('contacts-list'),e)});
 }
 
 var pendingContactDeleteId=null;
@@ -2578,7 +2888,9 @@ var pendingUnlockId=null;
 
 function promptUnlock(id){
   console.log('promptUnlock called with id:', id);
+  var current=unlockSlot();
   keysList().then(function(keys){
+    if(!current())return;
     console.log('keysList returned:', keys.length, 'keys');
     var record=keys.find(function(k){return k.id===id});
     console.log('Found record:', record ? record.name : 'NOT FOUND');
@@ -2589,10 +2901,11 @@ function promptUnlock(id){
     $('unlock-modal').classList.remove('hide');
     $('unlock-modal').style.display='flex';
     setTimeout(function(){$('unlock-modal-pass').focus()},100);
-  }).catch(function(e){console.error('promptUnlock error:', e)});
+  }).catch(function(e){if(current())showStatus('Error: '+e.message,'error')});
 }
 
 $('btn-unlock-cancel').onclick=function(){
+  unlockSlot(); // v1.1.4: a passphrase already on its way must not unlock after Cancel
   $('unlock-modal').classList.add('hide');
   $('unlock-modal').style.display='none';
   pendingUnlockId=null;
@@ -2614,11 +2927,14 @@ $('btn-unlock-confirm').onclick=function(){
     return;
   }
   
+  var current=unlockSlot();
   keysList().then(function(keys){
+    if(!current())return;
     var record=keys.find(function(k){return k.id===pendingUnlockId});
     if(!record||!record.enc)return;
-    decryptIdentity(record.enc,pass).then(function(data){
+    return decryptIdentity(record.enc,pass).then(function(data){
       return loadIdentityKeys(data).then(function(loaded){
+        if(!current())return;
         loaded.seq=record.seq||0;
         loaded.prevHash=record.prevHash||null;
         loaded.lastSignTime=record.lastSignTime||0;
@@ -2632,8 +2948,8 @@ $('btn-unlock-confirm').onclick=function(){
         renderLockStatus();
         showStatus('Unlocked');
       });
-    }).catch(function(){showStatus('Wrong passphrase','error')});
-  });
+    }).catch(function(){if(current())showStatus('Wrong passphrase','error')});
+  }).catch(function(e){if(current())showStatus('Error: '+e.message,'error')});
 };
 
 $('unlock-modal-pass').onkeydown=function(e){if(e.key==='Enter')$('btn-unlock-confirm').click()};
@@ -2821,6 +3137,8 @@ function resetCreateForm(){
   $('notice-title').value='';
   $('notice-content').value='';
   $('recipient-key').value='';
+  delete $('recipient-key').dataset.parsed;
+  recipientSlot();fileRecipientSlot();pendingFilesSlot();publishSlot();
   $('recipient-fp').textContent='No recipient';
   if($('att-subject'))$('att-subject').value='';
   if($('att-scope'))$('att-scope').value='';
@@ -2891,11 +3209,16 @@ $('lock-status').onclick=function(){
   }
 };
 function showTab(tabId){document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});var tabEl=document.querySelector('[data-tab="'+tabId+'"]');if(tabEl)tabEl.classList.add('active');var contentEl=$('tab-'+tabId);if(contentEl)contentEl.classList.add('active');if(tabId==='vault')renderVault();if(tabId==='keys'){renderKeys();renderContacts()}if(tabId==='create')renderIdentityList()}
-function setCreateStep(step){var steps=document.querySelectorAll('.step');steps.forEach(function(s,i){s.classList.remove('active','done');if(i+1<step)s.classList.add('done');if(i+1===step)s.classList.add('active')});for(var i=1;i<=4;i++){var el=$('create-step-'+i);if(el)el.classList.toggle('hide',i!==step)}if(step===3)startWaitTimer();else stopWaitTimer()}
+// v1.1.4: while a signature runs the form stands still. The timer used to re-enable the button after a second, and Back
+// let a result arrive in a form that had changed. There is nothing to discard: every run ends in step 4 or in an error.
+var signing=false;
+function signingDone(){signing=false;$('btn-step3-back').disabled=false;$('btn-step3-sign').disabled=false}
+function setCreateStep(step){if(step===4)signingDone();var steps=document.querySelectorAll('.step');steps.forEach(function(s,i){s.classList.remove('active','done');if(i+1<step)s.classList.add('done');if(i+1===step)s.classList.add('active')});for(var i=1;i<=4;i++){var el=$('create-step-'+i);if(el)el.classList.toggle('hide',i!==step)}if(step===3)startWaitTimer();else stopWaitTimer()}
 var waitTimerInterval=null;
 function startWaitTimer(){stopWaitTimer();updateWaitTimer();waitTimerInterval=setInterval(updateWaitTimer,1000)}
 function stopWaitTimer(){if(waitTimerInterval){clearInterval(waitTimerInterval);waitTimerInterval=null}}
 function updateWaitTimer(){
+  if(signing)return;
   var identity=identities.find(function(i){return i.id===selectedIdentityId});
   var btn=$('btn-step3-sign');
   if(!identity){$('pow-wait').classList.add('hide');btn.textContent=selectedTemplate==='file'?'Encrypt':'Sign with PoW';return}
@@ -2944,7 +3267,7 @@ document.querySelectorAll('.template-item').forEach(function(t){
     $('lora-fields').classList.toggle('hide',selectedTemplate!=='lora');
     $('default-fields').classList.toggle('hide',selectedTemplate==='attestation'||selectedTemplate==='lora'||selectedTemplate==='file');
     $('file-fields').classList.toggle('hide',selectedTemplate!=='file');
-    if(selectedTemplate==='file'){$('envelope-recipient').classList.add('hide');$('details-subtitle').textContent='Encrypted File (ENV-F-1)';$('publish-divider').classList.add('hide');$('publish-toggle-row').classList.add('hide')}
+    if(selectedTemplate==='file'){$('envelope-recipient').classList.add('hide');$('details-subtitle').textContent='Encrypted File (ENV-F-2)';$('publish-divider').classList.add('hide');$('publish-toggle-row').classList.add('hide')}
     else{$('publish-divider').classList.remove('hide');$('publish-toggle-row').classList.remove('hide');if(selectedTemplate==='envelope')$('details-subtitle').textContent='Encrypted (ENV-1.2)';else if(selectedTemplate==='attestation')$('details-subtitle').textContent='ISO format';else if(selectedTemplate==='lora')$('details-subtitle').textContent='SCP-1 Packet (~110 bytes)';else $('details-subtitle').textContent='Enter content'}
   };
 });
@@ -2952,17 +3275,25 @@ document.querySelectorAll('.template-item').forEach(function(t){
 $('btn-step1-next').onclick=function(){if(selectedTemplate)setCreateStep(2)};
 $('btn-step2-back').onclick=function(){setCreateStep(1)};
 $('btn-step2-next').onclick=function(){if(selectedTemplate==='file'){if(pendingFiles.length===0){showStatus('Select a file','error');return}if(!$('file-recipient-key').dataset.parsed&&fileRecipients.length===0){showStatus('Set recipient key','error');return}}else if(selectedTemplate==='attestation'){var subject=$('att-subject').value.trim(),statement=$('att-statement').value.trim();if(!subject){showStatus('Enter subject','error');return}if(!statement){showStatus('Enter statement','error');return}}else if(selectedTemplate==='lora'){var payload=$('lora-payload').value.trim();if(!payload){showStatus('Enter payload','error');return}}else{var content=$('notice-content').value.trim();if(!content){showStatus('Enter content','error');return}if(selectedTemplate==='envelope'){if(!$('recipient-key').dataset.parsed){showStatus('Invalid recipient','error');return}}}setCreateStep(3);renderIdentityList();var showPow=selectedTemplate!=='file'&&selectedTemplate!=='envelope'&&isPremium();$('pow-custom-row').classList.toggle('hide',!showPow);if(showPow)updatePowInfo()};
-function updatePowInfo(){var m=parseInt($('pow-multiplier').value)||1;var identity=identities.find(function(i){return i.id===selectedIdentityId});var seq=identity?(identity.seq||0)+1:1;var base=requiredRounds(seq);var total=base*m;$('pow-custom-info').textContent=total.toLocaleString()+' rounds'+(m>1?' ('+m+'× base)':'')}
+function updatePowInfo(){var m=parseInt($('pow-multiplier').value)||1;var identity=identities.find(function(i){return i.id===selectedIdentityId});var seq=identity?(identity.seq||0)+1:1;var base=requiredRounds(seq);var total=Math.min(base*m,ABS_MAX_ROUNDS);$('pow-custom-info').textContent=total.toLocaleString()+' rounds'+(m>1?' ('+m+'× base)':'')}
 $('pow-multiplier').onchange=updatePowInfo;
 $('btn-step3-back').onclick=function(){setCreateStep(2)};
 
-$('btn-step3-sign').onclick=async function(){
+// v1.1.4: whatever fails on the way, the lock ends with it. requireSigningAuth reads IndexedDB before anything else, and a
+// rejection there, or anything thrown before a run has its own .catch, used to leave Sign and Back locked until reload.
+$('btn-step3-sign').onclick=function(){
+  return signSelected().catch(function(e){signingDone();$('pow-status').classList.add('hide');showStatus('Error: '+e.message,'error');updateWaitTimer()});
+};
+async function signSelected(){
   var identity=identities.find(function(i){return i.id===selectedIdentityId});
   if(!identity){showStatus('Select identity','error');return}
+  if(signing)return;
+  signing=true;$('btn-step3-sign').disabled=true;$('btn-step3-back').disabled=true;
   
   // Level 2 Security: Require biometric verification before signing
   var authResult=await requireSigningAuth(identity.id);
   if(!authResult.success){
+    signingDone();
     showStatus(authResult.error,'error');
     return;
   }
@@ -3003,13 +3334,13 @@ $('btn-step3-sign').onclick=async function(){
         setCreateStep(4);
         $('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';
       });
-    }).catch(function(e){showStatus('Error: '+e.message,'error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';updateWaitTimer()});
+    }).catch(function(e){signingDone();showStatus('Error: '+e.message,'error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';updateWaitTimer()});
     return;
   }
   
   // File encryption - no PoW, direct ECDH + AES-GCM (supports batch)
   if(selectedTemplate==='file'){
-    if(pendingFiles.length===0){showStatus('Select a file first','error');return}
+    if(pendingFiles.length===0){signingDone();showStatus('Select a file first','error');return}
     // Collect all recipients (list + current input)
     var allRecipients = fileRecipients.map(function(r) { return r.pub; });
     var currentParsed = $('file-recipient-key').dataset.parsed;
@@ -3017,7 +3348,7 @@ $('btn-step3-sign').onclick=async function(){
       var cp = JSON.parse(currentParsed);
       if (!allRecipients.some(function(r) { return r.fp === cp.fp; })) allRecipients.push(cp);
     }
-    if (allRecipients.length === 0) { showStatus('Invalid recipient', 'error'); return; }
+    if (allRecipients.length === 0) { signingDone(); showStatus('Invalid recipient', 'error'); return; }
     var fileRecipient = allRecipients[0]; // for display
     $('btn-step3-sign').disabled=true;
     var total=pendingFiles.length;
@@ -3045,8 +3376,8 @@ $('btn-step3-sign').onclick=async function(){
         }
         addInfoRow(info,'Recipient'+(allRecipients.length>1?'s':''),allRecipients.length>1?allRecipients.length+' recipients':fileRecipient.fp||'Set');
         addInfoRow(info,'Mode',(settings.envPrivacy||'public'));
-        addInfoRow(info,'Forward Secrecy','Yes (ephemeral ECDH per file)');
-        addInfoRow(info,'License',licenseState.valid?'PRO \u2713':'Unlicensed \u2014 recipient will see a notice');
+        addInfoRow(info,'Forward Secrecy','Sender side only (ephemeral ECDH per file)');
+        addInfoRow(info,'Format','ENV-F-2 \u00b7 opens in toolkit 1.2 or newer');
         if(total===1)addInfoRow(info,'ID',firstResult.header.env_id);
         // Batch file list
         if(total>1){
@@ -3062,7 +3393,7 @@ $('btn-step3-sign').onclick=async function(){
         }
         $('file-output-subtitle').textContent=total>1?total+' files \u2192 .lownet.enc':firstResult.origName+' \u2192 '+firstResult.fileName;
         keysList().then(function(keys){var record=keys.find(function(k){return k.id===identity.id});if(record){record.lastSignTime=identity.lastSignTime;keysAdd(record)}});
-        $('output-subtitle').textContent='ENV-F-1 Encrypted File'+(total>1?'s':'');
+        $('output-subtitle').textContent='ENV-F-2 Encrypted File'+(total>1?'s':'');
         $('signed-output').value=total===1?JSON.stringify(firstResult.header,null,2):JSON.stringify(encryptedFiles.map(function(f){return{file:f.origName,id:f.header.env_id,size:f.totalSize}}),null,2);
         setCreateStep(4);$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Encrypt';
         return;
@@ -3072,7 +3403,7 @@ $('btn-step3-sign').onclick=async function(){
       encryptFileEnvelope(identity,allRecipients,pf.buffer,pf.name,pf.type).then(function(result){
         encryptedFiles.push({blob:result.blob,fileName:result.fileName,totalSize:result.totalSize,header:result.header,origName:pf.name,origSize:pf.size});
         idx++;encryptNext();
-      }).catch(function(e){showStatus('Error encrypting '+pf.name+': '+e.message,'error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Encrypt';updateWaitTimer()});
+      }).catch(function(e){signingDone();showStatus('Error encrypting '+pf.name+': '+e.message,'error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Encrypt';updateWaitTimer()});
     }
     encryptNext();
     return;
@@ -3081,7 +3412,7 @@ $('btn-step3-sign').onclick=async function(){
   $('pow-status').classList.remove('hide');$('btn-step3-sign').disabled=true;$('pow-value').textContent='0%';$('pow-progress').style.width='0%';$('pow-detail').textContent='';function onProgress(i,total,elapsed){var pct=Math.round(i/total*100);$('pow-value').textContent=pct+'%';$('pow-progress').style.width=pct+'%';$('pow-detail').textContent=i.toLocaleString()+' / '+total.toLocaleString()+' · '+(elapsed/1000).toFixed(1)+'s'}
   var powMult=isPremium()?parseInt($('pow-multiplier').value)||1:1;
   var links=linkedNotices.length>0?linkedNotices.slice():null;
-  var promise;if(selectedTemplate==='envelope'){var recipient=$('recipient-key').dataset.parsed?JSON.parse($('recipient-key').dataset.parsed):null;if(!recipient){showStatus('Invalid recipient','error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';return}var content={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=encryptEnvelope(identity,recipient,content).then(function(env){return{notice:env,receipt:null}});$('output-subtitle').textContent='ENV-1.2 Envelope'}else if(selectedTemplate==='attestation'){var payload={subject:$('att-subject').value.trim(),scope:$('att-scope').value.trim()||null,control_ref:$('att-control').value.trim()||null,evidence_ref:$('att-evidence').value.trim()||null,valid_from:$('att-valid-from').value||null,valid_until:$('att-valid-until').value||null,statement:$('att-statement').value.trim()};promise=signNotice(identity,'attestation',payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Attestation'}else{var payload={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=signNotice(identity,selectedTemplate,payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Notice'}
+  var promise;if(selectedTemplate==='envelope'){var recipient=$('recipient-key').dataset.parsed?JSON.parse($('recipient-key').dataset.parsed):null;if(!recipient){signingDone();$('pow-status').classList.add('hide');showStatus('Invalid recipient','error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';return}var content={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=encryptEnvelope(identity,recipient,content).then(function(env){return{notice:env,receipt:null}});$('output-subtitle').textContent='ENV-1.2 Envelope'}else if(selectedTemplate==='attestation'){var payload={subject:$('att-subject').value.trim(),scope:$('att-scope').value.trim()||null,control_ref:$('att-control').value.trim()||null,evidence_ref:$('att-evidence').value.trim()||null,valid_from:$('att-valid-from').value||null,valid_until:$('att-valid-until').value||null,statement:$('att-statement').value.trim()};promise=signNotice(identity,'attestation',payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Attestation'}else{var payload={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=signNotice(identity,selectedTemplate,payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Notice'}
   promise.then(function(result){
     var output=result.notice;
     var receipt=result.receipt;
@@ -3098,19 +3429,22 @@ $('btn-step3-sign').onclick=async function(){
     linkedNotices=[];
     // Update lastSignTime for all types (including envelope)
     if(output.env_version){identity.lastSignTime=Date.now()}
-    keysList().then(function(keys){var record=keys.find(function(k){return k.id===identity.id});if(record){record.seq=identity.seq;record.prevHash=identity.prevHash;record.lastSignTime=identity.lastSignTime;keysAdd(record)}});$('btn-qr-packet').classList.remove('hide');setCreateStep(4);if(publishEnabled&&publicServerUrl&&!output.env_version){autoPublish(output)}}).catch(function(e){showStatus('Error: '+e.message,'error');$('pow-status').classList.add('hide');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';updateWaitTimer()})};
+    keysList().then(function(keys){var record=keys.find(function(k){return k.id===identity.id});if(record){record.seq=identity.seq;record.prevHash=identity.prevHash;record.lastSignTime=identity.lastSignTime;keysAdd(record)}});$('btn-qr-packet').classList.remove('hide');setCreateStep(4);if(publishEnabled&&publicServerUrl&&!output.env_version){autoPublish(output)}}).catch(function(e){signingDone();showStatus('Error: '+e.message,'error');$('pow-status').classList.add('hide');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';updateWaitTimer()})}
 
 async function autoPublish(notice){
+  var current=publishSlot();
   $('publish-status-card').classList.remove('hide');
   $('publish-status-title').textContent='Publishing...';
   $('publish-status-detail').textContent=RELAY_URL;
   $('publish-status-icon').innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="animation:spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>';
   try{
     var result=await publishToServer(notice);
+    if(!current())return;
     $('publish-status-icon').innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
-    $('publish-status-title').textContent='Published';
-    $('publish-status-detail').textContent='ID: '+(result.id||notice.ln_id);
+    $('publish-status-title').textContent=result._withoutBind?'Published · without ln_bind':'Published';
+    $('publish-status-detail').textContent='ID: '+(result.id||notice.ln_id)+(result._withoutBind?' · the board runs an older node: its copy reads as older format':'');
   }catch(e){
+    if(!current())return;
     $('publish-status-icon').innerHTML='<svg viewBox="0 0 24 24" fill="var(--error)" width="20" height="20"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
     $('publish-status-title').textContent='Publish failed';
     var msg=e.message;
@@ -3146,9 +3480,14 @@ $('btn-save-vault').onclick=function(){vaultAdd(JSON.parse($('signed-output').va
 $('btn-create-new').onclick=function(){resetCreateForm()};
 
 $('recipient-key').oninput=function(){
+  // v1.1.4: what was parsed belongs to the old text. It used to stay when the field was emptied, and an older paste that
+  // finished later replaced the newer recipient, so the envelope went to someone not in the field.
+  var current=recipientSlot();
+  delete $('recipient-key').dataset.parsed;
   var val=$('recipient-key').value.trim();
   if(!val){$('recipient-fp').textContent='No recipient';$('recipient-fp').style.color='var(--text-muted)';return}
   parseRecipientInput(val).then(function(pub){
+    if(!current())return;
     if(pub&&pub.dh){
       // Valid recipient - show FP if available, otherwise show "Ready"
       if(pub.fp){
@@ -3164,12 +3503,12 @@ $('recipient-key').oninput=function(){
       $('recipient-fp').style.color='var(--error)';
       delete $('recipient-key').dataset.parsed;
     }
-  });
+  }).catch(function(){if(current()){$('recipient-fp').textContent='Invalid format';$('recipient-fp').style.color='var(--error)'}});
 };
 
 // VERIFY
 $('btn-load-verify').onclick=function(){$('file-verify').click()};
-$('file-verify').onchange=function(e){if(e.target.files&&e.target.files[0])e.target.files[0].text().then(function(t){$('verify-input').value=t});e.target.value=''};
+$('file-verify').onchange=function(e){if(e.target.files&&e.target.files[0]){var current=verifyFileSlot();e.target.files[0].text().then(function(t){if(current())setVerifyInput(t)}).catch(function(err){if(current())showStatus('Error: '+err.message,'error')})}e.target.value=''};
 
 // DOM-BASED VERIFY DETAILS (no innerHTML for user data)
 function addInfoRow(parent,label,value){
@@ -3181,19 +3520,27 @@ function addInfoRow(parent,label,value){
 
 function renderVerifyDetails(box,data,result){
   box.textContent='';
-  if(result.payload){
+  if(result.sender){
     addInfoRow(box,'Type','Envelope');
     addInfoRow(box,'From',(result.sender&&result.sender.name)||'Anonymous');
     addInfoRow(box,'FP',(result.sender&&result.sender.fp)||'-');
+    // v1.2 (finding F-5): the short FP is an index (48 bit). People compare the long one.
+    if(result.sender&&result.sender.longFp)addInfoRow(box,'Fingerprint',result.sender.longFp);
+    if(result.olderFormat)addInfoRow(box,'Format',data.env_version+' (older format)');
   }else{
     addInfoRow(box,'Type',data.ln_type||'-');
     addInfoRow(box,'Signer',(data.ln_signer&&data.ln_signer.name)||'Anonymous');
     addInfoRow(box,'FP',result.derivedFingerprint);
-    addInfoRow(box,'Time',data.ln_timestamp);
+    if(result.longFingerprint)addInfoRow(box,'Fingerprint',result.longFingerprint);
+    addInfoRow(box,'Time',data.ln_timestamp+' (stated by the signer)');
+    addInfoRow(box,'Chain and links',result.bound?'Covered by the signature (ln_bind)':'Not covered by a signature (older format)');
     if(result.pow){
-      addInfoRow(box,'PoW Rounds',result.pow.r.toLocaleString()+(result.pow.expectedR?' (min '+result.pow.expectedR.toLocaleString()+')':''));
+      // v1.1.4: the classic format has bits, not rounds. The missing r threw here, after the badge said Valid,
+      // and the card kept the content of the previous result beside the new signer.
+      if(result.pow.r===undefined)addInfoRow(box,'PoW Bits',String(result.pow.bits));
+      else addInfoRow(box,'PoW Rounds',result.pow.r.toLocaleString()+(result.pow.expectedR?' (min '+result.pow.expectedR.toLocaleString()+')':''));
       if(result.pow.unverified){
-        addInfoRow(box,'PoW Status','⚠ Not verified locally ('+result.pow.r.toLocaleString()+' rounds > '+(result.pow.threshold||VERIFY_SKIP_ROUNDS).toLocaleString()+' threshold)');
+        addInfoRow(box,'PoW Status',result.pow.reason==='below minimum'?'⚠ Below the minimum for this sequence number':result.pow.reason==='stopped'?'⚠ Check did not finish, run it again':'⚠ Not verified locally ('+result.pow.r.toLocaleString()+' rounds > '+(result.pow.threshold||VERIFY_SKIP_ROUNDS).toLocaleString()+' threshold)');
       }else if(result.pow.recomputedTime){
         addInfoRow(box,'Verify Time',(result.pow.recomputedTime/1000).toFixed(1)+'s (local)');
       }
@@ -3202,14 +3549,96 @@ function renderVerifyDetails(box,data,result){
   }
 }
 
-$('btn-verify').onclick=function(){var input=$('verify-input').value.trim();if(!input){showStatus('Paste JSON','error');return}var data;try{data=JSON.parse(input)}catch(e){showStatus('Invalid JSON','error');return}var badge=$('verify-badge'),checkSvg='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>',xSvg='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',warnSvg='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>',promise;
+// v1.1.4: what the card shows belongs to this one check. It is emptied first, a later check outdates an earlier one
+// (verifyRun), and what cannot be shown ends as an error. Before, a render that threw halfway left a green badge and a
+// new signer beside the previous content, and a slow check could overwrite the answer to a later one.
+var verifyRun=0;
+
+// v1.2 (finding F-5): a valid signature says which key signed, not that it is someone you expect. The card says
+// whether the key is yours or a contact's, and turns amber for any other key. It also notes an envelope that was
+// opened here before: a copy stays valid until it expires, so a repeat is shown, not hidden.
+function sameSignKey(a,b){if(typeof a!=='string'||typeof b!=='string')return false;var x=a.indexOf('ed25519:')===0?a.slice(8):a,y=b.indexOf('ed25519:')===0?b.slice(8):b;return x.length>0&&x===y}
+function knownSender(signKey){
+  var own=false;session.unlocked.forEach(function(id){if(id&&id.sign&&sameSignKey('ed25519:'+id.sign.pub,signKey))own=true});
+  if(own)return Promise.resolve('self');
+  return contactsList().then(function(cs){return cs.some(function(c){return sameSignKey(c.sign,signKey)})?'contact':null}).catch(function(){return null});
+}
+// v1.2: who a sender key belongs to here: {kind:'self'|'contact'|null, name: the name you stored}. The contact list
+// is read with a time limit: what is not known in time counts as unknown (amber), never as known.
+function senderInfo(signKey){
+  var own=null;session.unlocked.forEach(function(id){if(!own&&id&&id.sign&&sameSignKey('ed25519:'+id.sign.pub,signKey))own=id});
+  if(own)return Promise.resolve({kind:'self',name:own.name});
+  var timer,late=new Promise(function(res){timer=setTimeout(function(){res(null)},3000)});
+  var look=Promise.resolve().then(function(){return contactsList()}).then(function(cs){var c=(cs||[]).find(function(x){return sameSignKey(x.sign,signKey)});return c?{kind:'contact',name:c.name,ownName:typeof c.ownName==='string'?c.ownName:null}:{kind:null}}).catch(function(){return{kind:null}});
+  return Promise.race([look,late]).then(function(r){clearTimeout(timer);return r||{kind:null,late:true}});
+}
+// What the card says about a sender, and whether it may stay green
+function senderVerdict(info,claimedName){
+  if(info.kind==='self')return{row:'Yours'+(info.name?' ('+info.name+')':''),ok:true};
+  if(info.kind==='contact'){
+    // The name the key itself carried when you saved it; contacts saved before 1.2 only have your label
+    var expected=info.ownName!==null&&info.ownName!==undefined?info.ownName:info.name;
+    var same=typeof claimedName==='string'&&claimedName.normalize('NFC')===String(expected||'').normalize('NFC');
+    return same?{row:'In your contacts as '+info.name,ok:true}:{row:'In your contacts as '+info.name+', but it calls itself '+(claimedName||'(no name)'),ok:false,why:'The key belongs to your contact '+info.name+', who signs under another name here.'};
+  }
+  return{row:info.late?'Not checked (contact list did not answer)':'Unknown: compare the fingerprint',ok:false,why:'The signature holds, but this key is neither yours nor a contact. Compare the fingerprint before you trust it.'};
+}
+var MARK_WARN_SVG='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+var SEEN_KEY='lownet-seen-envelopes',SEEN_MAX=500;
+function seenEnvelope(id){
+  if(typeof id!=='string'||!id)return null;
+  try{var raw=JSON.parse(localStorage.getItem(SEEN_KEY)||'{}'),m=Object.create(null);if(raw&&typeof raw==='object'&&!Array.isArray(raw))Object.keys(raw).forEach(function(k){if(typeof raw[k]==='string')m[k]=raw[k]});var before=Object.prototype.hasOwnProperty.call(m,id)?m[id]:null;
+    if(!before){m[id]=new Date().toISOString();var k=Object.keys(m);if(k.length>SEEN_MAX){k.sort(function(a,b){return m[a]<m[b]?-1:1});for(var i=0;i<k.length-SEEN_MAX;i++)delete m[k[i]]}localStorage.setItem(SEEN_KEY,JSON.stringify(m))}
+    return before}catch(e){return null}
+}
+function markSender(run,badge,box,result,data){
+  var before=seenEnvelope(data&&data.env_id);
+  if(before)addInfoRow(box,'Opened before',before);
+  if(!result.sender||!result.sender.sign)return;
+  // Fail closed: amber until the sender is known. Green comes back only for your own key or a contact under its name.
+  var green=result.valid&&!badge.classList.contains('error'),title=badge.querySelector('.result-badge-title').textContent,sub=badge.querySelector('.result-badge-sub').textContent,icon=badge.querySelector('.result-badge-icon').innerHTML;
+  if(green){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=MARK_WARN_SVG;badge.querySelector('.result-badge-sub').textContent='Checking the sender…'}
+  senderInfo(result.sender.sign).then(function(info){
+    if(run!==verifyRun)return;
+    var v=senderVerdict(info,result.sender.name);
+    addInfoRow(box,'Sender key',v.row);
+    if(!green)return;
+    if(v.ok){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=icon;badge.querySelector('.result-badge-title').textContent=title;badge.querySelector('.result-badge-sub').textContent=sub;return}
+    badge.querySelector('.result-badge-title').textContent=info.kind==='contact'?'Decrypted · name does not match':'Decrypted · unknown sender';
+    badge.querySelector('.result-badge-sub').textContent=v.why;
+  });
+}
+function clearVerifyCard(){
+  $('verify-result').classList.add('hide');
+  var badge=$('verify-badge');
+  badge.classList.remove('error');
+  badge.querySelector('.result-badge-title').textContent='';
+  badge.querySelector('.result-badge-sub').textContent='';
+  $('verify-details').textContent='';
+  $('verify-content').textContent='';
+}
+// A new input outdates the card as well: the green result of one notice must not stand under the text of another.
+function setVerifyInput(text){$('verify-input').value=text;outdateVerifyCard()}
+function outdateVerifyCard(){verifyRun++;clearVerifyCard()}
+$('verify-input').oninput=outdateVerifyCard;
+// An envelope holds whatever the sender put in. Text and objects without `content` used to read "undefined".
+function envelopeText(p){
+  if(p===null||p===undefined)return'(empty)';
+  if(typeof p!=='object')return String(p);
+  if(p.content===undefined)return JSON.stringify(p,null,2);
+  return(p.title?p.title+'\n\n':'')+p.content;
+}
+
+$('btn-verify').onclick=function(){var run=++verifyRun;clearVerifyCard();var input=$('verify-input').value.trim();if(!input){showStatus('Paste JSON','error');return}var data;try{data=JSON.parse(input)}catch(e){showStatus('Invalid JSON','error');return}if(data===null){showStatus('Invalid JSON','error');return}var badge=$('verify-badge'),checkSvg='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>',xSvg='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>',warnSvg='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>',promise;
+function fail(sub){if(run!==verifyRun)return;badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Error';badge.querySelector('.result-badge-sub').textContent=sub;$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide')}
 
 // SCP-1 LoRa Packet verification
 if(data.scp1_version){
-  if(!data.publicKey){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Missing Key';badge.querySelector('.result-badge-sub').textContent='No publicKey in SCP-1 data';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}
+  if(!data.publicKey||typeof data.publicKey!=='string'){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Missing Key';badge.querySelector('.result-badge-sub').textContent='No publicKey in SCP-1 data';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}
   var pubB64=data.publicKey.indexOf('ed25519:')===0?data.publicKey.slice(8):data.publicKey;
   var packetData=data.scp1_hex||data.scp1_packet;
-  verifySCP1(packetData,unb64(pubB64)).then(function(result){
+  // v1.1.4: unb64 inside the chain, so a broken key ends in the .catch below and not in silence.
+  Promise.resolve().then(function(){return verifySCP1(packetData,unb64(pubB64))}).then(function(result){
     // v1.1.3: a payload shown next to a valid packet must hash to the hash INSIDE the signed packet
     // (result.hash). The JSON field payload_hash is not signed and is not trusted.
     if(!result.valid||!data.payload)return result;
@@ -3219,6 +3648,7 @@ if(data.scp1_version){
       return result;
     });
   }).then(function(result){
+    if(run!==verifyRun)return;
     var box=$('verify-details');
     if(result.valid){
       badge.classList.remove('error');
@@ -3227,10 +3657,11 @@ if(data.scp1_version){
       badge.querySelector('.result-badge-sub').textContent='Signature OK · key matches fingerprint · 110 bytes'+(data.payload?' · Payload ✓':'');
       box.textContent='';
       addInfoRow(box,'Type','SCP-1 LoRa Commitment');
-      addInfoRow(box,'Fingerprint',result.fp||data.fp);
-      addInfoRow(box,'Timestamp',result.timestamp||data.timestamp);
-      addInfoRow(box,'Sequence',String(result.seq||data.seq));
-      addInfoRow(box,'Payload Hash',(result.hash||data.payload_hash||'').slice(0,32)+'...');
+      // v1.1.4: only what the signed packet says. seq 0 used to fall through to the unsigned JSON field.
+      addInfoRow(box,'Fingerprint',result.fp);
+      addInfoRow(box,'Timestamp',result.timestamp);
+      addInfoRow(box,'Sequence',String(result.seq));
+      addInfoRow(box,'Payload Hash',result.hash.slice(0,32)+'...');
       $('verify-content').textContent=data.payload||'(payload not included)';
     }else{
       badge.classList.add('error');
@@ -3241,19 +3672,11 @@ if(data.scp1_version){
       $('verify-content').textContent='';
     }
     $('verify-result').classList.remove('hide');
-  }).catch(function(e){
-    badge.classList.add('error');
-    badge.querySelector('.result-badge-icon').innerHTML=xSvg;
-    badge.querySelector('.result-badge-title').textContent='Error';
-    badge.querySelector('.result-badge-sub').textContent=e.message;
-    $('verify-details').textContent='';
-    $('verify-content').textContent='';
-    $('verify-result').classList.remove('hide');
-  });
+  }).catch(function(e){fail(e.message)});
   return;
 }
 
-if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.payload&&result.sender){var features=[];if(result.forwardSecrecy)features.push('Forward Secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=(result.payload.title?result.payload.title+'\n\n':'')+result.payload.content}else{var powStatus='No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}}}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Signature OK, work not checked';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')})};
+if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'||data.env_version===ENV_VERSION){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){if(run===verifyRun)showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){if(run!==verifyRun)return;var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.sender){var features=[];if(result.forwardSecrecy)features.push('Sender-side forward secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(result.olderFormat?' · older format':'')+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else{var powStatus=data.ln_pow?'Chain not checked':'No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}}}else if(result.legacy&&result.sender){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Decrypted · older format';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent=noticeAmberTitle(result);badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')}).catch(function(e){fail(e.message)})};
 $('btn-verify-save').onclick=function(){vaultAdd(JSON.parse($('verify-input').value)).then(function(){showStatus('Saved')})};
 
 // VAULT
@@ -3288,12 +3711,15 @@ $('clear-modal').onclick=function(e){if(e.target===$('clear-modal'))$('btn-clear
 
 // CONTACTS HANDLERS
 $('btn-add-contact').onclick=function(){$('add-contact-form').classList.remove('hide');$('new-contact-name').focus()};
-$('btn-cancel-contact').onclick=function(){$('add-contact-form').classList.add('hide');$('new-contact-name').value='';$('new-contact-key').value='';$('new-contact-fp').textContent=''};
+$('btn-cancel-contact').onclick=function(){contactKeySlot();delete $('new-contact-key').dataset.parsed;$('add-contact-form').classList.add('hide');$('new-contact-name').value='';$('new-contact-key').value='';$('new-contact-fp').textContent=''};
 $('new-contact-key').oninput=function(){
+  var current=contactKeySlot();
+  delete $('new-contact-key').dataset.parsed;
   parseRecipientInput($('new-contact-key').value).then(function(pub){
+    if(!current())return;
     if(pub&&pub.dh){
       if(pub.fp){
-        $('new-contact-fp').textContent='FP: '+pub.fp;
+        $('new-contact-fp').textContent=pub.longFp?'Fingerprint: '+pub.longFp+' · FP '+pub.fp:'FP: '+pub.fp;
       }else{
         $('new-contact-fp').textContent='Valid (compact format)';
       }
@@ -3305,13 +3731,14 @@ $('new-contact-key').oninput=function(){
       $('new-contact-fp').style.color='var(--error)';
       delete $('new-contact-key').dataset.parsed;
     }
-  });
+  }).catch(function(){if(current()){$('new-contact-fp').textContent='Invalid format';$('new-contact-fp').style.color='var(--error)'}});
 };
 $('btn-save-contact').onclick=function(){
   if(!$('new-contact-key').dataset.parsed){showStatus('Invalid public key','error');return}
   var pub=JSON.parse($('new-contact-key').dataset.parsed);
   var name=$('new-contact-name').value.trim()||pub.name||'Unnamed';
-  contactsAdd({name:name,sign:pub.sign,dh:pub.dh,fp:pub.fp}).then(function(){
+  contactsAdd({name:name,ownName:typeof pub.name==='string'?pub.name:null,sign:pub.sign,dh:pub.dh,fp:pub.fp}).then(function(){
+    contactKeySlot();delete $('new-contact-key').dataset.parsed;
     $('add-contact-form').classList.add('hide');$('new-contact-name').value='';$('new-contact-key').value='';$('new-contact-fp').textContent='';
     renderContacts();showStatus('Contact saved');
   }).catch(function(e){showStatus('Error: '+e.message,'error')});
@@ -3331,7 +3758,9 @@ $('btn-scan-recipient').onclick=function(){
 
 // CONTACTS PICKER FOR ENVELOPE
 $('btn-pick-contact').onclick=function(){
+  var current=contactPickSlot();
   contactsList().then(function(contacts){
+    if(!current())return;
     if(contacts.length===0){showStatus('No contacts saved','error');return}
     var list=$('contacts-picker-list');
     list.innerHTML=contacts.map(function(c){
@@ -3357,7 +3786,9 @@ $('contacts-picker-modal').onclick=function(e){if(e.target===$('contacts-picker-
 
 // LINK NOTICE PICKER
 $('btn-link-notice').onclick=async function(){
+  var current=linkPickSlot();
   var items=await vaultList();
+  if(!current())return;
   // Filter to only notices with hashes (CNP-1)
   var notices=items.filter(function(item){
     var d=item.data;
@@ -3454,7 +3885,22 @@ async function publishToServer(notice){
   
   var url=RELAY_URL+'/submit';
   var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:payload});
-  if(!res.ok){var err=await res.json().catch(function(){return{}});throw new Error(err.error||'Failed');}
+  if(!res.ok){
+    var err=await res.json().catch(function(){return{}});
+    // v1.2: a node before 1.2 refuses the unknown field ln_bind; the submit relay before 1.2 counts it into the signed
+    // data and answers "sig". The board then gets the notice without it: ln_signature does not cover ln_bind, so the
+    // copy verifies and reads as older format (amber); the notice in your hands stays bound.
+    var why=String(err.error||'');
+    if(res.status===400&&(/unknown field "ln_bind"/.test(why)||why==='sig')&&notice.ln_bind){
+      var plain=JSON.parse(payload);delete plain.ln_bind;
+      var again=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(plain)});
+      if(!again.ok){var err2=await again.json().catch(function(){return{}});throw new Error(err2.error||'Failed');}
+      var out=await again.json();
+      if(out&&typeof out==='object')out._withoutBind=true;
+      return out;
+    }
+    throw new Error(err.error||'Failed');
+  }
   return await res.json();
 }
 
@@ -3590,13 +4036,16 @@ function timeAgo(ts){
 function renderPublicProofs(){
   var list=$('public-list');
   if(publicProofs.length===0){list.innerHTML='<div class="list-empty">No proofs yet</div>';return}
-  list.innerHTML=publicProofs.map(function(proof){
+  list.innerHTML=publicProofs.map(proofHtml).join('');
+}
+
+function proofHtml(proof){
     var payload=proof.ln_payload||{};
     var title=payload.title?escapeHtml(payload.title):'';
     var content=payload.content?escapeHtml(payload.content).slice(0,150):'';
     var author=proof.ln_signer?escapeHtml(proof.ln_signer.name||'Anonymous'):'Unknown';
-    var fp=proof._derivedFp||'';
-    var fpShort=escapeHtml(fp.split(':').slice(0,3).join(':'));
+    // v1.1.4: all six bytes, as on the Verify card. Three can be matched with about 16.8 million keys.
+    var fpShort=escapeHtml(proof._derivedFp||'');
     var displayTime=proof.server_received_at||proof.ln_timestamp;
     var time=escapeHtml(timeAgo(displayTime));
     var verifiedIcon;
@@ -3608,13 +4057,15 @@ function renderPublicProofs(){
       verifiedIcon='<svg viewBox="0 0 24 24" fill="var(--error)" width="12" height="12"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> Invalid';
     }
     var type=escapeHtml(proof.ln_type||'notice');
-    var hasPow=proof.ln_pow&&(proof.ln_pow.type==='sequential'||proof.ln_pow.type==='sequential-v2');
+    // v1.1.4: the mark says the chain was recomputed here, not that one is attached
+    var hasPow=proof._powChecked&&proof.ln_pow.type==='sequential-v2';
     return'<div style="border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;background:var(--input-bg);overflow:hidden;'+(proof._verified||proof._signatureOnly?'':'opacity:0.6;')+'"><div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;"><span><span style="color:var(--accent);font-weight:500;">'+author+'</span><span style="color:var(--text-muted);margin-left:6px;font-family:ui-monospace,monospace;font-size:9px;">'+fpShort+'</span></span><span style="color:var(--text-muted);font-size:10px;">'+time+'</span></div><div style="padding:12px 14px;"><span style="font-size:9px;font-weight:600;color:var(--bg);padding:2px 8px;border-radius:2px;text-transform:uppercase;background:var(--accent);margin-right:6px;">'+type+'</span>'+(hasPow?'<span style="font-size:9px;color:var(--text-muted);">PoW</span>':'')+(title?'<div style="font-size:12px;font-weight:600;margin:8px 0 4px;">'+title+'</div>':'')+'<div style="font-size:11px;color:var(--text-secondary);margin-top:6px;">'+content+(content.length>=150?'...':'')+'</div></div><div style="padding:8px 14px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;"><span style="display:flex;align-items:center;gap:4px;">'+verifiedIcon+'</span><span style="font-family:ui-monospace,monospace;font-size:9px;">'+escapeHtml((proof.ln_id||'').slice(0,16))+'</span></div></div>';
-  }).join('');
 }
 
 async function loadPublicProofs(){
   if(!publicServerUrl){$('public-status').textContent='Not connected';return}
+  var current=boardSlot();
+  publicProofs=[];
   $('public-status').textContent='Connecting...';
   $('public-list').innerHTML='<div style="text-align:center;color:var(--text-muted);padding:30px;"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" style="animation:spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg></div>';
   try{
@@ -3622,6 +4073,7 @@ async function loadPublicProofs(){
     var response=await fetch(indexUrl,{mode:'cors'});
     if(!response.ok)throw new Error('HTTP '+response.status);
     var index=await response.json();
+    if(!current())return;
     var entries=Array.isArray(index)?index:(index.posts||index.items||[]);
     if(typeof entries[0]==='string')entries=entries.map(function(f){return{id:f.replace('.json','')}});
     if(!entries||entries.length===0){
@@ -3629,7 +4081,7 @@ async function loadPublicProofs(){
       $('public-status').textContent='Connected · 0 proofs';
       return;
     }
-    publicProofs=[];
+    var proofs=[];
     for(var i=0;i<entries.length;i++){
       try{
         var proofUrl=RELAY_URL+'/posts/'+entries[i].id+'.json';
@@ -3637,23 +4089,32 @@ async function loadPublicProofs(){
         if(proofRes.ok){
           var proof=await proofRes.json();
           var verifyResult=await verifyNotice(proof).catch(function(){return{valid:false}});
+          if(!current())return;
           proof._verified=verifyResult.valid;
           proof._powUnverified=verifyResult.pow&&verifyResult.pow.unverified;
+          proof._powChecked=!!(verifyResult.pow&&verifyResult.pow.valid===true&&verifyResult.bound===true); // v1.2: only a chain ln_bind covers
           proof._signatureOnly=!verifyResult.valid&&!!verifyResult.unverified&&!!verifyResult.signatureValid;
           proof._derivedFp=verifyResult.derivedFingerprint||'';
           proof.server_received_at=entries[i].server_received_at||null;
-          publicProofs.push(proof);
+          // v1.1.4: a post that cannot be shown is left out. It must not take the rest of the board with it.
+          try{proofHtml(proof);new Date(proof.server_received_at||proof.ln_timestamp)}catch(e){console.log('Failed:',entries[i].id);continue}
+          proofs.push(proof);
         }
       }catch(e){console.log('Failed:',entries[i].id)}
     }
+    if(!current())return;
+    publicProofs=proofs;
     publicProofs.sort(function(a,b){
       var aTime=a.server_received_at||a.ln_timestamp;
       var bTime=b.server_received_at||b.ln_timestamp;
       return new Date(bTime)-new Date(aTime);
     });
     renderPublicProofs();
-    $('public-status').textContent='Connected · '+publicProofs.length+' proofs';
+    // v1.1.4: what was left out is counted, so a short list does not pass for the whole board
+    var leftOut=entries.length-publicProofs.length;
+    $('public-status').textContent='Connected · '+publicProofs.length+' proofs'+(leftOut?' · '+leftOut+' left out':'');
   }catch(e){
+    if(!current())return;
     $('public-status').textContent='Error: '+(e.message==='Failed to fetch'?'Server unreachable (CORS or offline)':e.message);
     $('public-list').innerHTML='<div style="text-align:center;color:var(--error);padding:30px;">Could not connect</div>';
   }
@@ -3839,9 +4300,13 @@ async function requireSigningAuth(identityId){
 var fileRecipients = []; // [{pub, fp, name}, ...] for multi-recipient
 
 $('file-recipient-key').oninput = function() {
+  var current = fileRecipientSlot();
+  delete this.dataset.parsed;
+  $('btn-add-file-recipient').classList.add('hide');
   var val = this.value.trim();
-  if (!val) { $('file-recipient-fp').textContent = 'No recipient'; $('file-recipient-fp').style.color = 'var(--text-muted)'; delete this.dataset.parsed; return; }
+  if (!val) { $('file-recipient-fp').textContent = 'No recipient'; $('file-recipient-fp').style.color = 'var(--text-muted)'; return; }
   parseRecipientInput(val).then(function(pub) {
+    if (!current()) return;
     if (pub && pub.dh) {
       $('file-recipient-fp').textContent = pub.fp ? 'Recipient: ' + pub.fp : 'Recipient: Ready';
       $('file-recipient-fp').style.color = 'var(--accent)';
@@ -3854,7 +4319,7 @@ $('file-recipient-key').oninput = function() {
       delete $('file-recipient-key').dataset.parsed;
       $('btn-add-file-recipient').classList.add('hide');
     }
-  });
+  }).catch(function() { if (current()) { $('file-recipient-fp').textContent = 'Invalid format'; $('file-recipient-fp').style.color = 'var(--error)'; } });
 };
 
 $('btn-add-file-recipient').onclick = function() {
@@ -3896,7 +4361,9 @@ $('btn-scan-file-recipient').onclick = function() {
 
 // Pick contact for file recipient
 $('btn-pick-file-contact').onclick = function() {
+  var current = contactPickSlot();
   contactsList().then(function(contacts) {
+    if (!current()) return;
     if (contacts.length === 0) { showStatus('No contacts saved', 'error'); return; }
     var list = $('contacts-picker-list');
     list.innerHTML = contacts.map(function(c) {
@@ -3960,6 +4427,8 @@ function handleFilesSelect(fileList) {
   var files = Array.from(fileList);
   // Non-PRO: only first file
   if (!isPremium()) files = files.slice(0, 1);
+  // v1.1.4: a read still running from an earlier choice must not add its file to the new one
+  var current = pendingFilesSlot();
   pendingFiles = [];
   var validCount = 0;
   var readCount = 0;
@@ -3972,8 +4441,15 @@ function handleFilesSelect(fileList) {
     validCount++;
     var reader = new FileReader();
     reader.onload = function(e) {
+      if (!current()) return;
       pendingFiles.push({ buffer: e.target.result, name: file.name, type: file.type || 'application/octet-stream', size: file.size });
       readCount++;
+      if (readCount === validCount) renderPendingFiles();
+    };
+    reader.onerror = function() {
+      if (!current()) return;
+      showStatus('Could not read ' + file.name, 'error');
+      validCount--;
       if (readCount === validCount) renderPendingFiles();
     };
     reader.readAsArrayBuffer(file);
@@ -4000,6 +4476,7 @@ function renderPendingFiles() {
 }
 
 $('btn-file-clear').onclick = function() {
+  pendingFilesSlot();
   pendingFiles = [];
   $('file-info-display').classList.add('hide');
   $('file-drop-zone').style.display = '';
@@ -4031,20 +4508,42 @@ $('btn-download-encrypted-file').onclick = function() {
 
 // === FILE DECRYPTION ===
 $('btn-load-encrypted-file').onclick = function() {
-  if (!isPremium()) { showPremiumModal(); return; }
+  // v1.2: opening a file needs no license. Your own files never depend on one; encrypting stays PRO.
   $('file-decrypt-input').click();
 };
+
+// v1.1.4: as on the Verify card, what this card shows belongs to one file. It is emptied first, the blob with it, a newer
+// file outdates an older one, and a failure is shown and leaves nothing behind. A render that threw halfway used to keep
+// the green card and the sender of the previous file, with the new file behind the download button.
+function clearFileCard() {
+  decryptedFileBlob = null;
+  decryptedFileName = null;
+  $('file-decrypt-result').classList.add('hide');
+  $('file-decrypt-badge').classList.remove('warn');
+  $('file-decrypt-title').textContent = '';
+  $('file-decrypt-sub').textContent = '';
+  $('file-decrypt-details').textContent = '';
+}
+function failFileCard(message) {
+  clearFileCard();
+  var status = $('file-decrypt-status');
+  status.classList.remove('hide');
+  status.textContent = 'Error: ' + message;
+  status.style.background = 'var(--error-subtle)';
+  status.style.color = 'var(--error)';
+}
 
 $('file-decrypt-input').onchange = function(e) {
   var file = e.target.files && e.target.files[0];
   if (!file) return;
   e.target.value = '';
   
+  var current = fileCardSlot();
+  clearFileCard();
   $('file-decrypt-status').classList.remove('hide');
   $('file-decrypt-status').textContent = 'Reading file...';
   $('file-decrypt-status').style.background = 'var(--surface)';
   $('file-decrypt-status').style.color = 'var(--text-muted)';
-  $('file-decrypt-result').classList.add('hide');
   
   // Find unlocked identity
   var myIdentity = null;
@@ -4057,50 +4556,60 @@ $('file-decrypt-input').onchange = function(e) {
   }
   
   var reader = new FileReader();
+  reader.onerror = function() { if (current()) failFileCard('Could not read the file'); };
   reader.onload = function(ev) {
+    if (!current()) return;
     $('file-decrypt-status').textContent = 'Decrypting...';
     
     decryptFileEnvelope(myIdentity, ev.target.result).then(function(result) {
-      // Success
-      decryptedFileBlob = new Blob([result.fileBuffer], { type: result.fileType });
-      decryptedFileName = result.fileName;
+      if (!current()) return;
       
-      $('file-decrypt-status').classList.add('hide');
-      $('file-decrypt-result').classList.remove('hide');
-      
+      // v1.1.4: a plain "Decrypted" only when result.valid, i.e. the sender's signature covers header
+      // and content and the content hash was recomputed. An older ENV-F-1 file opens as well, marked
+      // as older format with what its signature leaves out.
       var badge = $('file-decrypt-badge');
-      badge.classList.remove('error');
-      $('file-decrypt-title').textContent = 'Decrypted';
-      $('file-decrypt-sub').textContent = result.fileName + ' · ' + formatFileSize(result.fileSize);
-      
+      badge.classList.toggle('warn', !result.valid);
+      $('file-decrypt-title').textContent = result.valid ? 'Decrypted' : 'Decrypted · older format';
+      $('file-decrypt-sub').textContent = result.valid
+        ? result.fileName + ' · ' + formatFileSize(result.fileSize)
+        : (result.privateMode ? 'Signature does not cover name or recipients' : 'Signature does not cover the file content');
+
       var details = $('file-decrypt-details');
-      details.textContent = '';
       addInfoRow(details, 'File', result.fileName);
       addInfoRow(details, 'Type', result.fileType);
       addInfoRow(details, 'Size', formatFileSize(result.fileSize));
       addInfoRow(details, 'From', result.sender ? (result.sender.name || 'Anonymous') : 'Unknown');
       addInfoRow(details, 'FP', result.sender ? (result.sender.fp || '-') : '-');
-      addInfoRow(details, 'Time', result.timestamp);
+      addInfoRow(details, 'Time', result.timestamp + ' (stated by the sender)');
       addInfoRow(details, 'Mode', result.privateMode ? 'Private (sender hidden in header)' : 'Public');
       addInfoRow(details, 'ID', result.envId);
-      addInfoRow(details, 'License', result.senderLicensed ? 'PRO ✓' : 'Unlicensed');
-      
-      // Shareware badge
-      var existingBanner = document.getElementById('file-decrypt-license-banner');
-      if (existingBanner) existingBanner.remove();
-      if (!result.senderLicensed) {
-        var banner = document.createElement('div');
-        banner.id = 'file-decrypt-license-banner';
-        banner.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:10px;color:var(--text-muted);line-height:1.6;text-align:center;';
-        banner.innerHTML = 'Encrypted with LOWNET Toolkit <span style="color:var(--text-dim);">(unlicensed)</span><br><a href="https://lownet.org/pro" target="_blank" style="color:var(--accent);text-decoration:none;">Get PRO → lownet.org/pro</a>';
-        $('file-decrypt-result').appendChild(banner);
+      addInfoRow(details, 'Signed', result.valid ? 'Header and content (' + result.format + ')' : result.note);
+
+      // The file becomes available last, when everything about it could be shown
+      decryptedFileBlob = new Blob([result.fileBuffer], { type: result.fileType });
+      decryptedFileName = result.fileName;
+      $('file-decrypt-status').classList.add('hide');
+      $('file-decrypt-result').classList.remove('hide');
+      showStatus(result.valid ? 'File decrypted' : 'File decrypted · older format');
+      // v1.2 (finding F-5): as on the Verify card, the sender's key is named and an unknown key turns the card
+      // amber. It stays amber until the check has answered.
+      if (result.sender && typeof result.sender.sign === 'string') {
+        var wasValid = result.valid;
+        if (wasValid) { badge.classList.add('warn'); $('file-decrypt-sub').textContent = 'Checking the sender…'; }
+        longFingerprint(result.sender.sign).then(function(l) { if (current()) addInfoRow(details, 'Fingerprint', l); }, function() {});
+        senderInfo(result.sender.sign).then(function(info) {
+          if (!current()) return;
+          var v = senderVerdict(info, result.sender.name);
+          addInfoRow(details, 'Sender key', v.row);
+          if (!wasValid) return;
+          if (v.ok) { badge.classList.remove('warn'); $('file-decrypt-sub').textContent = result.fileName + ' · ' + formatFileSize(result.fileSize); return; }
+          $('file-decrypt-title').textContent = info.kind === 'contact' ? 'Decrypted · name does not match' : 'Decrypted · unknown sender';
+          $('file-decrypt-sub').textContent = v.why;
+        });
       }
-      
-      showStatus('File decrypted');
     }).catch(function(err) {
-      $('file-decrypt-status').textContent = 'Error: ' + err.message;
-      $('file-decrypt-status').style.background = 'var(--error-subtle)';
-      $('file-decrypt-status').style.color = 'var(--error)';
+      if (!current()) return;
+      failFileCard(err.message);
       
       // If it's "not for you", try other unlocked identities
       if (err.message.indexOf('not encrypted for') !== -1 && session.unlocked.size > 1) {
@@ -4150,7 +4659,9 @@ $('btn-activate-license').onclick = function() {
   if (!key) { showStatus('Paste a license key', 'error'); return; }
   $('btn-activate-license').disabled = true;
   $('btn-activate-license').textContent = 'Verifying...';
+  var current = licenseSlot();
   verifyLicense(key).then(function(result) {
+    if (!current()) return;
     if (result.valid) {
       localStorage.setItem('lownet_license', key);
       licenseState = result;
@@ -4192,29 +4703,11 @@ $('btn-premium-modal-settings').onclick = function() {
   zone.ondragleave = function(e) { e.preventDefault(); zone.style.borderColor = 'var(--border)'; zone.style.background = 'var(--input-bg)'; };
   zone.ondrop = function(e) { e.preventDefault(); zone.style.borderColor = 'var(--border)'; zone.style.background = 'var(--input-bg)'; if (e.dataTransfer.files && e.dataTransfer.files[0]) hashFile(e.dataTransfer.files[0]); };
   input.onchange = function(e) { if (e.target.files && e.target.files[0]) hashFile(e.target.files[0]); e.target.value = ''; };
-  function hashFile(file) {
-    $('hash-result').classList.add('hide');
-    $('hash-file-info').textContent = 'Hashing ' + file.name + ' (' + formatFileSize(file.size) + ')...';
-    $('hash-result').classList.remove('hide');
-    $('hash-output').textContent = '...';
-    $('hash-compare-result').classList.add('hide');
-    $('hash-compare-input').value = '';
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      sha256(new Uint8Array(ev.target.result)).then(function(hash) {
-        currentHash = bytesToHex(hash);
-        $('hash-file-info').textContent = file.name + ' · ' + formatFileSize(file.size);
-        $('hash-output').textContent = 'sha256:' + currentHash;
-      });
-    };
-    reader.readAsArrayBuffer(file);
-  }
-  $('btn-copy-hash').onclick = function() {
-    if (!currentHash) return;
-    navigator.clipboard.writeText('sha256:' + currentHash).then(function() { showStatus('Hash copied'); });
-  };
-  $('hash-compare-input').oninput = function() {
-    var expected = this.value.trim().replace(/^sha256:/i, '').toLowerCase();
+  // v1.1.4: the hash on the card belongs to the file named there. It is emptied on a new file, an older file finishing
+  // later is dropped, and a hash pasted while the file is read is compared when it is done. A paste during reading used
+  // to be compared with the previous file, and "Match" stood beside the new name.
+  function compareHash() {
+    var expected = $('hash-compare-input').value.trim().replace(/^sha256:/i, '').toLowerCase();
     var result = $('hash-compare-result');
     if (!expected || !currentHash) { result.classList.add('hide'); return; }
     result.classList.remove('hide');
@@ -4227,7 +4720,40 @@ $('btn-premium-modal-settings').onclick = function() {
       result.style.color = 'var(--error)';
       result.textContent = '✗ Mismatch — file may be corrupted or different';
     }
+  }
+  function hashFile(file) {
+    var current = hashCardSlot();
+    currentHash = '';
+    function failed(message) {
+      if (!current()) return;
+      $('hash-file-info').textContent = 'Could not hash ' + file.name + ': ' + message;
+      $('hash-output').textContent = '-';
+    }
+    $('hash-result').classList.add('hide');
+    $('hash-file-info').textContent = 'Hashing ' + file.name + ' (' + formatFileSize(file.size) + ')...';
+    $('hash-result').classList.remove('hide');
+    $('hash-output').textContent = '...';
+    $('hash-compare-result').classList.add('hide');
+    $('hash-compare-input').value = '';
+    var reader = new FileReader();
+    reader.onerror = function() { failed('read error'); };
+    reader.onload = function(ev) {
+      if (!current()) return;
+      sha256(new Uint8Array(ev.target.result)).then(function(hash) {
+        if (!current()) return;
+        currentHash = bytesToHex(hash);
+        $('hash-file-info').textContent = file.name + ' · ' + formatFileSize(file.size);
+        $('hash-output').textContent = 'sha256:' + currentHash;
+        compareHash();
+      }).catch(function(e) { failed(e.message); });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  $('btn-copy-hash').onclick = function() {
+    if (!currentHash) return;
+    navigator.clipboard.writeText('sha256:' + currentHash).then(function() { showStatus('Hash copied'); });
   };
+  $('hash-compare-input').oninput = compareHash;
 })();
 
 // INIT
@@ -4460,7 +4986,7 @@ var termCommands={
       if(!notice.ln_version){termPrint('Not a valid CNP-1 notice','error');return}
       termPrint('Publishing to '+new URL(RELAY_URL).host+'...','muted');
       publishToServer(notice).then(function(result){
-        termPrint('Published! ID: '+result.id,'success');
+        termPrint('Published! ID: '+result.id+(result._withoutBind?' (board copy without ln_bind: older node)':''),'success');
       }).catch(function(e){
         termPrint('Publish failed: '+e.message,'error');
       });
@@ -4493,7 +5019,8 @@ var termCommands={
     var id=session.activeId?session.unlocked.get(session.activeId):session.unlocked.values().next().value;
     if(!id){termPrint('No active identity','warn');return}
     termPrint('Name: '+(id.name||'unnamed'));
-    termPrint('Fingerprint: '+id.fp);
+    termPrint('FP: '+id.fp);
+    longFingerprint(id.sign.pub).then(function(l){termPrint('Fingerprint: '+l)},function(){});
     termPrint('Sequence: '+(id.seq||0));
     termPrint('Created: '+(id.created||'?'));
     // Show security level
