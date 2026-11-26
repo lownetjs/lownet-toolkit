@@ -35,6 +35,33 @@ Verifiable digital artifacts — signed notices and encrypted messages that exis
 - **Canonicalization**: RFC 8785 (JCS), strings exactly as written (older formats: normalized to NFC)
 - **Fingerprint**: 128 bit (SHA-256 of the signing key, first 16 bytes) for people to compare; the 48-bit `fp` stays inside the formats as an index
 
+## Changes in 1.2.1
+
+1.2.1 answers a second independent review, of 1.2.0 (103 attacks against messages, files and bound notices, none forged them). It found three medium weaknesses next to the core formats and a few small ones. The formats ENV-1.3, ENV-F-2 and CNP-1 stay as they are.
+
+**Key bundles sign their encryption key (finding N-C)**
+- The fingerprint covers only the signing key. A bundle could pair someone's signing key with another party's encryption key; the fingerprint still matched, and the other party read what you sent.
+- A bundle now carries `bsig`: the signing key's signature over name, signing key and encryption key. A bundle whose `bsig` does not hold is refused.
+- A bundle without `bsig` (from 1.2.0 or earlier, or from `lownet.js`) is marked "encryption key not confirmed by the signer". The page then shows a **bundle fingerprint** over signing and encryption key. The owner sees the same value under Keys. Encrypting needs an explicit confirmation that you compared this bundle fingerprint over a second channel; the ordinary fingerprint would not help, it matches for a swapped encryption key too. Contacts saved without `bsig` stay usable with the same mark until you import a new bundle. Fingerprints do not change.
+- Only the fields of a bundle are read from pasted text; nothing in it can claim a confirmation. The key download when creating an identity and the key QR now carry the full bundle with `bsig`.
+
+**Biometric unlock (finding N-A)**
+- Before 1.2.1 the key that wrapped the passphrase was stored next to it. Whoever had the database or a full backup could recover the passphrase without the sensor.
+- Biometric unlock now needs an authenticator that derives a key (WebAuthn PRF). Storage keeps salt and ciphertext only. Without PRF the option is not set up.
+- Records from before 1.2.1 lose their biometric data as soon as the Keys list is shown; set it up again if you want it. Full backups no longer contain biometric data, also on restore (biometric signing must then be set up again too).
+- **A full backup exported before 1.2.1 with biometric unlock enabled contains the passphrase in recoverable form.** Treat such a backup like an unencrypted identity. If one may have left your hands, create a new identity.
+- Biometric unlock is a convenience. On a compromised device it is no access barrier.
+
+**Notices name their signer (finding N-B)**
+- The Verify card for notices compares the signer with your contacts, as it does for messages and files. Green only for your own key or a contact under the name the key carried when you saved it. Anyone else: "Signature OK · unknown signer" or "name does not match".
+
+**Smaller**
+- Passphrases for new identities need 12 characters, under 16 they must mix character types, very common ones are refused (N-H). Existing identities still unlock.
+- Fields from backups and imports reach the page as text only, the sequence number as a number; the CSP adds `form-action 'none'` (N-D).
+- Compact keys (`lownet:e:`) and bundles without a signing key are refused as recipients instead of showing "Ready" (N-E).
+- The verify page has its own CSP and loads no third-party font (N-I).
+- The vault labels messages "envelope" and files "file".
+
 ## Changes in 1.2
 
 1.2 answers an independent review of 1.1.3 (seven findings, F-1 to F-7) and contains 1.1.4, which was finished but never published (see below). Older formats still open. They are marked as older format and are never shown as valid where the old format cannot back that up.
@@ -119,9 +146,10 @@ Verifiable digital artifacts — signed notices and encrypted messages that exis
 - **The board does not recompute long chains.** It recomputes up to 400,000 rounds, below every minimum, so its list marks notices "Signed · work not rechecked". Check a notice in the Verify card.
 - **Replays.** An envelope stays valid until it expires, an SCP-1 packet has no expiry. The page notes a repeat it has seen itself; it cannot know about other devices.
 - **Proof of work shows work, not elapsed time.** A faster machine does the same work sooner.
-- **A public key bundle does not bind its encryption key to its signing key.** The fingerprint is derived from the signing key; a bundle can pair someone's signing key with another party's encryption key, and what you encrypt to it goes to whoever holds that encryption key. Take bundles from the person, not from a third party.
-- **A compact recipient key (`lownet:e:`) carries no fingerprint.** Encrypting to it works, but the recipient's toolkit refuses the envelope as not addressed to it. Use the full public key.
-- **The verify page runs on the server it checks.** It looks at the file on the server, not at the copy your open tab or service worker runs, and a tampered server can serve a tampered verify page.
+- **Bundles without `bsig` are trusted by confirmation only.** Bundles from 1.2.0 and earlier, and from `lownet.js` 1.0.2, carry no `bsig`. The page then cannot tell whether the encryption key belongs to the signer; compare the bundle fingerprint (signing and encryption key) with its owner over a second channel before you confirm. The owner sees it under Keys from 1.2.1 on. Take bundles from the person, not from a third party.
+- **Multi-recipient files show a short hint per recipient.** The clear header of a file for several recipients holds the first 3 bytes of each recipient's fingerprint. 24 bits are enough to match known keys, not to guess unknown ones. Mailboxes on a LOWNET node use them to deliver the file.
+- **Sequence numbers and chains are the signer's own statement.** Two notices with the same sequence number both verify; nothing stops a fork. The page notes envelopes it has opened before, it cannot know about other devices.
+- **The verify page runs on the server it checks.** It has its own CSP and asks only this server and GitHub. It looks at the file on the server, not at the copy your open tab or service worker runs, and a tampered server can serve a tampered verify page.
 
 ## Verify Integrity
 

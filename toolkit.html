@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-WMVYoar79OZrSeVMgx4VYlwNYKEPQoMxsuBZ31h1nD8='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; frame-ancestors 'none'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-yUSW/74XBjlQYt+2N55rfJ1ou1KU6c2tPnBVCqq2lek='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none';">
   <!-- CSP (v1.1.2): Hash-based script-src (deploy.sh injects hash). connect-src locked to official relay.
        base-uri/frame-ancestors/object-src: none. Zero eval, zero external scripts, zero CDN. -->
   <meta name="theme-color" content="#050505">
@@ -438,6 +438,7 @@
         <div id="envelope-recipient" class="hide">
           <div class="field"><label class="field-label">Recipient Public Key <span class="required">*</span></label><textarea id="recipient-key" placeholder="Paste public key here" style="min-height:70px;"></textarea><div class="btn-row" style="margin-top:6px;"><button class="btn btn-secondary btn-small" id="btn-scan-recipient">Scan QR</button><button class="btn btn-secondary btn-small" id="btn-pick-contact">From Contacts</button></div></div>
           <div id="recipient-fp" style="font-size:10px;color:var(--text-muted);margin-bottom:14px;">No recipient</div>
+          <label id="recipient-confirm-row" class="hide" style="display:flex;gap:8px;align-items:flex-start;font-size:10px;color:var(--warning);margin:-8px 0 14px;"><input type="checkbox" id="recipient-confirm"> <span>I compared the bundle fingerprint with the recipient over a second channel</span></label>
         </div>
         <div id="file-fields" class="hide">
           <div style="background:var(--accent-subtle);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px;">
@@ -453,6 +454,7 @@
               <button class="btn btn-secondary btn-small hide" id="btn-add-file-recipient" title="Add another recipient">+ Recipient</button>
             </div>
             <div id="file-recipient-fp" style="font-size:10px;color:var(--text-muted);margin-top:6px;margin-bottom:4px;">No recipient</div>
+            <label id="file-recipient-confirm-row" class="hide" style="display:flex;gap:8px;align-items:flex-start;font-size:10px;color:var(--warning);margin-bottom:6px;"><input type="checkbox" id="file-recipient-confirm"> <span>I compared the bundle fingerprint with the recipient over a second channel</span></label>
             <div id="file-recipients-list" style="font-size:10px;margin-bottom:14px;"></div>
           </div>
           <div class="field">
@@ -737,7 +739,7 @@
     <div class="card">
       <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div><div class="card-title">About</div><div class="card-subtitle">Version & credits</div></div></div>
       <div style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.2.0</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.2.1</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);gap:8px;"><span style="white-space:nowrap;">Protocols</span><span style="font-family:ui-monospace,monospace;font-size:10px;text-align:right;">CNP-1 · ENV-1.2 · SCP-1 · PoW-v2 · ENV-F-2 (PRO)</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;"><span>Crypto</span><span style="font-family:ui-monospace,monospace;font-size:11px;">Ed25519 · P-256 · AES-GCM</span></div>
       </div>
@@ -1006,7 +1008,7 @@
       </table>
       
       <p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);color:var(--text-muted);text-align:center;font-size:10px;">
-        LOWNET Toolkit v1.2.0 · <a href="https://lownet.org" style="color:var(--accent);text-decoration:none;">lownet.org</a> · MIT License
+        LOWNET Toolkit v1.2.1 · <a href="https://lownet.org" style="color:var(--accent);text-decoration:none;">lownet.org</a> · MIT License
       </p>
     </div>
   </div>
@@ -1058,7 +1060,7 @@
 
 <script>
 // LOWNET Toolkit v3 with Sequential PoW
-var TOOLKIT_VERSION='1.2.0';
+var TOOLKIT_VERSION='1.2.1';
 var TOOLKIT_HASH=null; // Computed on load
 
 var $=function(id){return document.getElementById(id)};
@@ -1438,7 +1440,45 @@ function genIdentity(name){
   })
 }
 
-function pubBundle(id){return{name:id.name,sign:'ed25519:'+id.sign.pub,dh:{kty:id.dh.pub.kty,crv:id.dh.pub.crv,x:id.dh.pub.x,y:id.dh.pub.y},fp:id.fp}}
+// v1.2.1 (finding N-H): a new passphrase needs 12 characters; under 16 it must mix character types; common ones are refused.
+// The identity file is PBKDF2 with 600,000 rounds: that slows guessing, it does not save a short passphrase.
+var COMMON_PASSPHRASES=['passwortpasswort','passwordpassword','123456789012','1234567890123','qwertzuiopasdf','qwertyuiopasdf','iloveyouiloveyou','abcdefghijkl','111111111111','000000000000','letmeinletmein','adminadminadmin','lownetlownet'];
+function passphraseProblem(p){
+  if(typeof p!=='string'||p.length<12)return 'Passphrase too short: at least 12 characters';
+  var lower=p.toLowerCase();
+  if(COMMON_PASSPHRASES.indexOf(lower)>=0||/^(.)\1+$/.test(p))return 'Passphrase too common: choose a longer, less predictable one';
+  var kinds=(/[a-z]/.test(p)?1:0)+(/[A-Z]/.test(p)?1:0)+(/[0-9]/.test(p)?1:0)+(/[^A-Za-z0-9]/.test(p)?1:0);
+  if(p.length<16&&kinds<2)return 'Passphrase too weak: use 16 characters or more, or mix letters, digits and symbols';
+  return null;
+}
+function safeSeq(v){return Number.isSafeInteger(v)&&v>=0?v:0}
+// v1.2.1 (finding N-C): the fingerprint covers only the signing key. A bundle now carries bsig, the signing key's
+// signature over name, signing key and encryption (DH) key, so an encryption key swapped into someone's bundle is refused.
+function bundleSignKey(b){return typeof b.sign==='string'?(b.sign.indexOf('ed25519:')===0?b.sign:'ed25519:'+b.sign):b.sign}
+function bundleSigData(b){
+  return te.encode(canonicalizeExact({purpose:'LOWNET bundle v1',name:typeof b.name==='string'?b.name:null,sign:bundleSignKey(b),
+    dh:{kty:b.dh.kty,crv:b.dh.crv,x:b.dh.x,y:b.dh.y}}));
+}
+// v1.2.1 (review R-1): the fingerprint covers the signing key only. For a bundle without bsig the user compares this one,
+// over signing AND encryption key; the owner sees it under Keys.
+function bundleFingerprint(b){
+  return sha256(te.encode(canonicalizeExact({purpose:'LOWNET bundle fingerprint v1',sign:bundleSignKey(b),dh:{kty:b.dh.kty,crv:b.dh.crv,x:b.dh.x,y:b.dh.y}}))).then(function(h){
+    return bytesToHex(h.slice(0,16)).toUpperCase().match(/.{4}/g).join(' ');
+  });
+}
+// 'bound' (bsig holds), 'none' (older bundle without bsig) or 'bad' (bsig present but does not hold, or unreadable)
+function verifyBundle(b){
+  if(!b||b.bsig===undefined||b.bsig===null)return Promise.resolve('none');
+  if(typeof b.bsig!=='string'||typeof b.sign!=='string'||!b.dh||typeof b.dh!=='object')return Promise.resolve('bad');
+  try{
+    var raw=b.sign.indexOf('ed25519:')===0?b.sign.slice(8):b.sign;
+    var data=bundleSigData(b);
+    return crypto.subtle.importKey('raw',unb64(raw),'Ed25519',false,['verify']).then(function(k){
+      return crypto.subtle.verify('Ed25519',k,unb64(b.bsig),data);
+    }).then(function(ok){return ok?'bound':'bad'},function(){return 'bad'});
+  }catch(e){return Promise.resolve('bad')}
+}
+function pubBundle(id){var b={name:id.name,sign:'ed25519:'+id.sign.pub,dh:{kty:id.dh.pub.kty,crv:id.dh.pub.crv,x:id.dh.pub.x,y:id.dh.pub.y},fp:id.fp};if(typeof id.bsig==='string')b.bsig=id.bsig;return b}
 
 function encryptIdentity(id,pass){
   var salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
@@ -1469,7 +1509,10 @@ function loadIdentityKeys(data){
     crypto.subtle.importKey('jwk',data.dh.priv,{name:'ECDH',namedCurve:'P-256'},true,['deriveBits']),
     crypto.subtle.importKey('jwk',data.dh.pub,{name:'ECDH',namedCurve:'P-256'},true,[])
   ]).then(function(keys){
-    return Object.assign({},data,{_keys:{sign:{privateKey:keys[0],publicKey:keys[1]},dh:{privateKey:keys[2],publicKey:keys[3]}}})
+    var loaded=Object.assign({},data,{_keys:{sign:{privateKey:keys[0],publicKey:keys[1]},dh:{privateKey:keys[2],publicKey:keys[3]}}});
+    // v1.2.1: sign the own bundle once per unlock (finding N-C); a name that can't be canonicalized exactly leaves it unsigned
+    var bundle;try{bundle=bundleSigData({name:data.name,sign:'ed25519:'+data.sign.pub,dh:data.dh.pub})}catch(e){return loaded}
+    return crypto.subtle.sign('Ed25519',keys[0],bundle).then(function(sig){loaded.bsig=b64(new Uint8Array(sig));return loaded},function(){return loaded});
   })
 }
 
@@ -1992,36 +2035,39 @@ function decodeCompactPubKey(str){
 }
 function parseRecipientInput(str){
   str=str.trim();
-  // Try compact format (lownet:e:x:y)
-  if(str.indexOf('lownet:e:')===0){
-    var pub=decodeCompactPubKey(str);
-    if(pub){
-      // No fingerprint available from compact format - that's OK for encryption
-      return Promise.resolve(pub);
-    }
-  }
-  // Try JSON
-  try{
-    var pub=JSON.parse(str);
-    if(pub.dh){
-      // Has DH key - can be used for encryption
-      // v1.2: with a signing key, the fingerprint is always derived from it. A bundle whose fp claims another key is
-      // refused: the contact list decides who counts as known.
-      if(typeof pub.sign==='string'&&pub.sign){
-        var raw=pub.sign.indexOf('ed25519:')===0?pub.sign.slice(8):pub.sign;
-        return fingerprint(raw).then(function(fp){
-          if(pub.fp&&pub.fp!==fp)return null;
-          pub.fp=fp;
-          return longFingerprint(raw).then(function(l){pub.longFp=l;return pub},function(){return pub});
-        },function(){return null});
-      }
-      if(pub.fp)return Promise.resolve(pub);
-      // No sign key, no FP - still valid for encryption
-      return Promise.resolve(pub);
-    }
-  }catch(e){}
-  return Promise.resolve(null);
+  // v1.2.1 (finding N-E): a compact key (lownet:e:x:y) or a bundle without signing key can't receive envelopes: the
+  // recipient can't recognize them as theirs. Refused here, instead of showing "Ready" and producing a message nobody opens.
+  if(str.indexOf('lownet:e:')===0)return Promise.resolve({error:"Compact keys can't receive envelopes. Ask for the full key bundle."});
+  var raw0;
+  try{raw0=JSON.parse(str)}catch(e){return Promise.resolve(null)}
+  if(!raw0||typeof raw0!=='object'||!raw0.dh||typeof raw0.dh!=='object')return Promise.resolve(null);
+  if(typeof raw0.sign!=='string'||!raw0.sign)return Promise.resolve({error:"This bundle has no signing key, so the recipient can't open what you send. Ask for the full key bundle."});
+  // v1.2.1 (review R-2): only the fields of a bundle are taken over. Anything else in the pasted text (a field that
+  // claims a confirmation, for instance) is dropped here.
+  var pub={name:typeof raw0.name==='string'?raw0.name:null,sign:raw0.sign,dh:{kty:raw0.dh.kty,crv:raw0.dh.crv,x:raw0.dh.x,y:raw0.dh.y},fp:typeof raw0.fp==='string'?raw0.fp:undefined};
+  if(raw0.bsig!==undefined&&raw0.bsig!==null)pub.bsig=raw0.bsig;
+  // v1.2: the fingerprint is always derived from the signing key; a bundle whose fp claims another key is refused.
+  var raw=pub.sign.indexOf('ed25519:')===0?pub.sign.slice(8):pub.sign;
+  return fingerprint(raw).then(function(fp){
+    if(pub.fp&&pub.fp!==fp)return null;
+    pub.fp=fp;
+    // v1.2.1 (finding N-C): the encryption key must be signed by the signing key, or the bundle is marked unconfirmed
+    return verifyBundle(pub).then(function(st){
+      if(st==='bad')return {error:'Bundle signature invalid: the encryption key does not belong to this signer. Do not use this bundle.'};
+      pub.bundleState=st==='bound'?'bound':'unconfirmed';
+      return longFingerprint(raw).then(function(l){pub.longFp=l},function(){}).then(function(){
+        if(pub.bundleState==='bound')return pub;
+        return bundleFingerprint(pub).then(function(b){pub.bundleFp=b;return pub},function(){return pub});
+      });
+    });
+  },function(){return null});
 }
+// v1.2.1: a contact back as a bundle. bsig covers the name the key's owner gave, so a renamed contact hands on that name.
+function contactBundle(c){var signed=typeof c.bsig==='string';var b={name:typeof c.ownName==='string'?c.ownName:(signed?null:c.name),sign:c.sign,dh:c.dh,fp:c.fp};if(signed)b.bsig=c.bsig;return b}
+// v1.2.1: a recipient whose encryption key the signer has not confirmed needs an explicit confirmation by the user.
+// userConfirmed is set by the page only (file recipients list, after the box was checked); parseRecipientInput drops it.
+function recipientConfirmed(pub,checkboxId){return !!pub&&(pub.bundleState==='bound'||pub.userConfirmed===true||(!!checkboxId&&$(checkboxId).checked))}
+var UNCONFIRMED_TEXT='encryption key not confirmed by the signer. Compare the bundle fingerprint with the recipient over a second channel (they see it under Keys), or ask for a new bundle';
 // ============================================================
 // ENV-F-2: Encrypted File Envelope
 // ============================================================
@@ -2683,11 +2729,12 @@ function hidePremiumModal() {
 
 // RENDER FUNCTIONS
 function vaultRow(item){
-      var d=item.data,isEnv=d.env_version==='ENV-1.1'||d.env_version==='ENV-1.2',isScp=d.scp1_version;
+      var d=item.data,isEnv=typeof d.env_version==='string'&&/^ENV-1\./.test(d.env_version),isFile=typeof d.env_version==='string'&&/^ENV-F/.test(d.env_version),isScp=d.scp1_version;
       // Type labels: statement, commitment, attestation, envelope, lora
       var type;
       if(isScp)type='lora';
       else if(isEnv)type='envelope';
+      else if(isFile)type='file';
       else if(d.ln_type==='statement')type='statement';
       else if(d.ln_type==='commitment')type='commitment';
       else if(d.ln_type==='attestation')type='attest';
@@ -2696,11 +2743,11 @@ function vaultRow(item){
       var title=isScp?'Hash: '+(d.payload_hash||'').slice(0,16)+'...':isEnv?'To: '+(d.env_recipient_fp||d.env_recipient_hint||'private').slice(0,11):(d.ln_payload&&d.ln_payload.title?d.ln_payload.title:(d.ln_payload&&d.ln_payload.content?d.ln_payload.content.slice(0,40):'Untitled'));
       var time=(isScp?d.timestamp:isEnv?d.env_timestamp:d.ln_timestamp||item.savedAt||'').slice(0,16).replace('T',' ');
       var hasPow=d.ln_pow&&d.ln_pow.type==='sequential-v2';
-      return'<div class="list-item" data-id="'+item.id+'" style="display:flex;align-items:center;"><div style="flex:1;display:flex;align-items:center;gap:12px;cursor:pointer;" class="vault-item-click"><div class="list-type">'+escapeHtml(type)+'</div><div class="list-info"><div class="list-title">'+escapeHtml(title)+'</div><div class="list-meta">'+escapeHtml(time)+(hasPow?' · PoW':'')+(isScp?' · 110B':'')+'</div></div></div><button class="vault-delete" data-id="'+item.id+'" style="width:20px;height:20px;padding:0;margin-left:8px;font-size:11px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;opacity:0.5;border-radius:4px;" title="Delete">✕</button></div>';
+      return'<div class="list-item" data-id="'+escapeHtml(item.id)+'" style="display:flex;align-items:center;"><div style="flex:1;display:flex;align-items:center;gap:12px;cursor:pointer;" class="vault-item-click"><div class="list-type">'+escapeHtml(type)+'</div><div class="list-info"><div class="list-title">'+escapeHtml(title)+'</div><div class="list-meta">'+escapeHtml(time)+(hasPow?' · PoW':'')+(isScp?' · 110B':'')+'</div></div></div><button class="vault-delete" data-id="'+escapeHtml(item.id)+'" style="width:20px;height:20px;padding:0;margin-left:8px;font-size:11px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;opacity:0.5;border-radius:4px;" title="Delete">✕</button></div>';
 }
 // v1.1.4: an item that cannot be shown keeps a row to delete it. It must not take the rest of the vault with it.
 function vaultRowSafe(item){
-  try{return vaultRow(item)}catch(e){return'<div class="list-item" data-id="'+item.id+'" style="display:flex;align-items:center;"><div class="list-info" style="flex:1;"><div class="list-title">Unreadable item</div></div><button class="btn btn-secondary btn-small vault-delete" data-id="'+item.id+'">Delete</button></div>'}
+  try{return vaultRow(item)}catch(e){return'<div class="list-item" data-id="'+escapeHtml(item.id)+'" style="display:flex;align-items:center;"><div class="list-info" style="flex:1;"><div class="list-title">Unreadable item</div></div><button class="btn btn-secondary btn-small vault-delete" data-id="'+escapeHtml(item.id)+'">Delete</button></div>'}
 }
 function openVaultItem(id){
   var current=verifyFileSlot();
@@ -2740,6 +2787,8 @@ function renderVault(){
 function renderKeys(){
   var current=keysSlot();
   keysList().then(function(keys){
+    // v1.2.1 (review R-6): biometric data from before 1.2.1 (wrapping key next to the passphrase) goes at once
+    keys.forEach(function(k){if(stripLegacyBiometric(k))keysAdd(k).catch(function(){})});
     if(!current())return;
     var list=$('keys-list');
     if(keys.length===0){list.innerHTML='<div class="list-empty">No identities</div>';identities=[];return}
@@ -2765,13 +2814,17 @@ function renderKeys(){
       var actionBtn=isUnlocked
         ?'<button class="btn btn-secondary" data-action="lock" data-id="'+rid+'">Lock</button>'
         :'<button class="btn btn-accent" data-action="unlock" data-id="'+rid+'">Unlock</button>';
-      return'<div class="key-card"><div class="key-card-header"><div class="key-card-name">'+escapeHtml(record.name)+'</div><div class="key-card-fp" data-fp-id="'+rid+'">'+escapeHtml(record.fp)+'</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;"><span style="font-size:9px;color:var(--text-muted);">Seq: '+(record.seq||0)+(hasBiometric?' · Bio':'')+'</span><span class="key-status '+statusClass+'">'+statusText+'</span></div><div class="key-card-actions">'+actionBtn+biometricBtn+'<button class="btn btn-secondary" data-action="copy" data-id="'+rid+'">Copy Pub</button><button class="btn btn-secondary" data-action="qr" data-id="'+rid+'">QR</button><button class="btn btn-secondary" data-action="delete" data-id="'+rid+'">Delete</button></div></div>';
+      return'<div class="key-card"><div class="key-card-header"><div class="key-card-name">'+escapeHtml(record.name)+'</div><div class="key-card-fp" data-fp-id="'+rid+'">'+escapeHtml(record.fp)+'</div></div><div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;"><span style="font-size:9px;color:var(--text-muted);">Seq: '+safeSeq(record.seq)+(hasBiometric?' · Bio':'')+'</span><span class="key-status '+statusClass+'">'+statusText+'</span></div><div class="key-card-actions">'+actionBtn+biometricBtn+'<button class="btn btn-secondary" data-action="copy" data-id="'+rid+'">Copy Pub</button><button class="btn btn-secondary" data-action="qr" data-id="'+rid+'">QR</button><button class="btn btn-secondary" data-action="delete" data-id="'+rid+'">Delete</button></div></div>';
     }).join('');
     // v1.2 (finding F-5): an unlocked identity shows the 128-bit fingerprint others compare; a locked one only its index
     session.unlocked.forEach(function(loaded,key){
       longFingerprint(loaded.sign.pub).then(function(l){
         if(!current())return;
-        var cells=list.querySelectorAll('[data-fp-id]');for(var i=0;i<cells.length;i++)if(cells[i].dataset.fpId===key||cells[i].dataset.fpId===loaded.id)cells[i].textContent=l;
+        var cells=list.querySelectorAll('[data-fp-id]');
+        bundleFingerprint(pubBundle(loaded)).then(function(bf){return bf},function(){return null}).then(function(bf){
+          if(!current())return;
+          for(var i=0;i<cells.length;i++)if(cells[i].dataset.fpId===key||cells[i].dataset.fpId===loaded.id)cells[i].textContent=l+(bf?' · Bundle '+bf:'');
+        });
       },function(){});
     });
     // Event delegation for key actions
@@ -2805,7 +2858,7 @@ function renderIdentityList(){
     return;
   }
   list.innerHTML=identities.map(function(id){
-    return'<div class="identity-row '+(selectedIdentityId===id.id?'selected':'')+'" data-id="'+id.id+'"><div class="identity-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="identity-info"><div class="identity-name">'+escapeHtml(id.name)+'</div><div class="identity-fp">'+escapeHtml(id.fp)+' · Seq: '+(id.seq||0)+'</div></div></div>';
+    return'<div class="identity-row '+(selectedIdentityId===id.id?'selected':'')+'" data-id="'+escapeHtml(id.id)+'"><div class="identity-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="identity-info"><div class="identity-name">'+escapeHtml(id.name)+'</div><div class="identity-fp">'+escapeHtml(id.fp)+' · Seq: '+safeSeq(id.seq)+'</div></div></div>';
   }).join('');
   list.querySelectorAll('.identity-row').forEach(function(el){
     el.onclick=function(){
@@ -2854,7 +2907,7 @@ function renderContacts(){
       return;
     }
     list.innerHTML=contacts.map(function(c){
-      return'<div class="list-item" data-id="'+c.id+'"><div class="list-type">CONTACT</div><div class="list-info"><div class="list-title">'+escapeHtml(c.name||'Unnamed')+'</div><div class="list-meta">'+escapeHtml(c.fp||'-')+'</div></div><button class="contact-delete" data-id="'+c.id+'" style="width:20px;height:20px;padding:0;margin-left:8px;font-size:11px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;opacity:0.5;border-radius:4px;" title="Delete">✕</button></div>';
+      return'<div class="list-item" data-id="'+escapeHtml(c.id)+'"><div class="list-type">CONTACT</div><div class="list-info"><div class="list-title">'+escapeHtml(c.name||'Unnamed')+'</div><div class="list-meta">'+escapeHtml(c.fp||'-')+(typeof c.bsig==='string'?'':' · key not confirmed')+'</div></div><button class="contact-delete" data-id="'+escapeHtml(c.id)+'" style="width:20px;height:20px;padding:0;margin-left:8px;font-size:11px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;opacity:0.5;border-radius:4px;" title="Delete">✕</button></div>';
     }).join('');
     list.querySelectorAll('.list-item').forEach(function(el){
       el.onclick=function(e){
@@ -2933,6 +2986,7 @@ $('btn-unlock-confirm').onclick=function(){
     var record=keys.find(function(k){return k.id===pendingUnlockId});
     if(!record||!record.enc)return;
     return decryptIdentity(record.enc,pass).then(function(data){
+      if(stripLegacyBiometric(record))keysAdd(record).then(function(){showStatus('Biometric unlock was removed (security fix in 1.2.1). Set it up again if you want it.')}).catch(function(){});
       return loadIdentityKeys(data).then(function(loaded){
         if(!current())return;
         loaded.seq=record.seq||0;
@@ -2977,9 +3031,8 @@ function copyPubKey(id){
 function showPubQR(id){
   var loaded=session.unlocked.get(id);
   if(loaded){
-    var pub=pubBundle(loaded);
-    var compact=encodeCompactPubKey(pub);
-    showQR('Public Key: '+loaded.name,compact);
+    // v1.2.1 (review R-5): the full bundle with bsig; a compact key can no longer receive envelopes (finding N-E)
+    showQR('Public Key: '+loaded.name,JSON.stringify(pubBundle(loaded)));
   }else{
     showStatus('Unlock first','error');
   }
@@ -3036,17 +3089,21 @@ async function confirmBiometricEnable(id,pass){
   }
   
   showStatus('Touch sensor to enable...');
-  var result=await setupBiometric(id);
+  var prfSalt=crypto.getRandomValues(new Uint8Array(32));
+  var result=await setupBiometric(id,prfSalt);
   if(result.success){
-    // Encrypt passphrase with AES-256-GCM (gated by biometric)
+    // v1.2.1: wrap the passphrase with a key the authenticator derives (PRF); storage keeps salt, iv and ciphertext only.
+    // Most authenticators answer the PRF already when the credential is created; otherwise one more touch.
     try{
+      var prf=result.prf?{success:true,prf:result.prf}:null;
+      if(!prf){showStatus('Touch sensor once more to derive the key...');prf=await biometricPrf(result.credentialId,prfSalt)}
+      if(!prf.success){showStatus('Biometric not enabled: '+prf.error,'error');return}
       var bioIv=crypto.getRandomValues(new Uint8Array(12));
-      var bioKey=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);
-      var bioKeyRaw=new Uint8Array(await crypto.subtle.exportKey('raw',bioKey));
+      var bioKey=await bioKeyFrom(prf.prf,id);
       var bioEncPass=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv:bioIv},bioKey,te.encode(pass)));
+      delete record.biometricPass;
       record.biometricCredId=result.credentialId;
-      record.biometricEncPass={i:b64(bioIv),c:b64(bioEncPass),k:b64(bioKeyRaw)};
-      delete record.biometricPass; // Remove legacy plaintext
+      record.biometricEncPass={v:2,s:b64(prfSalt),i:b64(bioIv),c:b64(bioEncPass)};
       await keysAdd(record);
       renderKeys();
       showStatus('Biometric enabled ✓');
@@ -3066,35 +3123,21 @@ async function unlockWithBiometric(id){
     return;
   }
   
+  if(stripLegacyBiometric(record)){
+    await keysAdd(record);renderKeys();
+    showStatus('Biometric unlock must be set up again (security fix in 1.2.1). Unlock with your passphrase.','error');
+    return;
+  }
+  if(!record.biometricEncPass||record.biometricEncPass.v!==2){showStatus('No stored passphrase - please re-enable biometric','error');return}
   showStatus('Touch sensor...');
-  var result=await biometricUnlock(id,record.biometricCredId);
-  if(result.success){
-    // Biometric verified - decrypt passphrase
+  var prf=await biometricPrf(record.biometricCredId,unb64(record.biometricEncPass.s));
+  if(prf.success){
     var pass;
-    if(record.biometricEncPass){
-      // v3.2+: AES-GCM encrypted passphrase
-      try{
-        var bioKey=await crypto.subtle.importKey('raw',unb64(record.biometricEncPass.k),{name:'AES-GCM',length:256},false,['decrypt']);
-        var passBuf=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(record.biometricEncPass.i)},bioKey,unb64(record.biometricEncPass.c));
-        pass=td.decode(passBuf);
-      }catch(e){
-        showStatus('Passphrase decrypt failed - re-enable biometric','error');
-        return;
-      }
-    }else if(record.biometricPass){
-      // Legacy v3.1: btoa-encoded — Auto-migrate to AES-GCM
-      pass=atob(record.biometricPass);
-      try{
-        var migIv=crypto.getRandomValues(new Uint8Array(12));
-        var migKey=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);
-        var migKeyRaw=new Uint8Array(await crypto.subtle.exportKey('raw',migKey));
-        var migEncPass=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv:migIv},migKey,te.encode(pass)));
-        record.biometricEncPass={i:b64(migIv),c:b64(migEncPass),k:b64(migKeyRaw)};
-        delete record.biometricPass;
-        await keysAdd(record);
-      }catch(e){/* migration failed, legacy still works next time */}
-    }else{
-      showStatus('No stored passphrase - please re-enable biometric','error');
+    try{
+      var bioKey=await bioKeyFrom(prf.prf,id);
+      pass=td.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(record.biometricEncPass.i)},bioKey,unb64(record.biometricEncPass.c)));
+    }catch(e){
+      showStatus('Passphrase decrypt failed - re-enable biometric','error');
       return;
     }
     try{
@@ -3113,7 +3156,7 @@ async function unlockWithBiometric(id){
       showStatus('Decrypt failed - re-enable biometric','error');
     }
   }else{
-    showStatus('Biometric failed: '+result.error,'error');
+    showStatus('Biometric failed: '+prf.error,'error');
   }
 }
 
@@ -3123,8 +3166,8 @@ async function resetBiometric(id){
   var detail=record?record.name+' ('+record.fp+')':'ID: '+id;
   var ok=await showConfirm('Remove Biometric','Remove biometric unlock for this identity? You can re-enable it later.',detail,'Remove');
   if(!ok)return;
-  if(record&&record.biometricCredId){
-    delete record.biometricCredId;
+  if(record&&(record.biometricCredId||record.biometricEncPass||record.biometricPass)){
+    delete record.biometricCredId;delete record.biometricEncPass;delete record.biometricPass;
     await keysAdd(record);
     renderKeys();
     showStatus('Biometric removed');
@@ -3138,6 +3181,8 @@ function resetCreateForm(){
   $('notice-content').value='';
   $('recipient-key').value='';
   delete $('recipient-key').dataset.parsed;
+  $('recipient-confirm').checked=false;$('recipient-confirm-row').classList.add('hide');
+  $('file-recipient-confirm').checked=false;$('file-recipient-confirm-row').classList.add('hide');
   recipientSlot();fileRecipientSlot();pendingFilesSlot();publishSlot();
   $('recipient-fp').textContent='No recipient';
   if($('att-subject'))$('att-subject').value='';
@@ -3274,7 +3319,7 @@ document.querySelectorAll('.template-item').forEach(function(t){
 
 $('btn-step1-next').onclick=function(){if(selectedTemplate)setCreateStep(2)};
 $('btn-step2-back').onclick=function(){setCreateStep(1)};
-$('btn-step2-next').onclick=function(){if(selectedTemplate==='file'){if(pendingFiles.length===0){showStatus('Select a file','error');return}if(!$('file-recipient-key').dataset.parsed&&fileRecipients.length===0){showStatus('Set recipient key','error');return}}else if(selectedTemplate==='attestation'){var subject=$('att-subject').value.trim(),statement=$('att-statement').value.trim();if(!subject){showStatus('Enter subject','error');return}if(!statement){showStatus('Enter statement','error');return}}else if(selectedTemplate==='lora'){var payload=$('lora-payload').value.trim();if(!payload){showStatus('Enter payload','error');return}}else{var content=$('notice-content').value.trim();if(!content){showStatus('Enter content','error');return}if(selectedTemplate==='envelope'){if(!$('recipient-key').dataset.parsed){showStatus('Invalid recipient','error');return}}}setCreateStep(3);renderIdentityList();var showPow=selectedTemplate!=='file'&&selectedTemplate!=='envelope'&&isPremium();$('pow-custom-row').classList.toggle('hide',!showPow);if(showPow)updatePowInfo()};
+$('btn-step2-next').onclick=function(){if(selectedTemplate==='file'){if(pendingFiles.length===0){showStatus('Select a file','error');return}if(!$('file-recipient-key').dataset.parsed&&fileRecipients.length===0){showStatus('Set recipient key','error');return}if($('file-recipient-key').dataset.parsed&&!recipientConfirmed(JSON.parse($('file-recipient-key').dataset.parsed),'file-recipient-confirm')){showStatus('Confirm the recipient first: '+UNCONFIRMED_TEXT,'error');return}}else if(selectedTemplate==='attestation'){var subject=$('att-subject').value.trim(),statement=$('att-statement').value.trim();if(!subject){showStatus('Enter subject','error');return}if(!statement){showStatus('Enter statement','error');return}}else if(selectedTemplate==='lora'){var payload=$('lora-payload').value.trim();if(!payload){showStatus('Enter payload','error');return}}else{var content=$('notice-content').value.trim();if(!content){showStatus('Enter content','error');return}if(selectedTemplate==='envelope'){if(!$('recipient-key').dataset.parsed){showStatus('Invalid recipient','error');return}if(!recipientConfirmed(JSON.parse($('recipient-key').dataset.parsed),'recipient-confirm')){showStatus('Confirm the recipient first: '+UNCONFIRMED_TEXT,'error');return}}}setCreateStep(3);renderIdentityList();var showPow=selectedTemplate!=='file'&&selectedTemplate!=='envelope'&&isPremium();$('pow-custom-row').classList.toggle('hide',!showPow);if(showPow)updatePowInfo()};
 function updatePowInfo(){var m=parseInt($('pow-multiplier').value)||1;var identity=identities.find(function(i){return i.id===selectedIdentityId});var seq=identity?(identity.seq||0)+1:1;var base=requiredRounds(seq);var total=Math.min(base*m,ABS_MAX_ROUNDS);$('pow-custom-info').textContent=total.toLocaleString()+' rounds'+(m>1?' ('+m+'× base)':'')}
 $('pow-multiplier').onchange=updatePowInfo;
 $('btn-step3-back').onclick=function(){setCreateStep(2)};
@@ -3346,8 +3391,11 @@ async function signSelected(){
     var currentParsed = $('file-recipient-key').dataset.parsed;
     if (currentParsed) {
       var cp = JSON.parse(currentParsed);
+      if (!recipientConfirmed(cp, 'file-recipient-confirm')) { signingDone(); showStatus('Confirm the recipient first: ' + UNCONFIRMED_TEXT, 'error'); return; }
+      if (cp.bundleState !== 'bound') cp.userConfirmed = true; // set here, after the box was checked; parsed input never carries it
       if (!allRecipients.some(function(r) { return r.fp === cp.fp; })) allRecipients.push(cp);
     }
+    if (allRecipients.some(function(r) { return !recipientConfirmed(r); })) { signingDone(); showStatus('Confirm the recipient first: ' + UNCONFIRMED_TEXT, 'error'); return; }
     if (allRecipients.length === 0) { signingDone(); showStatus('Invalid recipient', 'error'); return; }
     var fileRecipient = allRecipients[0]; // for display
     $('btn-step3-sign').disabled=true;
@@ -3412,7 +3460,7 @@ async function signSelected(){
   $('pow-status').classList.remove('hide');$('btn-step3-sign').disabled=true;$('pow-value').textContent='0%';$('pow-progress').style.width='0%';$('pow-detail').textContent='';function onProgress(i,total,elapsed){var pct=Math.round(i/total*100);$('pow-value').textContent=pct+'%';$('pow-progress').style.width=pct+'%';$('pow-detail').textContent=i.toLocaleString()+' / '+total.toLocaleString()+' · '+(elapsed/1000).toFixed(1)+'s'}
   var powMult=isPremium()?parseInt($('pow-multiplier').value)||1:1;
   var links=linkedNotices.length>0?linkedNotices.slice():null;
-  var promise;if(selectedTemplate==='envelope'){var recipient=$('recipient-key').dataset.parsed?JSON.parse($('recipient-key').dataset.parsed):null;if(!recipient){signingDone();$('pow-status').classList.add('hide');showStatus('Invalid recipient','error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';return}var content={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=encryptEnvelope(identity,recipient,content).then(function(env){return{notice:env,receipt:null}});$('output-subtitle').textContent='ENV-1.2 Envelope'}else if(selectedTemplate==='attestation'){var payload={subject:$('att-subject').value.trim(),scope:$('att-scope').value.trim()||null,control_ref:$('att-control').value.trim()||null,evidence_ref:$('att-evidence').value.trim()||null,valid_from:$('att-valid-from').value||null,valid_until:$('att-valid-until').value||null,statement:$('att-statement').value.trim()};promise=signNotice(identity,'attestation',payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Attestation'}else{var payload={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=signNotice(identity,selectedTemplate,payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Notice'}
+  var promise;if(selectedTemplate==='envelope'){var recipient=$('recipient-key').dataset.parsed?JSON.parse($('recipient-key').dataset.parsed):null;if(recipient){delete recipient.userConfirmed;if(!recipientConfirmed(recipient,'recipient-confirm'))recipient=null}if(!recipient){signingDone();$('pow-status').classList.add('hide');showStatus('Invalid recipient','error');$('btn-step3-sign').disabled=false;$('btn-step3-sign').textContent='Sign with PoW';return}var content={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=encryptEnvelope(identity,recipient,content).then(function(env){return{notice:env,receipt:null}});$('output-subtitle').textContent='ENV-1.2 Envelope'}else if(selectedTemplate==='attestation'){var payload={subject:$('att-subject').value.trim(),scope:$('att-scope').value.trim()||null,control_ref:$('att-control').value.trim()||null,evidence_ref:$('att-evidence').value.trim()||null,valid_from:$('att-valid-from').value||null,valid_until:$('att-valid-until').value||null,statement:$('att-statement').value.trim()};promise=signNotice(identity,'attestation',payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Attestation'}else{var payload={title:$('notice-title').value.trim()||null,content:$('notice-content').value.trim()};promise=signNotice(identity,selectedTemplate,payload,onProgress,links,powMult);$('output-subtitle').textContent='CNP-1 Notice'}
   promise.then(function(result){
     var output=result.notice;
     var receipt=result.receipt;
@@ -3484,22 +3532,24 @@ $('recipient-key').oninput=function(){
   // finished later replaced the newer recipient, so the envelope went to someone not in the field.
   var current=recipientSlot();
   delete $('recipient-key').dataset.parsed;
+  $('recipient-confirm').checked=false;$('recipient-confirm-row').classList.add('hide');
   var val=$('recipient-key').value.trim();
   if(!val){$('recipient-fp').textContent='No recipient';$('recipient-fp').style.color='var(--text-muted)';return}
   parseRecipientInput(val).then(function(pub){
     if(!current())return;
-    if(pub&&pub.dh){
-      // Valid recipient - show FP if available, otherwise show "Ready"
-      if(pub.fp){
-        $('recipient-fp').textContent='Recipient: '+pub.fp;
+    if(pub&&pub.dh&&pub.fp){
+      var who=pub.longFp?pub.longFp+' · FP '+pub.fp:pub.fp;
+      if(pub.bundleState==='bound'){
+        $('recipient-fp').textContent='Recipient: '+who;
+        $('recipient-fp').style.color='var(--accent)';
       }else{
-        $('recipient-fp').textContent='Recipient: Ready (Recipient set)';
+        $('recipient-fp').textContent='Recipient: '+who+' · Bundle fingerprint '+(pub.bundleFp||'?')+' · '+UNCONFIRMED_TEXT;
+        $('recipient-fp').style.color='var(--warning)';
+        $('recipient-confirm-row').classList.remove('hide');
       }
-      $('recipient-fp').style.color='var(--accent)';
-      // Store parsed pub for use
       $('recipient-key').dataset.parsed=JSON.stringify(pub);
     }else{
-      $('recipient-fp').textContent='Invalid format';
+      $('recipient-fp').textContent=pub&&pub.error?pub.error:'Invalid format';
       $('recipient-fp').style.color='var(--error)';
       delete $('recipient-key').dataset.parsed;
     }
@@ -3591,8 +3641,10 @@ function seenEnvelope(id){
     if(!before){m[id]=new Date().toISOString();var k=Object.keys(m);if(k.length>SEEN_MAX){k.sort(function(a,b){return m[a]<m[b]?-1:1});for(var i=0;i<k.length-SEEN_MAX;i++)delete m[k[i]]}localStorage.setItem(SEEN_KEY,JSON.stringify(m))}
     return before}catch(e){return null}
 }
-function markSender(run,badge,box,result,data){
-  var before=seenEnvelope(data&&data.env_id);
+// v1.2.1 (finding N-B): notices go the same way (opts.notice): green only for your key or a contact under its own name.
+function markSender(run,badge,box,result,data,opts){
+  opts=opts||{};
+  var before=opts.notice?null:seenEnvelope(data&&data.env_id);
   if(before)addInfoRow(box,'Opened before',before);
   if(!result.sender||!result.sender.sign)return;
   // Fail closed: amber until the sender is known. Green comes back only for your own key or a contact under its name.
@@ -3601,11 +3653,14 @@ function markSender(run,badge,box,result,data){
   senderInfo(result.sender.sign).then(function(info){
     if(run!==verifyRun)return;
     var v=senderVerdict(info,result.sender.name);
-    addInfoRow(box,'Sender key',v.row);
+    addInfoRow(box,opts.notice?'Signer key':'Sender key',v.row);
     if(!green)return;
     if(v.ok){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=icon;badge.querySelector('.result-badge-title').textContent=title;badge.querySelector('.result-badge-sub').textContent=sub;return}
-    badge.querySelector('.result-badge-title').textContent=info.kind==='contact'?'Decrypted · name does not match':'Decrypted · unknown sender';
-    badge.querySelector('.result-badge-sub').textContent=v.why;
+    badge.querySelector('.result-badge-title').textContent=opts.notice
+      ?(info.kind==='contact'?'Signature OK · name does not match':'Signature OK · unknown signer')
+      :(info.kind==='contact'?'Decrypted · name does not match':'Decrypted · unknown sender');
+    // a notice keeps its signature and work status in the sub line; the reason stands in the row "Signer key"
+    badge.querySelector('.result-badge-sub').textContent=opts.notice?sub:v.why;
   });
 }
 function clearVerifyCard(){
@@ -3676,7 +3731,7 @@ if(data.scp1_version){
   return;
 }
 
-if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'||data.env_version===ENV_VERSION){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){if(run===verifyRun)showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){if(run!==verifyRun)return;var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.sender){var features=[];if(result.forwardSecrecy)features.push('Sender-side forward secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(result.olderFormat?' · older format':'')+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else{var powStatus=data.ln_pow?'Chain not checked':'No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}}}else if(result.legacy&&result.sender){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Decrypted · older format';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent=noticeAmberTitle(result);badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')}).catch(function(e){fail(e.message)})};
+if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'||data.env_version===ENV_VERSION){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){if(run===verifyRun)showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){if(run!==verifyRun)return;var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.sender){var features=[];if(result.forwardSecrecy)features.push('Sender-side forward secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(result.olderFormat?' · older format':'')+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else{var powStatus=data.ln_pow?'Chain not checked':'No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}if(data.ln_version&&data.ln_signer&&typeof data.ln_signer.publicKey==='string')markSender(run,badge,box,{valid:true,sender:{sign:data.ln_signer.publicKey,name:data.ln_signer.name}},data,{notice:true})}}else if(result.legacy&&result.sender){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Decrypted · older format';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent=noticeAmberTitle(result);badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')}).catch(function(e){fail(e.message)})};
 $('btn-verify-save').onclick=function(){vaultAdd(JSON.parse($('verify-input').value)).then(function(){showStatus('Saved')})};
 
 // VAULT
@@ -3693,16 +3748,16 @@ $('btn-vault-clear').onclick=function(){
 $('btn-new-identity').onclick=function(){$('new-identity-form').classList.remove('hide');$('load-identity-form').classList.add('hide')};
 $('btn-load-identity').onclick=function(){$('load-identity-form').classList.remove('hide');$('new-identity-form').classList.add('hide')};
 $('btn-cancel-identity').onclick=function(){$('new-identity-form').classList.add('hide')};
-$('btn-create-identity').onclick=function(){var name=$('new-id-name').value.trim(),pass=$('new-id-pass').value;if(!name){showStatus('Enter name','error');return}if(!pass||pass.length<4){showStatus('Passphrase too short','error');return}genIdentity(name).then(function(id){return encryptIdentity(id,pass).then(function(enc){var record={id:id.id,name:id.name,fp:id.fp,created:id.created,enc:enc,seq:0,prevHash:null};return keysAdd(record).then(function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(enc,null,2)],{type:'application/json'}));a.download='lownet-identity-'+id.fp.replace(/:/g,'')+'.json';a.click();setTimeout(function(){var b=document.createElement('a');b.href=URL.createObjectURL(new Blob([JSON.stringify(pubBundle(id),null,2)],{type:'application/json'}));b.download='lownet-pubkey-'+id.fp.replace(/:/g,'')+'.json';b.click()},500);return loadIdentityKeys(id).then(function(loaded){session.unlocked.set(id.id,loaded);session.activeId=id.id;$('new-id-name').value='';$('new-id-pass').value='';$('new-identity-form').classList.add('hide');renderKeys();renderLockStatus();showStatus('Created & downloaded')})})})}).catch(function(e){showStatus('Error: '+e.message,'error')})};
+$('btn-create-identity').onclick=function(){var name=$('new-id-name').value.trim(),pass=$('new-id-pass').value;if(!name){showStatus('Enter name','error');return}var weak=passphraseProblem(pass);if(weak){showStatus(weak,'error');return}genIdentity(name).then(function(id){return encryptIdentity(id,pass).then(function(enc){var record={id:id.id,name:id.name,fp:id.fp,created:id.created,enc:enc,seq:0,prevHash:null};return keysAdd(record).then(function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(enc,null,2)],{type:'application/json'}));a.download='lownet-identity-'+id.fp.replace(/:/g,'')+'.json';a.click();return loadIdentityKeys(id).then(function(loaded){setTimeout(function(){var b=document.createElement('a');b.href=URL.createObjectURL(new Blob([JSON.stringify(pubBundle(loaded),null,2)],{type:'application/json'}));b.download='lownet-pubkey-'+id.fp.replace(/:/g,'')+'.json';b.click()},500);session.unlocked.set(id.id,loaded);session.activeId=id.id;$('new-id-name').value='';$('new-id-pass').value='';$('new-identity-form').classList.add('hide');renderKeys();renderLockStatus();showStatus('Created & downloaded')})})})}).catch(function(e){showStatus('Error: '+e.message,'error')})};
 $('btn-select-id-file').onclick=function(){$('file-identity').click()};
 $('file-identity').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;var pass=$('load-id-pass').value;if(!pass){showStatus('Enter passphrase','error');return}file.text().then(function(t){var enc=JSON.parse(t);return decryptIdentity(enc,pass).then(function(data){var record={id:data.id||data.fp,name:data.name,fp:data.fp,created:data.created,enc:enc,seq:data.seq||0,prevHash:data.prevHash||null,lastSignTime:data.lastSignTime||0};return keysAdd(record).then(function(){return loadIdentityKeys(data).then(function(loaded){loaded.seq=record.seq;loaded.prevHash=record.prevHash;loaded.lastSignTime=record.lastSignTime;loaded.created=loaded.created||record.created||new Date().toISOString();session.unlocked.set(record.id,loaded);session.activeId=record.id;$('load-id-pass').value='';$('load-identity-form').classList.add('hide');renderKeys();renderLockStatus();showStatus('Loaded & unlocked')})})})}).catch(function(){showStatus('Wrong passphrase','error')});e.target.value=''};
 
 // SETTINGS
 $('btn-privacy-public').onclick=function(){settings.envPrivacy='public';$('btn-privacy-public').classList.remove('btn-secondary');$('btn-privacy-public').classList.add('btn-primary');$('btn-privacy-private').classList.remove('btn-primary');$('btn-privacy-private').classList.add('btn-secondary');$('privacy-desc').textContent='Public: Name visible'};
 $('btn-privacy-private').onclick=function(){settings.envPrivacy='private';$('btn-privacy-private').classList.remove('btn-secondary');$('btn-privacy-private').classList.add('btn-primary');$('btn-privacy-public').classList.remove('btn-primary');$('btn-privacy-public').classList.add('btn-secondary');$('privacy-desc').textContent='Private: Only pubkey visible'};
-$('btn-full-backup').onclick=function(){Promise.all([keysList(),vaultList()]).then(function(results){var keys=results[0],vault=results[1];var backup={backup:'LOWNET_FULL',version:2,exported:new Date().toISOString(),keys:keys,vault:vault.map(function(i){return i.data})};var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));a.download='lownet-backup-'+Date.now()+'.json';a.click()})};
+$('btn-full-backup').onclick=function(){Promise.all([keysList(),vaultList()]).then(function(results){var keys=results[0],vault=results[1];var backup={backup:'LOWNET_FULL',version:2,exported:new Date().toISOString(),keys:keys.map(function(k){var c=Object.assign({},k);delete c.biometricPass;delete c.biometricEncPass;delete c.biometricCredId;return c}),vault:vault.map(function(i){return i.data})};var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));a.download='lownet-backup-'+Date.now()+'.json';a.click()})};
 $('btn-restore-backup').onclick=function(){$('file-backup').click()};
-$('file-backup').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;file.text().then(function(t){var backup=JSON.parse(t);if(backup.backup!=='LOWNET_FULL')throw new Error('Invalid');var promises=[];for(var i=0;i<backup.keys.length;i++){promises.push(keysAdd(backup.keys[i]))}for(var j=0;j<backup.vault.length;j++){promises.push(vaultAdd(backup.vault[j]))}Promise.all(promises).then(function(){renderKeys();renderVault();showStatus('Restored '+backup.keys.length+' keys, '+backup.vault.length+' items')})}).catch(function(e){showStatus('Error: '+e.message,'error')});e.target.value=''};
+$('file-backup').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;file.text().then(function(t){var backup=JSON.parse(t);if(backup.backup!=='LOWNET_FULL')throw new Error('Invalid');var promises=[];for(var i=0;i<backup.keys.length;i++){var rk=backup.keys[i];if(rk&&typeof rk==='object'){rk=Object.assign({},rk);delete rk.biometricPass;delete rk.biometricEncPass;delete rk.biometricCredId}promises.push(keysAdd(rk))}for(var j=0;j<backup.vault.length;j++){promises.push(vaultAdd(backup.vault[j]))}Promise.all(promises).then(function(){renderKeys();renderVault();showStatus('Restored '+backup.keys.length+' keys, '+backup.vault.length+' items'+(backup.keys.some(function(k){return k&&(k.biometricCredId||k.biometricEncPass||k.biometricPass)})?' · biometric unlock and biometric signing must be set up again':''))})}).catch(function(e){showStatus('Error: '+e.message,'error')});e.target.value=''};
 $('btn-clear-all').onclick=function(){$('clear-modal-confirm').value='';$('clear-modal').classList.remove('hide');$('clear-modal').style.display='flex';setTimeout(function(){$('clear-modal-confirm').focus()},100)};
 $('btn-clear-cancel').onclick=function(){$('clear-modal').classList.add('hide');$('clear-modal').style.display='none'};
 $('btn-clear-confirm').onclick=function(){if($('clear-modal-confirm').value!=='DELETE'){showStatus('Type DELETE to confirm','error');$('clear-modal-confirm').focus();return}$('clear-modal').classList.add('hide');showStatus('Clearing...');openDB().then(function(db){var tx=db.transaction([STORE_VAULT,STORE_KEYS,STORE_CONTACTS],'readwrite');tx.objectStore(STORE_VAULT).clear();tx.objectStore(STORE_KEYS).clear();tx.objectStore(STORE_CONTACTS).clear();tx.oncomplete=function(){localStorage.clear();session.unlocked.clear();session.activeId=null;showStatus('All data cleared');setTimeout(function(){location.reload()},500)};tx.onerror=function(){showStatus('Error: '+tx.error,'error')}}).catch(function(e){showStatus('Error: '+e.message,'error')})};
@@ -3718,16 +3773,12 @@ $('new-contact-key').oninput=function(){
   parseRecipientInput($('new-contact-key').value).then(function(pub){
     if(!current())return;
     if(pub&&pub.dh){
-      if(pub.fp){
-        $('new-contact-fp').textContent=pub.longFp?'Fingerprint: '+pub.longFp+' · FP '+pub.fp:'FP: '+pub.fp;
-      }else{
-        $('new-contact-fp').textContent='Valid (compact format)';
-      }
-      $('new-contact-fp').style.color='var(--accent)';
+      $('new-contact-fp').textContent=(pub.longFp?'Fingerprint: '+pub.longFp+' · FP '+pub.fp:'FP: '+pub.fp)+(pub.bundleState==='bound'?'':' · Bundle fingerprint '+(pub.bundleFp||'?')+' · '+UNCONFIRMED_TEXT);
+      $('new-contact-fp').style.color=pub.bundleState==='bound'?'var(--accent)':'var(--warning)';
       $('new-contact-key').dataset.parsed=JSON.stringify(pub);
       if(!$('new-contact-name').value&&pub.name)$('new-contact-name').value=pub.name;
     }else{
-      $('new-contact-fp').textContent='Invalid format';
+      $('new-contact-fp').textContent=pub&&pub.error?pub.error:'Invalid format';
       $('new-contact-fp').style.color='var(--error)';
       delete $('new-contact-key').dataset.parsed;
     }
@@ -3737,7 +3788,7 @@ $('btn-save-contact').onclick=function(){
   if(!$('new-contact-key').dataset.parsed){showStatus('Invalid public key','error');return}
   var pub=JSON.parse($('new-contact-key').dataset.parsed);
   var name=$('new-contact-name').value.trim()||pub.name||'Unnamed';
-  contactsAdd({name:name,ownName:typeof pub.name==='string'?pub.name:null,sign:pub.sign,dh:pub.dh,fp:pub.fp}).then(function(){
+  contactsAdd({name:name,ownName:typeof pub.name==='string'?pub.name:null,sign:pub.sign,dh:pub.dh,fp:pub.fp,bsig:pub.bundleState==='bound'?pub.bsig:null}).then(function(){
     contactKeySlot();delete $('new-contact-key').dataset.parsed;
     $('add-contact-form').classList.add('hide');$('new-contact-name').value='';$('new-contact-key').value='';$('new-contact-fp').textContent='';
     renderContacts();showStatus('Contact saved');
@@ -3764,13 +3815,13 @@ $('btn-pick-contact').onclick=function(){
     if(contacts.length===0){showStatus('No contacts saved','error');return}
     var list=$('contacts-picker-list');
     list.innerHTML=contacts.map(function(c){
-      return'<div class="identity-row" data-id="'+c.id+'" style="cursor:pointer;"><div class="identity-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="identity-info"><div class="identity-name">'+escapeHtml(c.name||'Unnamed')+'</div><div class="identity-fp">'+escapeHtml(c.fp||'-')+'</div></div></div>';
+      return'<div class="identity-row" data-id="'+escapeHtml(c.id)+'" style="cursor:pointer;"><div class="identity-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="identity-info"><div class="identity-name">'+escapeHtml(c.name||'Unnamed')+'</div><div class="identity-fp">'+escapeHtml(c.fp||'-')+'</div></div></div>';
     }).join('');
     list.querySelectorAll('.identity-row').forEach(function(el){
       el.onclick=function(){
         var c=contacts.find(function(x){return x.id===parseInt(el.dataset.id)});
         if(c){
-          $('recipient-key').value=JSON.stringify({name:c.name,sign:c.sign,dh:c.dh,fp:c.fp});
+          $('recipient-key').value=JSON.stringify(contactBundle(c));
           $('recipient-key').dispatchEvent(new Event('input'));
           $('contacts-picker-modal').classList.add('hide');
           $('contacts-picker-modal').style.display='none';
@@ -3805,7 +3856,7 @@ $('btn-link-notice').onclick=async function(){
     var type=d.ln_type||'notice';
     var ts=d.ln_timestamp?new Date(d.ln_timestamp).toLocaleDateString():'?';
     var alreadyLinked=linkedNotices.some(function(l){return l.id===item.id});
-    return '<div class="list-item '+(alreadyLinked?'disabled':'')+'" data-id="'+item.id+'" style="'+(alreadyLinked?'opacity:0.5;pointer-events:none;':'')+'"><div class="list-type">'+escapeHtml(type.toUpperCase())+'</div><div class="list-info"><div class="list-title">'+escapeHtml(title)+'</div><div class="list-meta">'+escapeHtml(ts)+' · '+escapeHtml(d.ln_id||'-')+'</div></div></div>';
+    return '<div class="list-item '+(alreadyLinked?'disabled':'')+'" data-id="'+escapeHtml(item.id)+'" style="'+(alreadyLinked?'opacity:0.5;pointer-events:none;':'')+'"><div class="list-type">'+escapeHtml(type.toUpperCase())+'</div><div class="list-info"><div class="list-title">'+escapeHtml(title)+'</div><div class="list-meta">'+escapeHtml(ts)+' · '+escapeHtml(d.ln_id||'-')+'</div></div></div>';
   }).join('');
   list.querySelectorAll('.list-item:not(.disabled)').forEach(function(el){
     el.onclick=async function(){
@@ -4186,7 +4237,7 @@ window.addEventListener('appinstalled',function(){$('btn-install').classList.add
 // BIOMETRIC UNLOCK (WebAuthn)
 var webauthnAvailable=window.PublicKeyCredential&&typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable==='function';
 
-async function setupBiometric(identityId){
+async function setupBiometric(identityId,prfSalt){
   if(!webauthnAvailable)return{error:'WebAuthn not available'};
   if(!isSecureContext)return{error:'Biometric requires HTTPS or localhost (file:// not supported)'};
   try{
@@ -4210,14 +4261,18 @@ async function setupBiometric(identityId){
         user:{id:userId,name:identityId,displayName:'LOWNET Identity'},
         pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
         authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
-        timeout:60000
+        timeout:60000,
+        extensions:{prf:prfSalt?{eval:{first:prfSalt}}:{}}
       }
     });
-    
     if(credential){
-      // Store credential ID for this identity
+      // v1.2.1 (finding N-A): biometric unlock only where the authenticator derives a secret (WebAuthn PRF).
+      // Without it the key to the passphrase would have to sit next to it in storage, readable without the sensor.
+      var ext=credential.getClientExtensionResults?credential.getClientExtensionResults():{};
+      if(!ext||!ext.prf||ext.prf.enabled!==true)return{error:'This authenticator cannot derive a key (WebAuthn PRF). Biometric unlock is not offered here; use your passphrase.'};
       var credId=b64(new Uint8Array(credential.rawId));
-      return{success:true,credentialId:credId};
+      var first=ext.prf.results&&ext.prf.results.first;
+      return{success:true,credentialId:credId,prf:first?new Uint8Array(first):null};
     }
     return{error:'No credential created'};
   }catch(e){
@@ -4225,6 +4280,31 @@ async function setupBiometric(identityId){
   }
 }
 
+// v1.2.1: the key that wraps the passphrase comes from the authenticator (PRF over a stored random salt) and never sits in storage
+async function bioKeyFrom(prfOut,identityId){
+  var mat=await crypto.subtle.importKey('raw',prfOut,'HKDF',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'HKDF',hash:'SHA-256',salt:te.encode('LOWNET:BIO-PRF-1|'+identityId),info:te.encode('LOWNET passphrase wrap')},mat,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function biometricPrf(credentialId,prfSalt){
+  if(!webauthnAvailable)return{error:'WebAuthn not available'};
+  if(!isSecureContext)return{error:'Biometric requires HTTPS or localhost'};
+  try{
+    var assertion=await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials:[{type:'public-key',id:unb64(credentialId),transports:['internal']}],userVerification:'required',timeout:60000,
+      extensions:{prf:{eval:{first:prfSalt}}}}});
+    var ext=assertion&&assertion.getClientExtensionResults?assertion.getClientExtensionResults():{};
+    var out=ext&&ext.prf&&ext.prf.results&&ext.prf.results.first;
+    if(!out)return{error:'The authenticator gave no key (WebAuthn PRF). Unlock with your passphrase.'};
+    return{success:true,prf:new Uint8Array(out)};
+  }catch(e){return{error:e.message}}
+}
+// v1.2.1: records from before 1.2.1 kept the wrapping key k next to the wrapped passphrase (finding N-A). They lose all of it.
+function stripLegacyBiometric(record){
+  if(!record||typeof record!=='object')return false;
+  var legacy=!!record.biometricPass||!!(record.biometricEncPass&&record.biometricEncPass.k!==undefined);
+  if(legacy){delete record.biometricPass;delete record.biometricEncPass;delete record.biometricCredId}
+  return legacy;
+}
 async function biometricUnlock(identityId,credentialId){
   if(!webauthnAvailable)return{error:'WebAuthn not available'};
   if(!isSecureContext)return{error:'Biometric requires HTTPS or localhost'};
@@ -4302,19 +4382,27 @@ var fileRecipients = []; // [{pub, fp, name}, ...] for multi-recipient
 $('file-recipient-key').oninput = function() {
   var current = fileRecipientSlot();
   delete this.dataset.parsed;
+  $('file-recipient-confirm').checked = false; $('file-recipient-confirm-row').classList.add('hide');
   $('btn-add-file-recipient').classList.add('hide');
   var val = this.value.trim();
   if (!val) { $('file-recipient-fp').textContent = 'No recipient'; $('file-recipient-fp').style.color = 'var(--text-muted)'; return; }
   parseRecipientInput(val).then(function(pub) {
     if (!current()) return;
-    if (pub && pub.dh) {
-      $('file-recipient-fp').textContent = pub.fp ? 'Recipient: ' + pub.fp : 'Recipient: Ready';
-      $('file-recipient-fp').style.color = 'var(--accent)';
+    if (pub && pub.dh && pub.fp) {
+      var who = pub.longFp ? pub.longFp + ' · FP ' + pub.fp : pub.fp;
+      if (pub.bundleState === 'bound') {
+        $('file-recipient-fp').textContent = 'Recipient: ' + who;
+        $('file-recipient-fp').style.color = 'var(--accent)';
+      } else {
+        $('file-recipient-fp').textContent = 'Recipient: ' + who + ' · Bundle fingerprint ' + (pub.bundleFp || '?') + ' · ' + UNCONFIRMED_TEXT;
+        $('file-recipient-fp').style.color = 'var(--warning)';
+        $('file-recipient-confirm-row').classList.remove('hide');
+      }
       $('file-recipient-key').dataset.parsed = JSON.stringify(pub);
       // Show + button if PRO
       if (isPremium()) $('btn-add-file-recipient').classList.remove('hide');
     } else {
-      $('file-recipient-fp').textContent = 'Invalid format';
+      $('file-recipient-fp').textContent = pub && pub.error ? pub.error : 'Invalid format';
       $('file-recipient-fp').style.color = 'var(--error)';
       delete $('file-recipient-key').dataset.parsed;
       $('btn-add-file-recipient').classList.add('hide');
@@ -4326,6 +4414,8 @@ $('btn-add-file-recipient').onclick = function() {
   var parsed = $('file-recipient-key').dataset.parsed;
   if (!parsed) return;
   var pub = JSON.parse(parsed);
+  if (!recipientConfirmed(pub, 'file-recipient-confirm')) { showStatus('Confirm the recipient first: ' + UNCONFIRMED_TEXT, 'error'); return; }
+  if (pub.bundleState !== 'bound') pub.userConfirmed = true;
   // Avoid duplicates
   if (fileRecipients.some(function(r) { return r.fp === pub.fp; })) { showStatus('Recipient already added', 'error'); return; }
   fileRecipients.push({ pub: pub, fp: pub.fp || 'Unknown', name: pub.name || '' });
@@ -4333,6 +4423,7 @@ $('btn-add-file-recipient').onclick = function() {
   delete $('file-recipient-key').dataset.parsed;
   $('file-recipient-fp').textContent = 'No recipient';
   $('file-recipient-fp').style.color = 'var(--text-muted)';
+  $('file-recipient-confirm').checked = false; $('file-recipient-confirm-row').classList.add('hide');
   $('btn-add-file-recipient').classList.add('hide');
   renderFileRecipients();
 };
@@ -4342,7 +4433,7 @@ function renderFileRecipients() {
   if (fileRecipients.length === 0) { list.innerHTML = ''; return; }
   list.innerHTML = fileRecipients.map(function(r, i) {
     return '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:4px;">' +
-      '<span style="color:var(--accent);font-family:ui-monospace,monospace;">' + escapeHtml(r.name ? r.name + ' · ' + r.fp : r.fp) + '</span>' +
+      '<span style="color:' + (r.pub && r.pub.bundleState === 'bound' ? 'var(--accent)' : 'var(--warning)') + ';font-family:ui-monospace,monospace;">' + escapeHtml((r.name ? r.name + ' · ' + r.fp : r.fp) + (r.pub && r.pub.bundleState === 'bound' ? '' : ' · confirmed by you')) + '</span>' +
       '<span class="file-recipient-remove" data-idx="' + i + '" style="cursor:pointer;color:var(--text-muted);padding:2px 6px;">\u2715</span></div>';
   }).join('');
   list.querySelectorAll('.file-recipient-remove').forEach(function(el) {
@@ -4367,13 +4458,13 @@ $('btn-pick-file-contact').onclick = function() {
     if (contacts.length === 0) { showStatus('No contacts saved', 'error'); return; }
     var list = $('contacts-picker-list');
     list.innerHTML = contacts.map(function(c) {
-      return '<div class="identity-row" data-id="' + c.id + '" style="cursor:pointer;"><div class="identity-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="identity-info"><div class="identity-name">' + escapeHtml(c.name || 'Unnamed') + '</div><div class="identity-fp">' + escapeHtml(c.fp || '-') + '</div></div></div>';
+      return '<div class="identity-row" data-id="' + escapeHtml(c.id) + '" style="cursor:pointer;"><div class="identity-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="identity-info"><div class="identity-name">' + escapeHtml(c.name || 'Unnamed') + '</div><div class="identity-fp">' + escapeHtml(c.fp || '-') + '</div></div></div>';
     }).join('');
     list.querySelectorAll('.identity-row').forEach(function(el) {
       el.onclick = function() {
         var c = contacts.find(function(x) { return x.id === parseInt(el.dataset.id); });
         if (c) {
-          $('file-recipient-key').value = JSON.stringify({ name: c.name, sign: c.sign, dh: c.dh, fp: c.fp });
+          $('file-recipient-key').value = JSON.stringify(contactBundle(c));
           $('file-recipient-key').dispatchEvent(new Event('input'));
           $('contacts-picker-modal').classList.add('hide');
           $('contacts-picker-modal').style.display = 'none';

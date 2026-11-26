@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- v1.2.1 (finding N-I): own CSP, no third-party fonts. The page asks only this server and GitHub raw for hashes.json. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-L+rWi7j0Fg8ECujxoWKuXlmdhHyi6IulhIL9dJb8Rso='; style-src 'unsafe-inline'; connect-src 'self' https://raw.githubusercontent.com; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none';">
 <title>LOWNET — Verify Integrity</title>
 <meta name="description" content="Verify the integrity of LOWNET Toolkit against two independent sources.">
 <meta name="theme-color" content="#050505">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23050505' rx='8' width='100' height='100'/><text x='50' y='70' text-anchor='middle' font-size='56' font-family='monospace' font-weight='700' fill='white'>L</text></svg>">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 :root{--bg:#050505;--surface:#0a0a0b;--border:#1a1a1e;--accent:#00d970;--accent-dim:#00b85c;--accent-subtle:#00d97010;--text:#e5e5e5;--text-secondary:#a0a0a0;--text-muted:#666;--text-dim:#444;--error:#ef4444;--radius:12px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'JetBrains Mono',ui-monospace,monospace;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:60px 20px 40px}
@@ -64,14 +65,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;opacity:0.03;
     <div class="card-title">Dual-Channel Verification</div>
 
     <div class="hash-row">
-      <div class="hash-label"><span class="source-badge github">GitHub</span> Published hash · v1.2.0</div>
+      <div class="hash-label"><span class="source-badge github">GitHub</span> Published hash · v1.2.1</div>
       <div class="hash-value loading" id="github-hash">loading from GitHub...</div>
       <div class="meta">Source: <a href="https://github.com/lownetjs/lownet-toolkit/blob/main/hashes.json">lownetjs/lownet-toolkit</a></div>
     </div>
 
     <div class="hash-row">
-      <div class="hash-label"><span class="source-badge server">Server</span> Published hash · v1.2.0</div>
-      <div class="hash-value" id="server-hash">7e610c82b43d75e19b1691a330212d45d1a24c52637390d5202c9497eb4acdd1</div>
+      <div class="hash-label"><span class="source-badge server">Server</span> Published hash · v1.2.1</div>
+      <div class="hash-value" id="server-hash">7324baf6e2d51549a154c43f54a69011cffafb3388508331b9028cb4a5cf0b9d</div>
       <div class="meta">Embedded in this page at deploy time</div>
     </div>
 
@@ -131,7 +132,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;opacity:0.03;
 
 <script>
 (function() {
-  var VERSION = 'v1.2.0';
+  var VERSION = 'v1.2.1';
   var GITHUB_URL = 'https://raw.githubusercontent.com/lownetjs/lownet-toolkit/main/hashes.json';
   var serverHash = document.getElementById('server-hash').textContent.trim();
   var githubHash = null;
