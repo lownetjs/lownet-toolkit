@@ -18,5 +18,10 @@
     "toolkit.html": "7324baf6e2d51549a154c43f54a69011cffafb3388508331b9028cb4a5cf0b9d",
     "date": "2026-11-26T19:18:04Z",
     "note": "Security fix for a second independent review of 1.2.0: key bundles sign their encryption key (bsig; bundles without it need a confirmed bundle fingerprint), biometric unlock only with WebAuthn PRF and no wrapping key in storage or backups, the notice card checks the signer against your contacts, stricter passphrases, import fields as text only, compact keys refused as recipients, CSP for the verify page. Formats are not externally audited."
+  },
+  "v1.2.2": {
+    "toolkit.html": "c15980674d1afe65ea7098d8bff0cfec4e63c70a24c7962406aa31bbe6b24384",
+    "date": "2026-11-27T00:12:55Z",
+    "note": "Fixes from a third independent review of 1.2.1 and its re-check: a pasted key bundle is compared byte for byte with your saved contacts (a swapped encryption key is refused, with or without bsig), signing keys of small order are refused in every check, new passphrases need 16 characters and must not be predictable (with a generator), names rewritten between Unicode forms still verify, plus display and service-worker fixes. Formats unchanged. Not externally audited."
   }
 }

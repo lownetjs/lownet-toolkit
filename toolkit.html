@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-yUSW/74XBjlQYt+2N55rfJ1ou1KU6c2tPnBVCqq2lek='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-W2L4MMKywNIjZ0qvntWJ8AiXIzDCAhquGzPnn4uhAWg='; style-src 'unsafe-inline'; connect-src 'self' https://lownet.org; img-src data: blob:; worker-src 'self' blob:; manifest-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none';">
   <!-- CSP (v1.1.2): Hash-based script-src (deploy.sh injects hash). connect-src locked to official relay.
        base-uri/frame-ancestors/object-src: none. Zero eval, zero external scripts, zero CDN. -->
   <meta name="theme-color" content="#050505">
@@ -652,7 +652,7 @@
     <div id="new-identity-form" class="hide">
       <div class="card">
         <div class="field"><label class="field-label">Name <span class="required">*</span></label><input type="text" id="new-id-name" placeholder="Your name"></div>
-        <div class="field"><label class="field-label">Passphrase <span class="required">*</span></label><input type="password" id="new-id-pass" placeholder="Encryption passphrase"></div>
+        <div class="field"><label class="field-label">Passphrase <span class="required">*</span></label><input type="password" id="new-id-pass" placeholder="At least 16 characters"><button type="button" class="btn btn-secondary btn-small" id="btn-gen-pass" style="margin-top:6px;">Generate</button><div id="gen-pass-hint" class="hide" style="font-size:10px;color:var(--warning);margin-top:4px;">Write this passphrase down now. Without it the identity cannot be opened.</div></div>
         <div class="btn-row"><button class="btn btn-secondary" id="btn-cancel-identity">Cancel</button><button class="btn btn-primary" id="btn-create-identity">Create & Download</button></div>
       </div>
     </div>
@@ -739,7 +739,7 @@
     <div class="card">
       <div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div><div><div class="card-title">About</div><div class="card-subtitle">Version & credits</div></div></div>
       <div style="font-size:12px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.2.1</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>Version</span><span style="font-family:ui-monospace,monospace;">1.2.2</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);gap:8px;"><span style="white-space:nowrap;">Protocols</span><span style="font-family:ui-monospace,monospace;font-size:10px;text-align:right;">CNP-1 · ENV-1.2 · SCP-1 · PoW-v2 · ENV-F-2 (PRO)</span></div>
         <div style="display:flex;justify-content:space-between;padding:6px 0;"><span>Crypto</span><span style="font-family:ui-monospace,monospace;font-size:11px;">Ed25519 · P-256 · AES-GCM</span></div>
       </div>
@@ -1008,7 +1008,7 @@
       </table>
       
       <p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);color:var(--text-muted);text-align:center;font-size:10px;">
-        LOWNET Toolkit v1.2.1 · <a href="https://lownet.org" style="color:var(--accent);text-decoration:none;">lownet.org</a> · MIT License
+        LOWNET Toolkit v1.2.2 · <a href="https://lownet.org" style="color:var(--accent);text-decoration:none;">lownet.org</a> · MIT License
       </p>
     </div>
   </div>
@@ -1060,7 +1060,7 @@
 
 <script>
 // LOWNET Toolkit v3 with Sequential PoW
-var TOOLKIT_VERSION='1.2.1';
+var TOOLKIT_VERSION='1.2.2';
 var TOOLKIT_HASH=null; // Computed on load
 
 var $=function(id){return document.getElementById(id)};
@@ -1100,12 +1100,14 @@ qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e
 
 
 function generateQR(text,canvas,size){
+  // v1.2.2 (finding N-R): bytes as UTF-8; the library default (Latin-1) garbled names with umlauts or emoji
+  qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8'];
   var ctx=canvas.getContext('2d');
   canvas.width=size;canvas.height=size;
   ctx.fillStyle='#ffffff';
   ctx.fillRect(0,0,size,size);
   try{
-    var qr=qrcode(0,'M');
+    var qr=qrcode(0,text.length>300?'L':'M'); // v1.2.2 (N-O): a full bundle fits a less dense code with level L
     qr.addData(text);
     qr.make();
     var moduleCount=qr.getModuleCount();
@@ -1127,8 +1129,8 @@ function generateQR(text,canvas,size){
 
 function showQR(title,data){
   $('qr-modal-title').textContent=title;
-  $('qr-data').textContent=data.length>100?data.slice(0,100)+'...':data;
-  generateQR(data,$('qr-canvas'),280);
+  $('qr-data').textContent=noBidi(data.length>100?data.slice(0,100)+'...':data);
+  generateQR(data,$('qr-canvas'),data.length>300?400:280); // v1.2.2 (N-O): a full bundle is a dense code
   $('qr-modal').classList.remove('hide');
 }
 $('qr-close').onclick=function(){$('qr-modal').classList.add('hide')};
@@ -1186,7 +1188,10 @@ $('scan-modal').onclick=function(e){if(e.target===this)stopQRScan()};
 function b64(bytes){var s='';for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function unb64(s){var p=s.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((s.length+3)%4);var bin=atob(p),out=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);return out}
 function bytesToHex(bytes){return Array.from(bytes).map(function(b){return b.toString(16).padStart(2,'0')}).join('')}
-function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+// v1.2.2 (finding N-T): direction control characters can make a name look reversed. Shown as a visible mark.
+var BIDI_CONTROL=/[\u202A-\u202E\u2066-\u2069\u200E\u200F\u061C]/g;
+function noBidi(s){return String(s).replace(BIDI_CONTROL,'\u2BD1')}
+function escapeHtml(s){return noBidi(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function sha256(d){return crypto.subtle.digest('SHA-256',typeof d==='string'?te.encode(d):d).then(function(h){return new Uint8Array(h)})}
 function canonicalize(v){if(v===null)return'null';if(v===undefined)return undefined;var t=typeof v;if(t==='boolean')return v?'true':'false';if(t==='number')return Object.is(v,-0)?'0':String(v);if(t==='string')return JSON.stringify(v.normalize('NFC'));if(Array.isArray(v))return'['+v.map(canonicalize).join(',')+']';if(t==='object'){var k=Object.keys(v).sort(),p=[];for(var i=0;i<k.length;i++){var c=canonicalize(v[k[i]]);if(c!==undefined)p.push(JSON.stringify(k[i])+':'+c)}return'{'+p.join(',')+'}'}throw new Error('type')}
 // v1.2: canonical form for the new formats (ENV-1.3, ENV-F-2 as released, CNP-1 bind). Strings stay as they are:
@@ -1405,7 +1410,7 @@ function verifySCP1(data,pubKeyBytes){
   var decoded=decodeSCP1(data);
   if(!decoded.wellFormed)return Promise.resolve(decoded);
   decoded.valid=false;decoded.signatureValid=false;decoded.fpMatches=false;
-  return crypto.subtle.importKey('raw',pubKeyBytes,'Ed25519',false,['verify']).then(function(pubKey){
+  return importEdVerify(pubKeyBytes).then(function(pubKey){
     return crypto.subtle.verify('Ed25519',pubKey,decoded.sig,decoded.dataToVerify).then(function(sigOk){
       decoded.signatureValid=sigOk;
       if(!sigOk){decoded.error='Invalid signature';return decoded}
@@ -1440,16 +1445,65 @@ function genIdentity(name){
   })
 }
 
-// v1.2.1 (finding N-H): a new passphrase needs 12 characters; under 16 it must mix character types; common ones are refused.
-// The identity file is PBKDF2 with 600,000 rounds: that slows guessing, it does not save a short passphrase.
-var COMMON_PASSPHRASES=['passwortpasswort','passwordpassword','123456789012','1234567890123','qwertzuiopasdf','qwertyuiopasdf','iloveyouiloveyou','abcdefghijkl','111111111111','000000000000','letmeinletmein','adminadminadmin','lownetlownet'];
+// v1.2.2 (finding N-H, second review): 16 characters at least, and what is left after taking out common words, keyboard
+// rows, sequences, repeats and years must still be 10 characters. A generator offers a random passphrase instead.
+var COMMON_PASSPHRASE_WORDS=['password','passwort','kennwort','qwertz','qwerty','azerty','welcome','willkommen','summer','sommer','winter',
+  'fruehling','autumn','herbst','admin','administrator','letmein','iloveyou','ichliebedich','liebe','love','lownet','monkey','dragon','sunshine',
+  'football','fussball','hallo','hello','secret','geheim','master','login','test','changeme','default','trustno','starwars','pokemon',
+  'superman','batman','princess','baseball','shadow','freedom','whatever','computer','internet','google','deutschland','germany','berlin',
+  'hamburg','muenchen','munich','koeln','bayern','schalke','borussia','dortmund','mustermann','geburtstag','birthday','familie','family'];
+// keyboard rows and columns (QWERTZ and QWERTY), alphabet; stripped from 4 characters on, so ordinary words survive
+var PASS_SEQUENCES=['abcdefghijklmnopqrstuvwxyz','qwertyuiop','asdfghjkl','zxcvbnm','qwertzuiop','yxcvbnm',
+  '1qay2wsx3edc4rfv5tgb6zhn7ujm8ik9ol0p','1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik9ol0p'];
+function passphraseCore(p){
+  // order matters: on the raw text first (digits still digits), then look-alike letters, words, alphabet runs
+  var s=p.toLowerCase();
+  function strip(seq){for(var len=seq.length;len>=4;len--)for(var i=0;i+len<=seq.length;i++){var part=seq.slice(i,i+len);if(s.indexOf(part)>=0)s=s.split(part).join(' ')}}
+  PASS_SEQUENCES.forEach(function(q){strip(q);strip(q.split('').reverse().join(''))});
+  s=s.replace(/[^a-z0-9À-￿]+/g,'');
+  s=s.replace(/\d{2,}/g,' ').replace(/(.)\1{2,}/g,' ');
+  s=s.replace(/[0@4]/g,function(c){return {'0':'o','@':'a','4':'a'}[c]}).replace(/1/g,'i').replace(/3/g,'e').replace(/[5$]/g,'s').replace(/7/g,'t');
+  COMMON_PASSPHRASE_WORDS.forEach(function(w){s=s.split(w).join(' ')});
+  s=s.replace(/[^a-z0-9À-￿]+/g,'');
+  for(var k=0;k<3;k++)s=s.replace(/(.{2,})\1+/g,'$1');
+  return s;
+}
 function passphraseProblem(p){
-  if(typeof p!=='string'||p.length<12)return 'Passphrase too short: at least 12 characters';
-  var lower=p.toLowerCase();
-  if(COMMON_PASSPHRASES.indexOf(lower)>=0||/^(.)\1+$/.test(p))return 'Passphrase too common: choose a longer, less predictable one';
-  var kinds=(/[a-z]/.test(p)?1:0)+(/[A-Z]/.test(p)?1:0)+(/[0-9]/.test(p)?1:0)+(/[^A-Za-z0-9]/.test(p)?1:0);
-  if(p.length<16&&kinds<2)return 'Passphrase too weak: use 16 characters or more, or mix letters, digits and symbols';
+  if(typeof p!=='string'||p.length<16)return 'Passphrase too short: at least 16 characters. Tip: use Generate, or five random words';
+  if(passphraseCore(p).length<10)return 'Passphrase too predictable (common words, keyboard rows, sequences or years). Tip: use Generate, or five random words';
   return null;
+}
+// 24 characters from 31 unambiguous ones, in groups of four: about 119 bits
+function generatePassphrase(){
+  // a draw that the rule itself would refuse (rare: many digits in a row) is drawn again
+  for(var tries=0;tries<20;tries++){var g=drawPassphrase();if(passphraseProblem(g)===null)return g}
+  return drawPassphrase();
+}
+function drawPassphrase(){
+  var abc='abcdefghjkmnpqrstuvwxyz23456789',out='';
+  while(out.replace(/-/g,'').length<24){var b=crypto.getRandomValues(new Uint8Array(1))[0];if(b<248){out+=abc[b%31];if(out.replace(/-/g,'').length%4===0&&out.replace(/-/g,'').length<24)out+='-'}}
+  return out;
+}
+// v1.2.2 (finding N-Z): Ed25519 keys of small order, and non-canonical encodings, are refused as signing keys.
+// Only a self-made identity could use one, but a key like that can make one signature fit several messages.
+// The five y-coordinates of points of small order (little-endian). The sign bit (top bit of byte 31) is masked first:
+// with it set, the same point has a second encoding, and both must be refused (review of 1.2.2, R-1).
+var WEAK_ED25519_Y=['0100000000000000000000000000000000000000000000000000000000000000','ecffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f',
+  '0000000000000000000000000000000000000000000000000000000000000000','26e8958fc2b227b045c3f489f2ef98f0d5dfac05d3c63339b13802886d53fc05',
+  'c7176a703d4dd84fba3c0b760d10670f2a2053fa2c39ccc64ec7fd7792ac037a'];
+function isWeakEd25519(b){
+  if(!b||b.length!==32)return false;
+  var y=new Uint8Array(b);y[31]&=0x7f;
+  if(WEAK_ED25519_Y.indexOf(bytesToHex(y))>=0)return true;
+  // y >= p (2^255 - 19) is a non-canonical encoding
+  if(y[31]!==0x7f||y[0]<0xed)return false;
+  for(var i=1;i<31;i++)if(y[i]!==0xff)return false;
+  return true;
+}
+function importEdVerify(raw){
+  var b=raw instanceof Uint8Array?raw:new Uint8Array(raw);
+  if(isWeakEd25519(b))return Promise.reject(new Error('Invalid signing key (weak point)'));
+  return crypto.subtle.importKey('raw',b,'Ed25519',false,['verify']);
 }
 function safeSeq(v){return Number.isSafeInteger(v)&&v>=0?v:0}
 // v1.2.1 (finding N-C): the fingerprint covers only the signing key. A bundle now carries bsig, the signing key's
@@ -1471,11 +1525,21 @@ function verifyBundle(b){
   if(!b||b.bsig===undefined||b.bsig===null)return Promise.resolve('none');
   if(typeof b.bsig!=='string'||typeof b.sign!=='string'||!b.dh||typeof b.dh!=='object')return Promise.resolve('bad');
   try{
-    var raw=b.sign.indexOf('ed25519:')===0?b.sign.slice(8):b.sign;
-    var data=bundleSigData(b);
-    return crypto.subtle.importKey('raw',unb64(raw),'Ed25519',false,['verify']).then(function(k){
-      return crypto.subtle.verify('Ed25519',k,unb64(b.bsig),data);
-    }).then(function(ok){return ok?'bound':'bad'},function(){return 'bad'});
+    var raw=b.sign.indexOf('ed25519:')===0?b.sign.slice(8):b.sign,sig=unb64(b.bsig);
+    // v1.2.2 (finding N-N): a transport may rewrite the name from NFC to NFD. The keys are what bsig protects; a name that
+    // verifies in another normalization form is accepted, and the bundle takes the form that was signed.
+    var names=[b.name];
+    if(typeof b.name==='string'){[b.name.normalize('NFC'),b.name.normalize('NFD')].forEach(function(n){if(names.indexOf(n)<0)names.push(n)})}
+    return importEdVerify(unb64(raw)).then(function(k){
+      var i=0;
+      function next(){
+        if(i>=names.length)return 'bad';
+        var n=names[i++],data;
+        try{data=bundleSigData(Object.assign({},b,{name:n}))}catch(e){return next()}
+        return crypto.subtle.verify('Ed25519',k,sig,data).then(function(ok){if(ok){b.name=n;return 'bound'}return next()});
+      }
+      return next();
+    }).then(function(r){return r},function(){return 'bad'});
   }catch(e){return Promise.resolve('bad')}
 }
 function pubBundle(id){var b={name:id.name,sign:'ed25519:'+id.sign.pub,dh:{kty:id.dh.pub.kty,crv:id.dh.pub.crv,x:id.dh.pub.x,y:id.dh.pub.y},fp:id.fp};if(typeof id.bsig==='string')b.bsig=id.bsig;return b}
@@ -1671,7 +1735,7 @@ function bindState(data){
   try{sig=unb64(b.sig);pub=unb64(data.ln_signer.publicKey.slice(8))}catch(e){return Promise.resolve('none')}
   if(sig.length!==64)return Promise.resolve('none');
   try{signed=cnpBindData(data)}catch(e){return Promise.resolve('bad')}
-  return crypto.subtle.importKey('raw',pub,'Ed25519',false,['verify']).then(function(k){
+  return importEdVerify(pub).then(function(k){
     return crypto.subtle.verify('Ed25519',k,sig,signed).then(function(ok){return ok?'ok':'bad'});
   },function(){return'none'});
 }
@@ -1708,7 +1772,7 @@ function checkNotice(data,opts){
   var pubKeyStr=data.ln_signer.publicKey;
   // v1.1.4: a check answers, it does not throw. Broken Base64 here used to throw past the .catch below.
   var pubBytes;try{pubBytes=unb64(pubKeyStr.slice(8))}catch(e){return Promise.resolve({valid:false,error:'Invalid key encoding'})}
-  return crypto.subtle.importKey('raw',pubBytes,'Ed25519',false,['verify']).then(function(pubKey){
+  return importEdVerify(pubBytes).then(function(pubKey){
     var unsigned=buildUnsignedForCanon(data);
     return crypto.subtle.verify('Ed25519',pubKey,unb64(data.ln_signature),te.encode(canonicalize(unsigned))).then(function(valid){
       if(!valid)return{valid:false,error:'Invalid signature'};
@@ -1869,7 +1933,7 @@ function decryptEnvelope13(identity,data){
     if(!isPrivate){
       if(!data.env_sender||typeof data.env_sender.sign!=='string'||data.env_sender.sign.indexOf('ed25519:')!==0||typeof data.env_signature!=='string')return{valid:false,error:'Missing sender'};
       var signed=JSON.parse(JSON.stringify(data));delete signed.env_signature;
-      outer=crypto.subtle.importKey('raw',unb64(data.env_sender.sign.slice(8)),'Ed25519',false,['verify']).then(function(k){
+      outer=importEdVerify(unb64(data.env_sender.sign.slice(8))).then(function(k){
         return crypto.subtle.verify('Ed25519',k,unb64(data.env_signature),te.encode(canonicalizeExact(signed)));
       });
     }else outer=Promise.resolve(true);
@@ -1897,7 +1961,7 @@ function decryptEnvelope13(identity,data){
         if(!decrypted||typeof decrypted!=='object'||!decrypted.sender||typeof decrypted.sender.sign!=='string'||decrypted.sender.sign.indexOf('ed25519:')!==0||typeof decrypted.sender_sig!=='string')return{valid:false,error:'Missing inner auth'};
         var innerSenderPub=unb64(decrypted.sender.sign.slice(8)),signedData;
         try{signedData=env13InnerSignedData(view,decrypted.content)}catch(e){return{valid:false,error:'Malformed content: '+e.message}}
-        return crypto.subtle.importKey('raw',innerSenderPub,'Ed25519',false,['verify']).then(function(innerKey){
+        return importEdVerify(innerSenderPub).then(function(innerKey){
           return crypto.subtle.verify('Ed25519',innerKey,unb64(decrypted.sender_sig),signedData);
         }).then(function(innerValid){
           if(!innerValid)return{valid:false,error:'Invalid inner signature'};
@@ -1934,7 +1998,7 @@ function decryptEnvelopeLegacy(identity,data){
     if(!isPrivate||!isV12){
       if(!data.env_sender||!data.env_sender.sign)return Promise.resolve({valid:false,error:'Missing sender'});
       var senderPub=unb64(data.env_sender.sign.slice(8));
-      outerSigCheck=crypto.subtle.importKey('raw',senderPub,'Ed25519',false,['verify']).then(function(senderKey){
+      outerSigCheck=importEdVerify(senderPub).then(function(senderKey){
         var unsigned=Object.assign({},data);delete unsigned.env_signature;
         return crypto.subtle.verify('Ed25519',senderKey,unb64(data.env_signature),te.encode(canonicalize(unsigned)));
       });
@@ -1973,7 +2037,7 @@ function decryptEnvelopeLegacy(identity,data){
                   if(!decrypted||!decrypted.sender||!decrypted.sender_sig)return{valid:false,error:'Missing inner auth'};
                   var innerSenderPub=unb64(decrypted.sender.sign.slice(8));
                   var sigData=data.env_id+'|'+data.env_timestamp+'|'+canonicalize(decrypted.content);
-                  return crypto.subtle.importKey('raw',innerSenderPub,'Ed25519',false,['verify']).then(function(innerKey){
+                  return importEdVerify(innerSenderPub).then(function(innerKey){
                     return crypto.subtle.verify('Ed25519',innerKey,unb64(decrypted.sender_sig),te.encode(sigData)).then(function(innerValid){
                       if(!innerValid)return{valid:false,error:'Invalid inner signature'};
                       return fingerprint(innerSenderPub).then(function(computedFp){
@@ -2044,7 +2108,10 @@ function parseRecipientInput(str){
   if(typeof raw0.sign!=='string'||!raw0.sign)return Promise.resolve({error:"This bundle has no signing key, so the recipient can't open what you send. Ask for the full key bundle."});
   // v1.2.1 (review R-2): only the fields of a bundle are taken over. Anything else in the pasted text (a field that
   // claims a confirmation, for instance) is dropped here.
-  var pub={name:typeof raw0.name==='string'?raw0.name:null,sign:raw0.sign,dh:{kty:raw0.dh.kty,crv:raw0.dh.crv,x:raw0.dh.x,y:raw0.dh.y},fp:typeof raw0.fp==='string'?raw0.fp:undefined};
+  var signBytes=signKeyBytes(raw0.sign);
+  if(!signBytes)return Promise.resolve({error:'The signing key in this bundle is not a valid Ed25519 key.'});
+  // the signing key in its one canonical form, before fingerprint, bsig and contact check (review R-2)
+  var pub={name:typeof raw0.name==='string'?raw0.name:null,sign:'ed25519:'+b64(signBytes),dh:{kty:raw0.dh.kty,crv:raw0.dh.crv,x:raw0.dh.x,y:raw0.dh.y},fp:typeof raw0.fp==='string'?raw0.fp:undefined};
   if(raw0.bsig!==undefined&&raw0.bsig!==null)pub.bsig=raw0.bsig;
   // v1.2: the fingerprint is always derived from the signing key; a bundle whose fp claims another key is refused.
   var raw=pub.sign.indexOf('ed25519:')===0?pub.sign.slice(8):pub.sign;
@@ -2053,14 +2120,45 @@ function parseRecipientInput(str){
     pub.fp=fp;
     // v1.2.1 (finding N-C): the encryption key must be signed by the signing key, or the bundle is marked unconfirmed
     return verifyBundle(pub).then(function(st){
-      if(st==='bad')return {error:'Bundle signature invalid: the encryption key does not belong to this signer. Do not use this bundle.'};
+      if(st==='bad')return {error:'Bundle signature invalid: the keys or the name were changed on the way, or the bundle is forged. Ask the person for it again.'};
       pub.bundleState=st==='bound'?'bound':'unconfirmed';
+      // v1.2.2 (finding N-M): a contact with the same signing key and another encryption key means a swapped bundle,
+      // whether this one has bsig or not. A missing bsig is fine when a saved, confirmed contact has the same keys.
+      return contactsForSign(pub.sign).then(function(look){
+        if(look===null){pub.contactCheck='late';return pub}
+        return Promise.all(look.map(function(c){return verifyBundle(contactBundle(c)).then(function(st){return{c:c,ok:st==='bound'}})})).then(function(rs){
+          var confirmedDiff=rs.find(function(x){return x.ok&&x.c.dh&&!sameDh(x.c.dh,pub.dh)});
+          if(confirmedDiff)return {error:'This signing key belongs to your contact '+noBidi(String(confirmedDiff.c.name||''))+', but the encryption key differs from the confirmed one you saved. The bundle may have been swapped. Do not use it.'};
+          var confirmedSame=rs.find(function(x){return x.ok&&x.c.dh&&sameDh(x.c.dh,pub.dh)});
+          if(pub.bundleState!=='bound'&&confirmedSame){
+            // review R-4: take name and bsig from the confirmed contact, not the unsigned name in the pasted text
+            var cb=contactBundle(confirmedSame.c);pub.bundleState='bound';pub.name=cb.name;pub.bsig=cb.bsig;return pub;
+          }
+          var unconfirmedDiff=rs.find(function(x){return !x.ok&&x.c.dh&&!sameDh(x.c.dh,pub.dh)});
+          if(unconfirmedDiff){
+            if(pub.bundleState!=='bound')return {error:'This signing key belongs to your contact '+noBidi(String(unconfirmedDiff.c.name||''))+', but the encryption key differs from the saved one. Neither is confirmed by the signer. Ask the person for a new bundle.'};
+            // review R-6: the signed bundle is fine; the saved contact was never confirmed and is the one to replace
+            pub.contactNote='Differs from your contact '+noBidi(String(unconfirmedDiff.c.name||''))+', which was saved without confirmation. Replace that contact with this bundle.';
+          }
+          return pub;
+        });
+      }).then(function(pub){
+      if(pub.error)return pub;
       return longFingerprint(raw).then(function(l){pub.longFp=l},function(){}).then(function(){
         if(pub.bundleState==='bound')return pub;
         return bundleFingerprint(pub).then(function(b){pub.bundleFp=b;return pub},function(){return pub});
       });
+      });
     });
   },function(){return null});
+}
+function sameDh(a,b){return !!a&&!!b&&a.x===b.x&&a.y===b.y&&(a.crv||'P-256')===(b.crv||'P-256')}
+// All saved contacts with this signing key, or null when the contact list does not answer within 1.5 s. Then nothing is
+// upgraded, the bundle stays as it is, and the page says the check did not run (review R-7).
+function contactsForSign(sign){
+  var timer,late=new Promise(function(res){timer=setTimeout(function(){res(null)},1500)});
+  var look=Promise.resolve().then(function(){return contactsList()}).then(function(cs){return (cs||[]).filter(function(x){return x&&sameSignKey(x.sign,sign)})},function(){return []});
+  return Promise.race([look,late]).then(function(r){clearTimeout(timer);return r});
 }
 // v1.2.1: a contact back as a bundle. bsig covers the name the key's owner gave, so a renamed contact hands on that name.
 function contactBundle(c){var signed=typeof c.bsig==='string';var b={name:typeof c.ownName==='string'?c.ownName:(signed?null:c.name),sign:c.sign,dh:c.dh,fp:c.fp};if(signed)b.bsig=c.bsig;return b}
@@ -2422,7 +2520,7 @@ async function openEnvF2(header, ctBytes, keyMat, isPrivate) {
     if (!header.env_signature || !header.env_sender || typeof header.env_sender.sign !== 'string') {
       throw new Error('Missing sender signature');
     }
-    var senderKey = await crypto.subtle.importKey('raw', unb64(header.env_sender.sign.slice(8)), 'Ed25519', false, ['verify']);
+    var senderKey = await importEdVerify(unb64(header.env_sender.sign.slice(8)));
     var sigValid = await crypto.subtle.verify(
       'Ed25519', senderKey, unb64(header.env_signature), te.encode(canonicalizeExact(envfView(header, ['env_signature'])))
     );
@@ -2444,7 +2542,7 @@ async function openEnvF2(header, ctBytes, keyMat, isPrivate) {
     if (!fileMeta._sender || typeof fileMeta._sender.sign !== 'string' || typeof fileMeta._sender_sig !== 'string') {
       throw new Error('Missing inner auth');
     }
-    var innerKey = await crypto.subtle.importKey('raw', unb64(fileMeta._sender.sign.slice(8)), 'Ed25519', false, ['verify']);
+    var innerKey = await importEdVerify(unb64(fileMeta._sender.sign.slice(8)));
     var innerValid = await crypto.subtle.verify(
       'Ed25519', innerKey, unb64(fileMeta._sender_sig), envfInnerSignedData(signedHeader, fileMeta)
     );
@@ -2471,7 +2569,7 @@ async function openEnvF1(header, ctBytes, keyMat, isPrivate) {
       throw new Error('Missing sender signature');
     }
     var senderPub = unb64(header.env_sender.sign.slice(8));
-    var senderKey = await crypto.subtle.importKey('raw', senderPub, 'Ed25519', false, ['verify']);
+    var senderKey = await importEdVerify(senderPub);
     var sigHeader = Object.assign({}, header);
     delete sigHeader.env_signature;
     var sigValid = await crypto.subtle.verify(
@@ -2518,7 +2616,7 @@ async function openEnvF1(header, ctBytes, keyMat, isPrivate) {
       throw new Error('File hash mismatch (content may be corrupted)');
     }
     var innerPub = unb64(fileMeta._sender.sign.slice(8));
-    var innerKey = await crypto.subtle.importKey('raw', innerPub, 'Ed25519', false, ['verify']);
+    var innerKey = await importEdVerify(innerPub);
     var sigData = header.env_id + '|' + header.env_timestamp + '|' + fileMeta._file_hash;
     var innerValid = await crypto.subtle.verify('Ed25519', innerKey, unb64(fileMeta._sender_sig), te.encode(sigData));
     if (!innerValid) throw new Error('Invalid inner signature (sender auth failed)');
@@ -2634,7 +2732,7 @@ async function verifyLicense(keyStr) {
     if (payload.type !== 'pro') return { valid: false, error: 'Invalid type' };
     // Verify Ed25519 signature
     var pubBytes = unb64(LICENSE_PUB_B64);
-    var pubKey = await crypto.subtle.importKey('raw', pubBytes, 'Ed25519', false, ['verify']);
+    var pubKey = await importEdVerify(pubBytes);
     var sigBytes = unb64(sigB64);
     var valid = await crypto.subtle.verify('Ed25519', pubKey, sigBytes, te.encode(payloadJson));
     if (!valid) return { valid: false, error: 'Invalid signature' };
@@ -2915,7 +3013,7 @@ function renderContacts(){
         var c=contacts.find(function(x){return x.id===parseInt(el.dataset.id)});
         if(c){
           // Show contact details or copy to clipboard
-          navigator.clipboard.writeText(JSON.stringify({name:c.name,sign:c.sign,dh:c.dh,fp:c.fp},null,2));
+          navigator.clipboard.writeText(JSON.stringify(contactBundle(c),null,2));
           showStatus('Copied to clipboard');
         }
       };
@@ -2989,7 +3087,7 @@ $('btn-unlock-confirm').onclick=function(){
       if(stripLegacyBiometric(record))keysAdd(record).then(function(){showStatus('Biometric unlock was removed (security fix in 1.2.1). Set it up again if you want it.')}).catch(function(){});
       return loadIdentityKeys(data).then(function(loaded){
         if(!current())return;
-        loaded.seq=record.seq||0;
+        loaded.seq=safeSeq(record.seq);
         loaded.prevHash=record.prevHash||null;
         loaded.lastSignTime=record.lastSignTime||0;
         loaded.created=loaded.created||record.created||new Date().toISOString();
@@ -3045,6 +3143,7 @@ function deleteIdentity(id){
     showConfirm('Delete Identity','This will permanently delete this identity and all associated data.',detail,'Delete').then(function(ok){
       if(ok){
         keysDelete(id).then(function(){
+          if(record)forgetPasskey(record.biometricCredId); // v1.2.2 (N-Q)
           session.unlocked.delete(id);
           renderKeys();
           renderLockStatus();
@@ -3143,7 +3242,7 @@ async function unlockWithBiometric(id){
     try{
       var data=await decryptIdentity(record.enc,pass);
       var loaded=await loadIdentityKeys(data);
-      loaded.seq=record.seq||0;
+      loaded.seq=safeSeq(record.seq);
       loaded.prevHash=record.prevHash||null;
       loaded.lastSignTime=record.lastSignTime||0;
       loaded.created=loaded.created||record.created||new Date().toISOString();
@@ -3167,6 +3266,7 @@ async function resetBiometric(id){
   var ok=await showConfirm('Remove Biometric','Remove biometric unlock for this identity? You can re-enable it later.',detail,'Remove');
   if(!ok)return;
   if(record&&(record.biometricCredId||record.biometricEncPass||record.biometricPass)){
+    forgetPasskey(record.biometricCredId);
     delete record.biometricCredId;delete record.biometricEncPass;delete record.biometricPass;
     await keysAdd(record);
     renderKeys();
@@ -3538,7 +3638,7 @@ $('recipient-key').oninput=function(){
   parseRecipientInput(val).then(function(pub){
     if(!current())return;
     if(pub&&pub.dh&&pub.fp){
-      var who=pub.longFp?pub.longFp+' · FP '+pub.fp:pub.fp;
+      var who=(pub.longFp?pub.longFp+' · FP '+pub.fp:pub.fp)+(pub.contactNote?' · '+pub.contactNote:'')+(pub.contactCheck==='late'?' · contact list did not answer, not compared':'');
       if(pub.bundleState==='bound'){
         $('recipient-fp').textContent='Recipient: '+who;
         $('recipient-fp').style.color='var(--accent)';
@@ -3564,7 +3664,7 @@ $('file-verify').onchange=function(e){if(e.target.files&&e.target.files[0]){var 
 function addInfoRow(parent,label,value){
   var row=document.createElement('div');row.className='info-row';
   var l=document.createElement('span');l.className='info-label';l.textContent=label;
-  var v=document.createElement('span');v.className='info-value';v.textContent=value;
+  var v=document.createElement('span');v.className='info-value';v.textContent=noBidi(value);
   row.append(l,v);parent.append(row);
 }
 
@@ -3607,7 +3707,9 @@ var verifyRun=0;
 // v1.2 (finding F-5): a valid signature says which key signed, not that it is someone you expect. The card says
 // whether the key is yours or a contact's, and turns amber for any other key. It also notes an envelope that was
 // opened here before: a copy stays valid until it expires, so a repeat is shown, not hidden.
-function sameSignKey(a,b){if(typeof a!=='string'||typeof b!=='string')return false;var x=a.indexOf('ed25519:')===0?a.slice(8):a,y=b.indexOf('ed25519:')===0?b.slice(8):b;return x.length>0&&x===y}
+// v1.2.2 (review R-2): compared as bytes. As text, a space, a line break or standard Base64 made the same key look different.
+function signKeyBytes(k){if(typeof k!=='string')return null;try{var r=unb64(k.indexOf('ed25519:')===0?k.slice(8):k);return r.length===32?r:null}catch(e){return null}}
+function sameSignKey(a,b){var x=signKeyBytes(a),y=signKeyBytes(b);if(!x||!y)return false;for(var i=0;i<32;i++)if(x[i]!==y[i])return false;return true}
 function knownSender(signKey){
   var own=false;session.unlocked.forEach(function(id){if(id&&id.sign&&sameSignKey('ed25519:'+id.sign.pub,signKey))own=true});
   if(own)return Promise.resolve('self');
@@ -3731,7 +3833,7 @@ if(data.scp1_version){
   return;
 }
 
-if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'||data.env_version===ENV_VERSION){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){if(run===verifyRun)showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){if(run!==verifyRun)return;var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.sender){var features=[];if(result.forwardSecrecy)features.push('Sender-side forward secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(result.olderFormat?' · older format':'')+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else{var powStatus=data.ln_pow?'Chain not checked':'No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}if(data.ln_version&&data.ln_signer&&typeof data.ln_signer.publicKey==='string')markSender(run,badge,box,{valid:true,sender:{sign:data.ln_signer.publicKey,name:data.ln_signer.name}},data,{notice:true})}}else if(result.legacy&&result.sender){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Decrypted · older format';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent=noticeAmberTitle(result);badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}$('verify-result').classList.remove('hide')}).catch(function(e){fail(e.message)})};
+if(data.env_version==='ENV-1.1'||data.env_version==='ENV-1.2'||data.env_version===ENV_VERSION){var myIdentity=null;session.unlocked.forEach(function(id){if(!myIdentity)myIdentity=id});if(!myIdentity){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Unlock Required';badge.querySelector('.result-badge-sub').textContent='Unlock identity first';$('verify-details').textContent='';$('verify-content').textContent='';$('verify-result').classList.remove('hide');return}promise=decryptEnvelope(myIdentity,data)}else{promise=verifyNotice(data,{maxRounds:VERIFY_TAB_ROUNDS,onProgress:function(i,n){if(run===verifyRun)showStatus('Verifying work... '+Math.floor(100*i/n)+'%')}})}promise.then(function(result){if(run!==verifyRun)return;var box=$('verify-details');if(result.valid){badge.classList.remove('error');badge.querySelector('.result-badge-icon').innerHTML=checkSvg;if(result.sender){var features=[];if(result.forwardSecrecy)features.push('Sender-side forward secrecy');if(result.senderMinimized)features.push('Sender Hidden');badge.querySelector('.result-badge-title').textContent='Decrypted';badge.querySelector('.result-badge-sub').textContent='Valid'+(result.olderFormat?' · older format':'')+(features.length?' · '+features.join(' · '):'');renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else{var powStatus=data.ln_pow?'Chain not checked':'No PoW';if(result.pow){if(result.pow.unverified){powStatus='PoW: '+result.pow.r.toLocaleString()+' rounds (not verified locally)'}else if(result.pow.valid===true){powStatus='PoW OK'}else if(result.pow.valid===false){powStatus='PoW: '+result.pow.error}else{powStatus='PoW: unknown'}}badge.querySelector('.result-badge-title').textContent='Valid';badge.querySelector('.result-badge-sub').textContent='Signature OK · '+powStatus;renderVerifyDetails(box,data,result);if(data.ln_type==='attestation'&&data.ln_payload){var p=data.ln_payload;$('verify-content').textContent='Subject: '+(p.subject||'-')+'\nScope: '+(p.scope||'-')+'\nControl: '+(p.control_ref||'-')+'\nEvidence: '+(p.evidence_ref||'-')+'\nValid: '+(p.valid_from||'?')+' to '+(p.valid_until||'?')+'\n\nStatement:\n'+(p.statement||'-')}else{$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}if(data.ln_version&&data.ln_signer&&typeof data.ln_signer.publicKey==='string')markSender(run,badge,box,{valid:true,sender:{sign:data.ln_signer.publicKey,name:data.ln_signer.name}},data,{notice:true})}}else if(result.legacy&&result.sender){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent='Decrypted · older format';badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=envelopeText(result.payload);markSender(run,badge,box,result,data)}else if(result.unverified&&result.signatureValid){badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=warnSvg;badge.querySelector('.result-badge-title').textContent=noticeAmberTitle(result);badge.querySelector('.result-badge-sub').textContent=result.error;renderVerifyDetails(box,data,result);$('verify-content').textContent=((data.ln_payload&&data.ln_payload.title)?data.ln_payload.title+'\n\n':'')+((data.ln_payload&&data.ln_payload.content)||JSON.stringify(data.ln_payload,null,2))}else{badge.classList.add('error');badge.querySelector('.result-badge-icon').innerHTML=xSvg;badge.querySelector('.result-badge-title').textContent='Invalid';badge.querySelector('.result-badge-sub').textContent=result.error;box.textContent='';$('verify-content').textContent=''}var vc=$('verify-content');if(BIDI_CONTROL.test(vc.textContent)){BIDI_CONTROL.lastIndex=0;vc.textContent=noBidi(vc.textContent);addInfoRow(box,'Note','The text holds direction control characters, shown as \u2BD1')}BIDI_CONTROL.lastIndex=0;$('verify-result').classList.remove('hide')}).catch(function(e){fail(e.message)})};
 $('btn-verify-save').onclick=function(){vaultAdd(JSON.parse($('verify-input').value)).then(function(){showStatus('Saved')})};
 
 // VAULT
@@ -3748,19 +3850,21 @@ $('btn-vault-clear').onclick=function(){
 $('btn-new-identity').onclick=function(){$('new-identity-form').classList.remove('hide');$('load-identity-form').classList.add('hide')};
 $('btn-load-identity').onclick=function(){$('load-identity-form').classList.remove('hide');$('new-identity-form').classList.add('hide')};
 $('btn-cancel-identity').onclick=function(){$('new-identity-form').classList.add('hide')};
+$('btn-gen-pass').onclick=function(){var f=$('new-id-pass');f.value=generatePassphrase();f.type='text';f.dataset.generated=f.value;$('gen-pass-hint').classList.remove('hide')};
+$('new-id-pass').oninput=function(){if(this.dataset.generated&&this.value!==this.dataset.generated){this.type='password';delete this.dataset.generated;$('gen-pass-hint').classList.add('hide')}};
 $('btn-create-identity').onclick=function(){var name=$('new-id-name').value.trim(),pass=$('new-id-pass').value;if(!name){showStatus('Enter name','error');return}var weak=passphraseProblem(pass);if(weak){showStatus(weak,'error');return}genIdentity(name).then(function(id){return encryptIdentity(id,pass).then(function(enc){var record={id:id.id,name:id.name,fp:id.fp,created:id.created,enc:enc,seq:0,prevHash:null};return keysAdd(record).then(function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(enc,null,2)],{type:'application/json'}));a.download='lownet-identity-'+id.fp.replace(/:/g,'')+'.json';a.click();return loadIdentityKeys(id).then(function(loaded){setTimeout(function(){var b=document.createElement('a');b.href=URL.createObjectURL(new Blob([JSON.stringify(pubBundle(loaded),null,2)],{type:'application/json'}));b.download='lownet-pubkey-'+id.fp.replace(/:/g,'')+'.json';b.click()},500);session.unlocked.set(id.id,loaded);session.activeId=id.id;$('new-id-name').value='';$('new-id-pass').value='';$('new-identity-form').classList.add('hide');renderKeys();renderLockStatus();showStatus('Created & downloaded')})})})}).catch(function(e){showStatus('Error: '+e.message,'error')})};
 $('btn-select-id-file').onclick=function(){$('file-identity').click()};
-$('file-identity').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;var pass=$('load-id-pass').value;if(!pass){showStatus('Enter passphrase','error');return}file.text().then(function(t){var enc=JSON.parse(t);return decryptIdentity(enc,pass).then(function(data){var record={id:data.id||data.fp,name:data.name,fp:data.fp,created:data.created,enc:enc,seq:data.seq||0,prevHash:data.prevHash||null,lastSignTime:data.lastSignTime||0};return keysAdd(record).then(function(){return loadIdentityKeys(data).then(function(loaded){loaded.seq=record.seq;loaded.prevHash=record.prevHash;loaded.lastSignTime=record.lastSignTime;loaded.created=loaded.created||record.created||new Date().toISOString();session.unlocked.set(record.id,loaded);session.activeId=record.id;$('load-id-pass').value='';$('load-identity-form').classList.add('hide');renderKeys();renderLockStatus();showStatus('Loaded & unlocked')})})})}).catch(function(){showStatus('Wrong passphrase','error')});e.target.value=''};
+$('file-identity').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;var pass=$('load-id-pass').value;if(!pass){showStatus('Enter passphrase','error');return}file.text().then(function(t){var enc=JSON.parse(t);return decryptIdentity(enc,pass).then(function(data){var record={id:data.id||data.fp,name:data.name,fp:data.fp,created:data.created,enc:enc,seq:safeSeq(data.seq),prevHash:data.prevHash||null,lastSignTime:data.lastSignTime||0};return keysAdd(record).then(function(){return loadIdentityKeys(data).then(function(loaded){loaded.seq=record.seq;loaded.prevHash=record.prevHash;loaded.lastSignTime=record.lastSignTime;loaded.created=loaded.created||record.created||new Date().toISOString();session.unlocked.set(record.id,loaded);session.activeId=record.id;$('load-id-pass').value='';$('load-identity-form').classList.add('hide');renderKeys();renderLockStatus();showStatus('Loaded & unlocked')})})})}).catch(function(){showStatus('Wrong passphrase','error')});e.target.value=''};
 
 // SETTINGS
 $('btn-privacy-public').onclick=function(){settings.envPrivacy='public';$('btn-privacy-public').classList.remove('btn-secondary');$('btn-privacy-public').classList.add('btn-primary');$('btn-privacy-private').classList.remove('btn-primary');$('btn-privacy-private').classList.add('btn-secondary');$('privacy-desc').textContent='Public: Name visible'};
 $('btn-privacy-private').onclick=function(){settings.envPrivacy='private';$('btn-privacy-private').classList.remove('btn-secondary');$('btn-privacy-private').classList.add('btn-primary');$('btn-privacy-public').classList.remove('btn-primary');$('btn-privacy-public').classList.add('btn-secondary');$('privacy-desc').textContent='Private: Only pubkey visible'};
 $('btn-full-backup').onclick=function(){Promise.all([keysList(),vaultList()]).then(function(results){var keys=results[0],vault=results[1];var backup={backup:'LOWNET_FULL',version:2,exported:new Date().toISOString(),keys:keys.map(function(k){var c=Object.assign({},k);delete c.biometricPass;delete c.biometricEncPass;delete c.biometricCredId;return c}),vault:vault.map(function(i){return i.data})};var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));a.download='lownet-backup-'+Date.now()+'.json';a.click()})};
 $('btn-restore-backup').onclick=function(){$('file-backup').click()};
-$('file-backup').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;file.text().then(function(t){var backup=JSON.parse(t);if(backup.backup!=='LOWNET_FULL')throw new Error('Invalid');var promises=[];for(var i=0;i<backup.keys.length;i++){var rk=backup.keys[i];if(rk&&typeof rk==='object'){rk=Object.assign({},rk);delete rk.biometricPass;delete rk.biometricEncPass;delete rk.biometricCredId}promises.push(keysAdd(rk))}for(var j=0;j<backup.vault.length;j++){promises.push(vaultAdd(backup.vault[j]))}Promise.all(promises).then(function(){renderKeys();renderVault();showStatus('Restored '+backup.keys.length+' keys, '+backup.vault.length+' items'+(backup.keys.some(function(k){return k&&(k.biometricCredId||k.biometricEncPass||k.biometricPass)})?' · biometric unlock and biometric signing must be set up again':''))})}).catch(function(e){showStatus('Error: '+e.message,'error')});e.target.value=''};
+$('file-backup').onchange=function(e){var file=e.target.files&&e.target.files[0];if(!file)return;file.text().then(function(t){var backup=JSON.parse(t);if(backup.backup!=='LOWNET_FULL')throw new Error('Invalid');var promises=[];for(var i=0;i<backup.keys.length;i++){var rk=backup.keys[i];if(rk&&typeof rk==='object'){rk=Object.assign({},rk);delete rk.biometricPass;delete rk.biometricEncPass;delete rk.biometricCredId;rk.seq=safeSeq(rk.seq)}promises.push(keysAdd(rk))}for(var j=0;j<backup.vault.length;j++){promises.push(vaultAdd(backup.vault[j]))}Promise.all(promises).then(function(){renderKeys();renderVault();showStatus('Restored '+backup.keys.length+' keys, '+backup.vault.length+' items'+(backup.keys.some(function(k){return k&&(k.biometricCredId||k.biometricEncPass||k.biometricPass)})?' · biometric unlock and biometric signing must be set up again':''))})}).catch(function(e){showStatus('Error: '+e.message,'error')});e.target.value=''};
 $('btn-clear-all').onclick=function(){$('clear-modal-confirm').value='';$('clear-modal').classList.remove('hide');$('clear-modal').style.display='flex';setTimeout(function(){$('clear-modal-confirm').focus()},100)};
 $('btn-clear-cancel').onclick=function(){$('clear-modal').classList.add('hide');$('clear-modal').style.display='none'};
-$('btn-clear-confirm').onclick=function(){if($('clear-modal-confirm').value!=='DELETE'){showStatus('Type DELETE to confirm','error');$('clear-modal-confirm').focus();return}$('clear-modal').classList.add('hide');showStatus('Clearing...');openDB().then(function(db){var tx=db.transaction([STORE_VAULT,STORE_KEYS,STORE_CONTACTS],'readwrite');tx.objectStore(STORE_VAULT).clear();tx.objectStore(STORE_KEYS).clear();tx.objectStore(STORE_CONTACTS).clear();tx.oncomplete=function(){localStorage.clear();session.unlocked.clear();session.activeId=null;showStatus('All data cleared');setTimeout(function(){location.reload()},500)};tx.onerror=function(){showStatus('Error: '+tx.error,'error')}}).catch(function(e){showStatus('Error: '+e.message,'error')})};
+$('btn-clear-confirm').onclick=function(){if($('clear-modal-confirm').value!=='DELETE'){showStatus('Type DELETE to confirm','error');$('clear-modal-confirm').focus();return}$('clear-modal').classList.add('hide');showStatus('Clearing...');keysList().then(function(ks){(ks||[]).forEach(function(k){if(k&&k.biometricCredId)forgetPasskey(k.biometricCredId)})}).catch(function(){});openDB().then(function(db){var tx=db.transaction([STORE_VAULT,STORE_KEYS,STORE_CONTACTS],'readwrite');tx.objectStore(STORE_VAULT).clear();tx.objectStore(STORE_KEYS).clear();tx.objectStore(STORE_CONTACTS).clear();tx.oncomplete=function(){localStorage.clear();session.unlocked.clear();session.activeId=null;showStatus('All data cleared');setTimeout(function(){location.reload()},500)};tx.onerror=function(){showStatus('Error: '+tx.error,'error')}}).catch(function(e){showStatus('Error: '+e.message,'error')})};
 $('clear-modal-confirm').onkeydown=function(e){if(e.key==='Enter')$('btn-clear-confirm').click();if(e.key==='Escape')$('btn-clear-cancel').click()};
 $('clear-modal').onclick=function(e){if(e.target===$('clear-modal'))$('btn-clear-cancel').click()};
 
@@ -4132,10 +4236,14 @@ async function loadPublicProofs(){
       $('public-status').textContent='Connected · 0 proofs';
       return;
     }
-    var proofs=[];
+    var proofs=[],BOARD_MAX=200,idOk=/^[A-Za-z0-9_-]{1,64}$/;
+    // v1.2.2 (finding N-Y): the relay's ids go into a URL. Only plain ids, encoded, and at most 200 posts per load.
+    var capped=entries.length>BOARD_MAX?entries.length-BOARD_MAX:0;
+    if(capped)entries=entries.slice(entries.length-BOARD_MAX);
     for(var i=0;i<entries.length;i++){
       try{
-        var proofUrl=RELAY_URL+'/posts/'+entries[i].id+'.json';
+        if(!entries[i]||typeof entries[i].id!=='string'||!idOk.test(entries[i].id))throw new Error('id');
+        var proofUrl=RELAY_URL+'/posts/'+encodeURIComponent(entries[i].id)+'.json';
         var proofRes=await fetch(proofUrl);
         if(proofRes.ok){
           var proof=await proofRes.json();
@@ -4163,7 +4271,7 @@ async function loadPublicProofs(){
     renderPublicProofs();
     // v1.1.4: what was left out is counted, so a short list does not pass for the whole board
     var leftOut=entries.length-publicProofs.length;
-    $('public-status').textContent='Connected · '+publicProofs.length+' proofs'+(leftOut?' · '+leftOut+' left out':'');
+    $('public-status').textContent='Connected · '+publicProofs.length+' proofs'+(leftOut?' · '+leftOut+' left out':'')+(capped?' · '+capped+' older not loaded':'');
   }catch(e){
     if(!current())return;
     $('public-status').textContent='Error: '+(e.message==='Failed to fetch'?'Server unreachable (CORS or offline)':e.message);
@@ -4237,12 +4345,20 @@ window.addEventListener('appinstalled',function(){$('btn-install').classList.add
 // BIOMETRIC UNLOCK (WebAuthn)
 var webauthnAvailable=window.PublicKeyCredential&&typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable==='function';
 
+// v1.2.2 (finding N-Q): tell the authenticator that a passkey is no longer used, where the browser supports it
+function forgetPasskey(credId){
+  try{if(credId&&window.PublicKeyCredential&&typeof PublicKeyCredential.signalUnknownCredential==='function')PublicKeyCredential.signalUnknownCredential({rpId:location.hostname,credentialId:credId}).catch(function(){})}catch(e){}
+}
 async function setupBiometric(identityId,prfSalt){
   if(!webauthnAvailable)return{error:'WebAuthn not available'};
   if(!isSecureContext)return{error:'Biometric requires HTTPS or localhost (file:// not supported)'};
   try{
     var available=await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
     if(!available)return{error:'No biometric authenticator'};
+    // v1.2.2 (finding N-Q): ask the browser first whether it can derive a key, so no unused passkey is left behind
+    if(typeof PublicKeyCredential.getClientCapabilities==='function'){
+      try{var caps=await PublicKeyCredential.getClientCapabilities();if(caps&&caps['extension:prf']===false)return{error:'This browser cannot derive a key (WebAuthn PRF). Biometric unlock is not offered here; use your passphrase.'}}catch(e){}
+    }
     
     var challenge=crypto.getRandomValues(new Uint8Array(32));
     var userId=te.encode(identityId);
@@ -4269,7 +4385,10 @@ async function setupBiometric(identityId,prfSalt){
       // v1.2.1 (finding N-A): biometric unlock only where the authenticator derives a secret (WebAuthn PRF).
       // Without it the key to the passphrase would have to sit next to it in storage, readable without the sensor.
       var ext=credential.getClientExtensionResults?credential.getClientExtensionResults():{};
-      if(!ext||!ext.prf||ext.prf.enabled!==true)return{error:'This authenticator cannot derive a key (WebAuthn PRF). Biometric unlock is not offered here; use your passphrase.'};
+      if(!ext||!ext.prf||ext.prf.enabled!==true){
+        forgetPasskey(b64(new Uint8Array(credential.rawId)));
+        return{error:'This authenticator cannot derive a key (WebAuthn PRF). Biometric unlock is not offered here; use your passphrase. If your system lists an unused passkey "LOWNET Identity", you can delete it.'};
+      }
       var credId=b64(new Uint8Array(credential.rawId));
       var first=ext.prf.results&&ext.prf.results.first;
       return{success:true,credentialId:credId,prf:first?new Uint8Array(first):null};
@@ -4302,7 +4421,7 @@ async function biometricPrf(credentialId,prfSalt){
 function stripLegacyBiometric(record){
   if(!record||typeof record!=='object')return false;
   var legacy=!!record.biometricPass||!!(record.biometricEncPass&&record.biometricEncPass.k!==undefined);
-  if(legacy){delete record.biometricPass;delete record.biometricEncPass;delete record.biometricCredId}
+  if(legacy){forgetPasskey(record.biometricCredId);delete record.biometricPass;delete record.biometricEncPass;delete record.biometricCredId}
   return legacy;
 }
 async function biometricUnlock(identityId,credentialId){
@@ -4389,7 +4508,7 @@ $('file-recipient-key').oninput = function() {
   parseRecipientInput(val).then(function(pub) {
     if (!current()) return;
     if (pub && pub.dh && pub.fp) {
-      var who = pub.longFp ? pub.longFp + ' · FP ' + pub.fp : pub.fp;
+      var who = (pub.longFp ? pub.longFp + ' · FP ' + pub.fp : pub.fp) + (pub.contactNote ? ' · ' + pub.contactNote : '') + (pub.contactCheck === 'late' ? ' · contact list did not answer, not compared' : '');
       if (pub.bundleState === 'bound') {
         $('file-recipient-fp').textContent = 'Recipient: ' + who;
         $('file-recipient-fp').style.color = 'var(--accent)';
@@ -4662,7 +4781,7 @@ $('file-decrypt-input').onchange = function(e) {
       badge.classList.toggle('warn', !result.valid);
       $('file-decrypt-title').textContent = result.valid ? 'Decrypted' : 'Decrypted · older format';
       $('file-decrypt-sub').textContent = result.valid
-        ? result.fileName + ' · ' + formatFileSize(result.fileSize)
+        ? noBidi(result.fileName) + ' · ' + formatFileSize(result.fileSize)
         : (result.privateMode ? 'Signature does not cover name or recipients' : 'Signature does not cover the file content');
 
       var details = $('file-decrypt-details');
@@ -4693,7 +4812,7 @@ $('file-decrypt-input').onchange = function(e) {
           var v = senderVerdict(info, result.sender.name);
           addInfoRow(details, 'Sender key', v.row);
           if (!wasValid) return;
-          if (v.ok) { badge.classList.remove('warn'); $('file-decrypt-sub').textContent = result.fileName + ' · ' + formatFileSize(result.fileSize); return; }
+          if (v.ok) { badge.classList.remove('warn'); $('file-decrypt-sub').textContent = noBidi(result.fileName) + ' · ' + formatFileSize(result.fileSize); return; }
           $('file-decrypt-title').textContent = info.kind === 'contact' ? 'Decrypted · name does not match' : 'Decrypted · unknown sender';
           $('file-decrypt-sub').textContent = v.why;
         });
@@ -4715,7 +4834,7 @@ $('btn-download-decrypted-file').onclick = function() {
   if (!decryptedFileBlob) { showStatus('No decrypted file', 'error'); return; }
   var a = document.createElement('a');
   a.href = URL.createObjectURL(decryptedFileBlob);
-  a.download = decryptedFileName || 'decrypted-file';
+  a.download = noBidi(decryptedFileName || 'decrypted-file').replace(/\u2BD1/g, '_'); // v1.2.2: no reversed file names
   a.click();
   URL.revokeObjectURL(a.href);
 };
@@ -5278,6 +5397,20 @@ if(!localStorage.getItem('lownet_term_hint')){
 (function() {
   // Register service worker for offline support
   if ('serviceWorker' in navigator) {
+    // v1.2.2 (finding N-U): a new version is loaded in the background and runs after the next reload. Say so, once.
+    navigator.serviceWorker.addEventListener('message', function(ev) {
+      if (!ev.data || ev.data.type !== 'lownet-updated' || document.getElementById('update-note')) return;
+      var n = document.createElement('div');
+      n.id = 'update-note';
+      n.setAttribute('role', 'status');
+      n.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;padding:10px 14px;border:1px solid var(--warning);border-radius:8px;background:var(--surface);color:var(--text);font-size:11px;display:flex;gap:10px;align-items:center;justify-content:space-between;';
+      var t = document.createElement('span');
+      t.textContent = 'A new version of this page was downloaded. It runs after a reload. Check it under /verify/ first if you want.';
+      var b = document.createElement('button');
+      b.className = 'btn btn-secondary btn-small'; b.textContent = 'OK';
+      b.onclick = function() { n.remove(); };
+      n.append(t, b); document.body.append(n);
+    });
     navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
       // Check for updates every hour
       setInterval(function() { reg.update(); }, 60 * 60 * 1000);

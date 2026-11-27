@@ -35,6 +35,23 @@ Verifiable digital artifacts — signed notices and encrypted messages that exis
 - **Canonicalization**: RFC 8785 (JCS), strings exactly as written (older formats: normalized to NFC)
 - **Fingerprint**: 128 bit (SHA-256 of the signing key, first 16 bytes) for people to compare; the 48-bit `fp` stays inside the formats as an index
 
+## Changes in 1.2.2
+
+1.2.2 answers a third independent review, of 1.2.1. More than 5,000 mutations of notices, messages and files, an independent re-implementation of the formats in Python and 20 guided UI runs in Chrome found no way to make a forgery pass. The findings concern handling, display, passphrases and operation. The formats stay as they are.
+
+- **Swapped bundles against your contacts (N-M).** A bundle whose signing key belongs to a saved contact but whose encryption key differs is refused, with or without `bsig`. Leaving out `bsig` no longer leads to the confirmation box in that case. A bundle without `bsig` whose keys match a confirmed contact counts as confirmed.
+- **Signing keys of small order (N-Z).** Such keys are refused everywhere a signature is checked. With one of them, a zero signature matched any text; only a self-made identity could use that, never someone else's.
+- **Passphrases (N-H).** New passphrases need 16 characters. What is left after taking out common words, keyboard rows, sequences, repeats and years must still be 10 characters. A generator offers a random passphrase (about 119 bits). Existing identities still unlock.
+- **Names rewritten on the way (N-N).** A bundle whose name arrives in another Unicode normalization form still verifies; the keys are what `bsig` protects. A bundle that really changed gets a clearer message.
+- **Smaller:**
+  - Copying a contact keeps `bsig` (N-S).
+  - Key QR codes are encoded as UTF-8 and drawn larger (N-R, N-O).
+  - Direction control characters in names and texts are shown as a visible mark (N-T).
+  - The sequence number is checked on unlock and restore too (N-P).
+  - The browser is asked first whether it can derive a key, and a passkey that is no longer used is reported to the authenticator where supported (N-Q).
+  - Board ids from the relay are checked and encoded, at most 200 posts per load (N-Y).
+  - The page says when a new version was downloaded in the background (N-U).
+
 ## Changes in 1.2.1
 
 1.2.1 answers a second independent review, of 1.2.0 (103 attacks against messages, files and bound notices, none forged them). It found three medium weaknesses next to the core formats and a few small ones. The formats ENV-1.3, ENV-F-2 and CNP-1 stay as they are.
@@ -149,6 +166,9 @@ Verifiable digital artifacts — signed notices and encrypted messages that exis
 - **Bundles without `bsig` are trusted by confirmation only.** Bundles from 1.2.0 and earlier, and from `lownet.js` 1.0.2, carry no `bsig`. The page then cannot tell whether the encryption key belongs to the signer; compare the bundle fingerprint (signing and encryption key) with its owner over a second channel before you confirm. The owner sees it under Keys from 1.2.1 on. Take bundles from the person, not from a third party.
 - **Multi-recipient files show a short hint per recipient.** The clear header of a file for several recipients holds the first 3 bytes of each recipient's fingerprint. 24 bits are enough to match known keys, not to guess unknown ones. Mailboxes on a LOWNET node use them to deliver the file.
 - **Sequence numbers and chains are the signer's own statement.** Two notices with the same sequence number both verify; nothing stops a fork. The page notes envelopes it has opened before, it cannot know about other devices.
+- **Proof of work is a brake, not a lock.** A native implementation computes the same chain about ten times faster than the page. Work never protects integrity, the signatures do.
+- **Same content, different bytes.** The last Base64 character can vary, and some encrypted parts ignore unsigned extra keys, without changing what verifies. Compare signatures or IDs, not the hash of the whole file.
+- **The verify page needs the network.** It compares against this server and GitHub, so it is not kept for offline use.
 - **The verify page runs on the server it checks.** It has its own CSP and asks only this server and GitHub. It looks at the file on the server, not at the copy your open tab or service worker runs, and a tampered server can serve a tampered verify page.
 
 ## Verify Integrity
